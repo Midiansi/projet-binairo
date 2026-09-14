@@ -1,0 +1,2 @@
+# Exact progress / next action
+2026-09-14: originals inventoried locally; source audit and interface contract established. Private remote created at https://github.com/Midiansi/epfl-me213-binairo-2026; no push yet. Next autonomous action: implement/test C against contract, then implement MATLAB, then complete LabVIEW recipe and integration audit. Human construction is not requested before the complete package exists. MATLAB/LabVIEW execution is prohibited for the agent and pending later human evidence.

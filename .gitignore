@@ -1,0 +1,20 @@
+# Course files and personal conversations are restored separately.
+course_materials/*
+!course_materials/RESTORE.md
+transcripts/*
+!transcripts/README.md
+runtime/*
+!runtime/README.md
+build/
+__pycache__/
+*.pyc
+.DS_Store
+*.exe
+*.o
+*.obj
+*.pdb
+*.ilk
+*.zip
+*.lvps
+*.lvlps
+*.aliases

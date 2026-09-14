@@ -1,0 +1,157 @@
+[
+  {
+    "file": "Exo.Proj.Binairo.LabVIEW.2.pdf",
+    "sha256": "e61cdf6ceb74501efe0c56c8d8ac637a7f1d8c0b8bfae3202b0588e884d45895",
+    "size": 359324
+  },
+  {
+    "file": "Exo.Proj.Binairo.OCR.2026.pdf",
+    "sha256": "5037bd4488f4b1a09ee030a69e69e09fddaa08758acf5a9bf0e9027dead0e80a",
+    "size": 377747
+  },
+  {
+    "file": "Exo.Proj.Binairo.LabVIEW.1.pdf",
+    "sha256": "734b87c8f73ebdd57ed7c9b4f20d8c77eab25b1af0c4539f17a0d5d75dea53bb",
+    "size": 1656405
+  },
+  {
+    "file": "MP_LaunchMatlabScript4.vi",
+    "sha256": "2d96751539e1525af43f07e51a622b6269925bece301c4b745dc64455dcc3590",
+    "size": 57410
+  },
+  {
+    "file": "Binairo_6x6.png",
+    "sha256": "85a4ecbad7a030e33f4a4c58c1567d64beafc4efe07796db57d580132f53fa88",
+    "size": 54362
+  },
+  {
+    "file": "Binairo_8x8.png",
+    "sha256": "d8be3d41b42e547446efea5c84e470d4bab3db5df8986693c44e183331bba830",
+    "size": 16565
+  },
+  {
+    "file": "FontRasterized_0_1.h",
+    "sha256": "7577b40b35674ec3d19571b434b1d0c9ec848594461a52d9ee6b7045c51631aa",
+    "size": 1203
+  },
+  {
+    "file": "Cell0.bin",
+    "sha256": "72be43fe05c0d856797a25213a366c814c1e361eadf86a50791cbe159d6935f8",
+    "size": 5484
+  },
+  {
+    "file": "Binairo_8x8.pdf",
+    "sha256": "57cf318f5ed05d90d359e476389c3958ad0095de6cd5ebbefe5e2fcd78a7cbf6",
+    "size": 10004
+  },
+  {
+    "file": "Binairo_6x6.pdf",
+    "sha256": "7aa4dfe7210f3bd5a85c0bb9916d052fed2ea1fb398cd33d921f57bc20e0e51d",
+    "size": 9917
+  },
+  {
+    "file": "Ex. Documentation projet.pdf",
+    "sha256": "d1fb60f9c699526ca8332ba19f52653a8b44b81d76b85decd1392fb55bfb3e0a",
+    "size": 64555
+  },
+  {
+    "file": "Cell1.bin",
+    "sha256": "9c96d353d4a7fd2edd54a61136d06d0dc6075014f7a2bff7e7148f6290441896",
+    "size": 5484
+  },
+  {
+    "file": "CellEmpty.bin",
+    "sha256": "e7c6c0dc81e0daacdc1fa01ddf0cc5dc524ea1cb35ff714c752b5d9ef2913825",
+    "size": 5484
+  },
+  {
+    "file": "Exo.Proj.Binairo.Matlab.1.pdf",
+    "sha256": "a324f723bac3af1c351c659582d03acbf595e217dd7f672cd3641ec3dbc45e7a",
+    "size": 193923
+  },
+  {
+    "file": "Billard2025_ConPane.vi",
+    "sha256": "253d354c0e39580f876845e86346efbc5d7b79e1f40a8abe234f041d8e9cfd6f",
+    "size": 16271
+  },
+  {
+    "file": "P00.PPI_Projet.2026.2.pdf",
+    "sha256": "ac82cc121dd723c432132482bd15973689868dfb880036aaa7d795702fece2e1",
+    "size": 1876256
+  },
+  {
+    "file": "P0.PPI_Projet.25.r1.pdf",
+    "sha256": "e34f200f46a5a7d815d5183b38447016f891ac0d21ec9305b6af467d23433452",
+    "size": 3071675
+  },
+  {
+    "file": "Exo.Proj.Binairo.Matlab.2.pdf",
+    "sha256": "8dd5df407ebd4b5407f9308233d7d86b4eb766c13e5c483385c19f77b0ed07af",
+    "size": 55773
+  },
+  {
+    "file": "P0.PPI_Projet.25.r2.pdf",
+    "sha256": "309846b882711b18ed07bac08161e21bea60ef1214f25365045c5782216440c0",
+    "size": 3090097
+  },
+  {
+    "file": "P0.PPI_Projet.25.r6.pdf",
+    "sha256": "fa71911aa616c2160789f4d5411243e783f660ed49db6d049ae8ecad8ac674eb",
+    "size": 3156508
+  },
+  {
+    "file": "P0.PPI_Projet_addendum.25.r2.pdf",
+    "sha256": "a301668ff2b660e5e271faf28e8b70fc1d127e598c15a60423577f4d8f984123",
+    "size": 1483067
+  },
+  {
+    "file": "P0.PPI_Projet.25.r5.pdf",
+    "sha256": "cf7759f45ed390ae07c58aa766cb1c35c488e03585ee0d2d19a661c364767860",
+    "size": 3199471
+  },
+  {
+    "file": "P00.PPI_Projet.2026_b1.pdf",
+    "sha256": "d496e0c8f28f97527af0a6ed4315686c1843992652b660bf845ab73e5ceeab0a",
+    "size": 1863278
+  },
+  {
+    "file": "P0.PPI_Projet_addendum.25.r1.pdf",
+    "sha256": "072c259784472eabbb6669acbe1b189307d78f7fb90fdfafe807626aa7f020f3",
+    "size": 1468769
+  },
+  {
+    "file": "P0.PPI_Projet.25.r4.pdf",
+    "sha256": "673294dab0e4eb3b016c0a34919d5063224d05f9076e5d5fe0f1a56f213e79ff",
+    "size": 3184527
+  },
+  {
+    "file": "Binaro_5x6_Bad.png",
+    "sha256": "75dc06e234f132fceb8cd4d2fc68dd416cf3d8aeebf0eb477e31842e07c4d584",
+    "size": 63527
+  },
+  {
+    "file": "SolveBinairoHeader.m",
+    "sha256": "002249f75cd49747b928c072508328271cffee8f52e73994f26ec7842241fee0",
+    "size": 3480
+  },
+  {
+    "file": "Binairo_4x4_Bad.pdf",
+    "sha256": "27ecd2957924e0a5e2c6d8fd99b983cf0abaa4b62684f311c2157e9f201234e2",
+    "size": 10108
+  },
+  {
+    "file": "Exo.Proj.Binairo.Matlab.Recursion.pdf",
+    "sha256": "4c500b7fa1ac8e6ad13a6fa2253ea99115a85839b265a4fcbaf092025a3f4f90",
+    "size": 260415
+  },
+  {
+    "file": "Cell_0.h",
+    "sha256": "b34562b48e7a962850c0e6510c082f899957011fa98f5712257d1a366849a7db",
+    "size": 17098
+  },
+  {
+    "file": "Binairo_4x4_Bad.png",
+    "sha256": "87a833908fd20b7b0067a3497ebfa678462b5da2c983be8a74f4e3c37dd01bbe",
+    "size": 27524
+  }
+]
