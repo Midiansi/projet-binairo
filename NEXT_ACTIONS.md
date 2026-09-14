@@ -1,0 +1,10 @@
+# Next actions after the first delivery
+
+1. Extract the complete archive to a writable folder on the suitable teammate computer. Open START_HERE.html. Follow docs/C_OPERATOR_GUIDE.md to build/test the target executable and assemble runtime. A Mac binary cannot run on Windows.
+2. One assigned LabVIEW builder follows the ENTIRE docs/LABVIEW_COMPLETE.html, starting chapter1: create a blank project saved as labview/Binairo2026.lvproj, then ErrorIf.vi and each listed subVI. Source VIs are saved in labview/, copied into runtime/ before running. The main VI comes last. No programming design is delegated to the builder.
+3. The MATLAB operator follows docs/MATLAB_OPERATOR_GUIDE.md, runs the prepared24-case runner and returns its whole evidence folder, including failures and PDFs. Complete all LabVIEW checkpoints and TEST_PACKAGE native acceptance cases. Course-launcher connector inspection is the narrow explicitly documented boundary; complete synchronous direct launching is already specified.
+4. Return source VIs/typedefs/project and evidence as one archive to this task; the agent audits and repairs all components, commits and verifies a private push. Do not call native checks complete from a screenshot alone. Preserve failed runs.
+5. A teammate sends the compact PROFESSOR_QUESTIONS.md when practical; no message has been sent by the agent. Supply the actual three author names and unavailable teammate conversation exports before final submission. Latest current connector/error/submission instructions remain pending.
+6. Owner manually invites the actual teammate GitHub accounts using TEAM_GITHUB_GUIDE. Separately back up course originals, transcript PDFs and target artifacts. The agent has not claimed that this separate off-device copy already exists.
+
+Autonomous work completed for this first delivery: source contract, compiled/tested C, written/reviewed MATLAB, full native LabVIEW construction recipe, cross-component review, short draft report, preserved available transcripts and coherent archive. Native execution and final report/submission acceptance are the next workflow phase, not omitted first-delivery work.

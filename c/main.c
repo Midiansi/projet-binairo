@@ -9,6 +9,18 @@
 #include <stdlib.h>
 #include <string.h>
 
+/* File-only deletion preserves a directory accidentally named CellValue.txt.
+ * ISO remove() may delete an empty directory on POSIX. These equivalent APIs
+ * are the only platform-specific operations used by the C executable.
+ */
+#ifdef _WIN32
+#include <io.h>
+#define DeleteFileOnly _unlink
+#else
+#include <unistd.h>
+#define DeleteFileOnly unlink
+#endif
+
 static const char OutputName[] = "CellValue.txt";
 static const char TemporaryName[] = "CellValue.txt.tmp";
 
@@ -89,7 +101,7 @@ static int OutputPaths(const char *input, char **output, char **temporary,
 
 static int RemoveOldFile(const char *path, const char **description)
 {
-    if (remove(path) != 0 && errno != ENOENT) {
+    if (DeleteFileOnly(path) != 0 && errno != ENOENT) {
         *description = "cannot remove a previous OCR output or temporary file";
         return OCR_OUTPUT_ERROR;
     }
@@ -125,7 +137,7 @@ static int WriteResult(const char *output, const char *temporary,
         /* Output is never published before every write and close succeeds.
          * If cleanup itself fails, a .tmp file may remain, never a result.
          */
-        (void)remove(temporary);
+        (void)DeleteFileOnly(temporary);
     }
     return status;
 }

@@ -1,8 +1,8 @@
 /* EPFL ME-213 Binairo 2026. AI-assisted implementation by Codex.
  * Team author names: to be supplied before submission; see docs report.
  * Contract and provisional choices: docs/INTERFACE_CONTRACT.md. */
-#ifndef BINAiro_OCR_POLICY_H
-#define BINAiro_OCR_POLICY_H
+#ifndef BINAIRO_OCR_POLICY_H
+#define BINAIRO_OCR_POLICY_H
 
 /* Provisional assignment decisions: see docs/INTERFACE_CONTRACT.md.
  * Change only these definitions if the professor resolves either ambiguity.

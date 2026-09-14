@@ -1,0 +1,15 @@
+COURSE LAUNCHER INTERFACE — NOT YET INSPECTED NATIVELY
+Actual LabVIEW version:
+Actual builder/date:
+Original file hash:
+Each occupied connector terminal (position | exact label | input/output | complete type):
+Script input semantics proved by diagram (basename / extension / full path):
+Test switch exact label, value and diagram effect:
+Working-directory behavior:
+Executable-location behavior:
+Wait-until-completion behavior:
+Error/stdout/stderr/exitcode outputs actually present:
+Screenshots attached:
+Success test and fresh status observed:
+Intentional failure test and full error observed:
+Course mode enabled only after these checks:

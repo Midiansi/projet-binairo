@@ -1,6 +1,6 @@
 # C build and test - literal operator steps
 
-The delivered tested executable is macOS ARM64 only. Windows needs a native build; no Windows execution is claimed. C uses only the standard library. Supplied packed bitmaps stay unchanged in course_materials/FontRasterized_0_1.h. Compiler/runtime source is c/main.c + c/ocr.c; c/test_ocr.c is a development test, not another runtime executable entry point.
+The delivered tested executable is macOS ARM64 only. Windows needs a native build; no Windows execution is claimed. C uses the standard library plus file-only deletion via unlink on POSIX / _unlink on Windows, to preserve accidental output directories. Supplied packed bitmaps stay unchanged in course_materials/FontRasterized_0_1.h. Compiler/runtime source is c/main.c + c/ocr.c; c/test_ocr.c is a development test, not another runtime executable entry point.
 
 ## Windows (provisional team target)
 

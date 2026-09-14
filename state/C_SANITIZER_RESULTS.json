@@ -8,347 +8,347 @@
     {
       "test": "supplied_Cell0.bin",
       "status": "PASS",
-      "seconds": 0.5605
+      "seconds": 0.3971
     },
     {
       "test": "supplied_Cell1.bin",
       "status": "PASS",
-      "seconds": 0.1113
+      "seconds": 0.1105
     },
     {
       "test": "supplied_CellEmpty.bin",
       "status": "PASS",
-      "seconds": 0.0635
+      "seconds": 0.0608
     },
     {
       "test": "exact32_digit0",
       "status": "PASS",
-      "seconds": 0.062
+      "seconds": 0.0603
     },
     {
       "test": "bottom_right_rectangular_digit0",
       "status": "PASS",
-      "seconds": 0.064
+      "seconds": 0.0612
     },
     {
       "test": "exact32_digit1",
       "status": "PASS",
-      "seconds": 0.0618
+      "seconds": 0.0604
     },
     {
       "test": "bottom_right_rectangular_digit1",
       "status": "PASS",
-      "seconds": 0.0627
+      "seconds": 0.0644
     },
     {
       "test": "small_empty",
       "status": "PASS",
-      "seconds": 0.062
+      "seconds": 0.1243
     },
     {
       "test": "small_nonempty",
       "status": "PASS",
-      "seconds": 0.0615
+      "seconds": 0.0609
     },
     {
       "test": "empty_equality_is_not_empty",
       "status": "PASS",
-      "seconds": 0.0616
+      "seconds": 0.0645
     },
     {
       "test": "blank_strict_greater",
       "status": "PASS",
-      "seconds": 0.0611
+      "seconds": 0.0626
     },
     {
       "test": "upper_dimension_empty",
       "status": "PASS",
-      "seconds": 0.0625
+      "seconds": 0.1034
     },
     {
       "test": "invalid_width_0",
       "status": "PASS",
-      "seconds": 0.0611
+      "seconds": 0.0649
     },
     {
       "test": "invalid_height_0",
       "status": "PASS",
-      "seconds": 0.0613
+      "seconds": 0.1449
     },
     {
       "test": "invalid_width_1",
       "status": "PASS",
-      "seconds": 0.0615
+      "seconds": 0.0679
     },
     {
       "test": "invalid_height_1",
       "status": "PASS",
-      "seconds": 0.0628
+      "seconds": 0.0637
     },
     {
       "test": "invalid_width_9",
       "status": "PASS",
-      "seconds": 0.0611
+      "seconds": 0.0632
     },
     {
       "test": "invalid_height_9",
       "status": "PASS",
-      "seconds": 0.0622
+      "seconds": 0.0621
     },
     {
       "test": "invalid_width_257",
       "status": "PASS",
-      "seconds": 0.0619
+      "seconds": 0.0629
     },
     {
       "test": "invalid_height_257",
       "status": "PASS",
-      "seconds": 0.0616
+      "seconds": 0.0598
     },
     {
       "test": "invalid_width_4294967295",
       "status": "PASS",
-      "seconds": 0.0611
+      "seconds": 0.0602
     },
     {
       "test": "invalid_height_4294967295",
       "status": "PASS",
-      "seconds": 0.0618
+      "seconds": 0.0597
     },
     {
       "test": "short_header_0",
       "status": "PASS",
-      "seconds": 0.0614
+      "seconds": 0.0598
     },
     {
       "test": "short_header_1",
       "status": "PASS",
-      "seconds": 0.061
+      "seconds": 0.06
     },
     {
       "test": "short_header_2",
       "status": "PASS",
-      "seconds": 0.0623
+      "seconds": 0.06
     },
     {
       "test": "short_header_3",
       "status": "PASS",
-      "seconds": 0.0628
+      "seconds": 0.0644
     },
     {
       "test": "short_header_4",
       "status": "PASS",
-      "seconds": 0.0614
+      "seconds": 0.0602
     },
     {
       "test": "short_header_5",
       "status": "PASS",
-      "seconds": 0.0624
+      "seconds": 0.0602
     },
     {
       "test": "short_header_6",
       "status": "PASS",
-      "seconds": 0.0622
+      "seconds": 0.0598
     },
     {
       "test": "short_header_7",
       "status": "PASS",
-      "seconds": 0.0622
+      "seconds": 0.06
     },
     {
       "test": "short_payload",
       "status": "PASS",
-      "seconds": 0.0631
+      "seconds": 0.0604
     },
     {
       "test": "excess_payload",
       "status": "PASS",
-      "seconds": 0.0643
+      "seconds": 0.0627
     },
     {
       "test": "illegal_pixel",
       "status": "PASS",
-      "seconds": 0.0644
+      "seconds": 0.1049
     },
     {
       "test": "big_endian_rejected",
       "status": "PASS",
-      "seconds": 0.0651
+      "seconds": 0.1072
     },
     {
       "test": "no_match",
       "status": "PASS",
-      "seconds": 0.0647
+      "seconds": 0.0628
     },
     {
       "test": "margin_vs_raw_disagreement",
       "status": "PASS",
-      "seconds": 0.0734
+      "seconds": 0.071
     },
     {
       "test": "exact_tie_select_zero",
       "status": "PASS",
-      "seconds": 0.0739
+      "seconds": 0.0709
     },
     {
       "test": "oracle_noise_0",
       "status": "PASS",
-      "seconds": 0.0683
+      "seconds": 0.0625
     },
     {
       "test": "oracle_noise_1",
       "status": "PASS",
-      "seconds": 0.066
+      "seconds": 0.062
     },
     {
       "test": "oracle_noise_2",
       "status": "PASS",
-      "seconds": 0.0663
+      "seconds": 0.0639
     },
     {
       "test": "oracle_noise_3",
       "status": "PASS",
-      "seconds": 0.0646
+      "seconds": 0.0615
     },
     {
       "test": "oracle_noise_4",
       "status": "PASS",
-      "seconds": 0.0684
+      "seconds": 0.0647
     },
     {
       "test": "oracle_noise_5",
       "status": "PASS",
-      "seconds": 0.0642
+      "seconds": 0.061
     },
     {
       "test": "oracle_noise_6",
       "status": "PASS",
-      "seconds": 0.0633
+      "seconds": 0.0619
     },
     {
       "test": "oracle_noise_7",
       "status": "PASS",
-      "seconds": 0.0639
+      "seconds": 0.063
     },
     {
       "test": "oracle_noise_8",
       "status": "PASS",
-      "seconds": 0.0654
+      "seconds": 0.0633
     },
     {
       "test": "oracle_noise_9",
       "status": "PASS",
-      "seconds": 0.0633
+      "seconds": 0.0624
     },
     {
       "test": "oracle_noise_10",
       "status": "PASS",
-      "seconds": 0.0643
+      "seconds": 0.0609
     },
     {
       "test": "oracle_noise_11",
       "status": "PASS",
-      "seconds": 0.0653
+      "seconds": 0.0635
     },
     {
       "test": "bad_threshold_''",
       "status": "PASS",
-      "seconds": 0.0634
+      "seconds": 0.0616
     },
     {
       "test": "bad_threshold_'-1'",
       "status": "PASS",
-      "seconds": 0.062
+      "seconds": 0.061
     },
     {
       "test": "bad_threshold_'101'",
       "status": "PASS",
-      "seconds": 0.0627
+      "seconds": 0.0616
     },
     {
       "test": "bad_threshold_'nan'",
       "status": "PASS",
-      "seconds": 0.0633
+      "seconds": 0.0605
     },
     {
       "test": "bad_threshold_'inf'",
       "status": "PASS",
-      "seconds": 0.0635
+      "seconds": 0.0721
     },
     {
       "test": "bad_threshold_'90x'",
       "status": "PASS",
-      "seconds": 0.0624
+      "seconds": 0.0996
     },
     {
       "test": "bad_threshold_'90,1'",
       "status": "PASS",
-      "seconds": 0.0638
+      "seconds": 0.1053
     },
     {
       "test": "bad_threshold_' 90'",
       "status": "PASS",
-      "seconds": 0.0635
+      "seconds": 0.061
     },
     {
       "test": "bad_threshold_'90 '",
       "status": "PASS",
-      "seconds": 0.0636
+      "seconds": 0.061
     },
     {
       "test": "bad_threshold_'1e2'",
       "status": "PASS",
-      "seconds": 0.0642
+      "seconds": 0.0608
     },
     {
       "test": "bad_threshold_'0x64'",
       "status": "PASS",
-      "seconds": 0.0637
+      "seconds": 0.0602
     },
     {
       "test": "argc_user_arguments_0",
       "status": "PASS",
-      "seconds": 0.0618
+      "seconds": 0.0585
     },
     {
       "test": "argc_user_arguments_1",
       "status": "PASS",
-      "seconds": 0.0625
+      "seconds": 0.0593
     },
     {
       "test": "argc_user_arguments_2",
       "status": "PASS",
-      "seconds": 0.0626
+      "seconds": 0.0591
     },
     {
       "test": "argc_user_arguments_3",
       "status": "PASS",
-      "seconds": 0.0625
+      "seconds": 0.0605
     },
     {
       "test": "argc_user_arguments_5",
       "status": "PASS",
-      "seconds": 0.0622
+      "seconds": 0.0596
     },
     {
       "test": "argc_user_arguments_6",
       "status": "PASS",
-      "seconds": 0.0634
+      "seconds": 0.0586
     },
     {
       "test": "missing_input",
       "status": "PASS",
-      "seconds": 0.0632
+      "seconds": 0.0599
     },
     {
       "test": "output_path_is_nonempty_directory",
       "status": "PASS",
-      "seconds": 0.0644
+      "seconds": 0.0608
     },
     {
       "test": "output_beside_input_with_spaces_apostrophe",
       "status": "PASS",
-      "seconds": 0.0638
+      "seconds": 0.0609
     }
   ],
   "pass": 69,

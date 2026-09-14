@@ -1,0 +1,17 @@
+{
+  "tests": [
+    {
+      "name": "CellValue.txt",
+      "status": "PASS",
+      "returncode": 6
+    },
+    {
+      "name": "CellValue.txt.tmp",
+      "status": "PASS",
+      "returncode": 6
+    }
+  ],
+  "pass": 2,
+  "native_matlab": false,
+  "native_labview": false
+}

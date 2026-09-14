@@ -1,0 +1,1842 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><title>Complete Binairo LabVIEW construction</title><style>body{margin:0;background:#f3f5f7;color:#192b3a;font:17px/1.6 system-ui,sans-serif}main{max-width:1100px;margin:auto;background:white;padding:40px 52px}h1{font-size:2.2rem;line-height:1.2;color:#093855}h2{margin-top:2.5em;padding-top:1em;border-top:2px solid #d4e4ed}h3{margin-top:2em;color:#0b5674}a{color:#006e9a}p,li{overflow-wrap:anywhere}table{border-collapse:collapse;width:100%;font-size:14px;display:block;overflow-x:auto;margin:24px 0}th,td{border:1px solid #cbd7df;padding:10px;vertical-align:top;text-align:left}th{background:#e6f0f5}tr:nth-child(even){background:#f6f9fb}code{font:0.9em/1.5 ui-monospace,monospace;background:#f0f3f5;padding:2px 4px;overflow-wrap:anywhere}pre{padding:18px;background:#edf2f6;overflow-x:auto;white-space:pre-wrap}pre code{padding:0;background:none}nav{background:#e8f1f6;padding:18px 24px;border-radius:8px}nav a{display:block;padding:3px 0;font-size:15px}aside{padding:14px 20px;background:#fff3d8;border-left:5px solid #d39b2b}footer{font-size:13px;color:#536574;margin-top:40px}@media(max-width:700px){main{padding:24px}body{font-size:16px}}@media print{body{background:white;font-size:10pt}main{padding:0;max-width:none}nav{display:none}h2,h3{break-after:avoid}tr,pre{break-inside:avoid}a{color:inherit}table{display:table;font-size:8pt}}</style></head><body><main><aside>First delivery · Native MATLAB/LabVIEW execution pending · Build from this complete recipe and retain failure evidence.</aside><nav aria-label="Contents"><a href="#section-1">Complete LabVIEW construction recipe - first delivery</a><a href="#section-2">1. First step: prepare the project and create the empty LabVIEW project</a><a href="#section-3">2. Common exact conventions for every table</a><a href="#section-4">3. ErrorIf.vi - explicit error creation and preservation</a><a href="#section-5">4. ReadText.vi and WriteText.vi - complete disk wrappers</a><a href="#section-6">5. Native image, bounds, grid and crop geometry</a><a href="#section-7">Geometry chapter: LabVIEW image and geometry construction recipe</a><a href="#section-8">1. Construction notation and exact type rules</a><a href="#section-9">2. Project-owned connector pattern and common types</a><a href="#section-10">3. BoolExtent.vi — first and last occupied position</a><a href="#section-11">4. BlackRuns.vi — exact stroke intervals, including edge strokes</a><a href="#section-12">5. ComputeCellRect.vi — one crop, with bounds checked before indexing</a><a href="#section-13">6. ComputeRowsCols.vi — image bounds, scanlines and valid grid</a><a href="#section-14">7. ReadImage.vi — native PNG, white background and black-TRUE polarity</a><a href="#section-15">8. Native evidence and reviewed references</a><a href="#section-16">9. Completed source/wiring self-review and remaining native boundary</a><a href="#section-17">6. WriteCell.vi - exact header and row-major pixels</a><a href="#section-18">7. BuildOCRCommand.vi - thresholds and host quoting</a><a href="#section-19">8. ParseCellValue.vi - strict one-line grammar</a><a href="#section-20">9. ReadCase.vi - crop, write, execute, parse</a><a href="#section-21">10. BuildML.vi - actual script generated from OCR results</a><a href="#section-22">11. CheckMatlabStatus.vi - completion cannot be inferred from a PDF alone</a><a href="#section-23">12. LaunchMatlabAdapter.vi - complete direct path and bounded course interface</a><a href="#section-24">13. BinairoSolver.vi — the complete main pipeline</a><a href="#section-25">14. Checkpoints, native tests and return packet</a></nav><h1 id="section-1">Complete LabVIEW construction recipe - first delivery</h1>
+<p><strong>Read together with LABVIEW_GEOMETRY_GUIDE.md, which is the numbered geometry chapter of this recipe.</strong> The HTML edition combines both into one readable document. This guide describes how to build real VIs; it is not an executable VI or evidence of native execution. Provisional environment: English desktop LabVIEW on Windows; native macOS alternative commands are given. The course&#39;s current main connector is missing. All project connectors below are our explicit provisional design. The supplied launcher is included unchanged; only its actual connector requires the narrow later inspection in chapter12.</p>
+<h2 id="section-2">1. First step: prepare the project and create the empty LabVIEW project</h2>
+<ol>
+<li>Extract the complete first-delivery archive into a writable folder on the teammate computer. Keep the directory tree intact. Do not use a Mac executable on Windows. Follow C_OPERATOR_GUIDE.md through its successful build and <code>python tools/prepare_runtime.py</code> step. Follow MATLAB_OPERATOR_GUIDE.md when MATLAB is available; first delivery does not assert these native tests have happened.</li>
+<li>Open LabVIEW manually. Choose File &gt; Create Project &gt; Blank Project (or File &gt; New Project if that is the installed equivalent). Save the project as <code>labview/Binairo2026.lvproj</code> inside this package. Use My Computer for all VIs, not a real-time target.</li>
+<li>Read state/VI_OWNERSHIP.md: one builder edits the VIs. Build source VIs in labview/. Before running the pipeline, use the assembly helper to copy them into runtime/, where all runtime files are co-located. Close VIs before copying to avoid editing mixed versions. After any runtime-side repair, explicitly save the authoritative changed file back into labview/ before committing.</li>
+<li>Create File &gt; New VI and immediately save as <code>labview/ErrorIf.vi</code>. Complete chapter3, then build each named subVI in chapter order. The main VI is built last. Do not build from the old Billard connector.</li>
+</ol>
+<h2 id="section-3">2. Common exact conventions for every table</h2>
+<ol>
+<li><strong>Object identity.</strong> Each table&#39;s ID is a free label you add beside that object (double-click empty diagram area and type the ID). <code>P.</code> identifies a front-panel terminal. <code>C.</code> identifies a block-diagram constant. <code>N.</code> identifies a node. <code>S.</code> identifies a structure. IDs are scoped to that VI, so <code>N1</code> in ReadText.vi is a different object from <code>N1</code> in WriteCell.vi. Table rows instantiate exactly one object unless an indexed finite set is explicitly enumerated. Do not create extra implicit arithmetic nodes.</li>
+<li><strong>Placement/search.</strong> Front panel: right-click empty area, Controls palette Search, enter the exact control type in the table, select the standard control/indicator. Diagram: Ctrl+Space (Quick Drop), type the exact node name, select the matching LabVIEW built-in, Enter and click to place. Course-confirmed image palette routes: Programming &gt; Graphics &amp; Sound &gt; Graphics Formats for Read PNG File/Unflatten Pixmap; Programming &gt; Graphics &amp; Sound &gt; Picture Functions for Draw Flattened Pixmap/Picture to Pixmap. Built-in file nodes are Programming &gt; File I/O. When an English search returns multiple items, use Context Help to choose the named terminals/types stated here. A toolkit/IMAQ equivalent is not intended.</li>
+<li><strong>Terminals.</strong> Ctrl+H opens Context Help. Hover the node, then hover each terminal; its label and data type identify it. Right-click the node &gt; Visible Items &gt; Terminals where available. Our wire tables use terminal names, not icon corner guesses. Expand growable nodes by dragging their lower edge to the exact number of inputs stated. All listed source→destination wires are required. Branch an existing source wire when it feeds several destinations. Listed but unused OUTPUTS stay unconnected; unused INPUTS are stated explicitly with their default below. Do not guess terminals of the supplied MATLAB-launch VI.</li>
+<li><strong>Representations.</strong> Numeric controls/constants: right-click &gt; Representation &gt; I32, U32, U8 or DBL exactly as listed. I32 means signed32, U32 unsigned32, U8 unsigned8, DBL floating64. Set displayed numeric constants to decimal unless <code>0x</code> says hexadecimal (right-click radix &gt; Hex). Booleans are switches for controls, LEDs for indicators; defaults FALSE unless specified TRUE. Arrays: place Array shell, drop the element control inside, then right-click index display &gt; Add Dimension until dimensions match. Arrays are initially empty, not one zero element. For 2D Boolean arrays, the first index is row and second is column.</li>
+<li><strong>Clusters.</strong> Error cluster is the standard Error In/Out control, order status(Boolean), code(I32), source(String). GridLines cluster is project-owned order xStart[],xEnd[],yStart[],yEnd[], all1D I32. CellRect cluster is project-owned order left,top,right,bottom, allI32. Set cluster order via right-click border &gt; Reorder Controls in Cluster. <strong>Native picture rectangle fields are I16; do not reuse CellRect for native picture terminals.</strong> Create native cluster types from their actual terminals.</li>
+<li><strong>Connector panes.</strong> For project subVIs choose the pattern with four terminals down each side and two across each top/bottom edge (12 total, commonly labelled4x2x2x4). Right-click icon &gt; Show Connector, Patterns, select by geometry. Label positions on your paper L1..L4 top-to-bottom left; R1..R4 top-to-bottom right; T1,T2 left-to-right top; B1,B2 left-to-right bottom. Click a terminal then its front-panel object. All assigned data inputs required; error input recommended. Every unassigned terminal remains UNASSIGNED. Connector tables below and in geometry chapter fully enumerate assigned terminals. This is not an official current course connector.</li>
+<li><strong>Cases.</strong> A standard guard <code>S0</code> is a Case Structure selected by error-in.status. It has FALSE (no existing error) and TRUE (existing error). Each subVI table explicitly describes both branches. No side-effect node goes outside FALSE unless stated. Every output tunnel is wired in BOTH cases; do not select Use Default If Unwired. Scalar pure computations may execute before a guard, but indexing/division/open/run operations belong after input validation.</li>
+<li><strong>Loops.</strong> For Loops use default I32 iteration i starting0. N equals stated count. Auto-indexing is enabled only where stated; nonindexing tunnels are solid squares. Shift registers are initialized by the specified wire OUTSIDE their loop. Never use uninitialized registers. Every branch wires right registers. Stop early is only enabled where stated. UI runs once when the Run arrow is clicked; do not add an infinite outer loop.</li>
+<li><strong>Primitive terminal aliases/defaults.</strong> In these tables argument0/input0 means the first growable input, which NI may label input1; argument1 means the second. Format Into String initial string is explicitly empty at every call (wire a String constant labelled with the node ID plus <code>.Empty</code>); Search and Replace regex mode is OFF unless explicitly stated; all output offsets/counts not named are unused. Error outputs from formatting/regex nodes must flow along the listed error chain. For Open/Create/Replace File the optional advisory input is left at its documented default FALSE; do not add a speculative terminal.</li>
+<li><strong>Defaults/description.</strong> After finishing a VI, set stated control defaults, Edit &gt; Make Current Values Default, save. File &gt; VI Properties &gt; Documentation: paste its purpose paragraph and reference this guide section; add actual builder name and date (never invent authors). Confirm Run arrow is unbroken. If broken, click it, save full Error List text/screenshot and the relevant objectIDs/Context Help. Never hide broken wires or insert arbitrary coercions.</li>
+</ol>
+<h2 id="section-4">3. ErrorIf.vi - explicit error creation and preservation</h2>
+<p>Purpose: preserve a prior error; otherwise create one only if Condition is TRUE. Error codes in this guide are project-defined7001..7099 and are not official NI/course codes.</p>
+<p>Panel/connector: P1 Condition Boolean control FALSE=L1; P2 Code I32 control7001=L2; P3 Message String control empty=L3; P4 error in standard cluster=L4; P5 error out indicator=R4. R1,R2,R3,T1,T2,B1,B2 unassigned.</p>
+<p>Diagram objects: C1 Boolean TRUE; N1 Unbundle By Name(status) from error cluster; N2 Bundle (3 inputs status/code/source, creates standard error cluster); N3 Select; N4 Select. No loops/cases.</p>
+<table>
+<thead>
+<tr>
+<th>Source terminal</th>
+<th>Destination terminal</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>P4.value</td>
+<td>N1.cluster</td>
+</tr>
+<tr>
+<td>C1.value</td>
+<td>N2.element0 status</td>
+</tr>
+<tr>
+<td>P2.value</td>
+<td>N2.element1 code</td>
+</tr>
+<tr>
+<td>P3.value</td>
+<td>N2.element2 source</td>
+</tr>
+<tr>
+<td>P1.value</td>
+<td>N3.s selector</td>
+</tr>
+<tr>
+<td>N2.cluster</td>
+<td>N3.t</td>
+</tr>
+<tr>
+<td>P4.value</td>
+<td>N3.f</td>
+</tr>
+<tr>
+<td>N1.status</td>
+<td>N4.s</td>
+</tr>
+<tr>
+<td>P4.value</td>
+<td>N4.t</td>
+</tr>
+<tr>
+<td>N3.output</td>
+<td>N4.f</td>
+</tr>
+<tr>
+<td>N4.output</td>
+<td>P5.value</td>
+</tr>
+</tbody></table>
+<p>Checkpoint: FALSE with no prior error passes unchanged; TRUE produces supplied code/message; existing error remains even if TRUE asks for a different error.</p>
+<h2 id="section-5">4. ReadText.vi and WriteText.vi - complete disk wrappers</h2>
+<p>These are two separate VIs with explicit variations below. Use Open/Create/Replace File, Read from Text File / Write to Text File, Close File, Merge Errors, Unbundle By Name, Case Structure and the controls named. No dialog path defaults are allowed at runtime.</p>
+<h3>4.1 ReadText.vi</h3>
+<p>Panel/connector: P1 File Path control (empty)=L1; P2 error in=L4; P3 Text String indicator=R1; P4 error out=R4; others unassigned. Constants C1 I32(-1), C2 String empty, C3 no-error cluster(False,0,empty). N1 Unbundle(status), S0 Case, N2 Open/Create/Replace File, N3 Unbundle(status), S1 Case, N4 Read from Text File, N5 Close File, N6 Merge Errors(2inputs). On N2 create constants FROM terminals: operation=<code>open</code>, access=<code>read-only</code>, deny mode=<code>deny write</code>. Leave the documented advisory input at FALSE (default); all path/access/operation/deny inputs are explicitly set. No file dialogue because P1 wired.</p>
+<p>Wires: P2→N1.cluster; N1.status→S0.selector. In S0 TRUE: C2→P3 output tunnel; P2→P4 output tunnel. In S0 FALSE: P1→N2.file path; P2→N2.error in; N2.error out→N3.cluster; N3.status→S1.selector. S1 TRUE (open failed): C2→text output; N2.error out→error output. S1 FALSE: N2.refnum→N4.file; C1→N4.count; N2.error out→N4.error in; N4.text→text output; N2.refnum→N5.refnum; N4.error out→N6.error0; C3→N5.error in; N5.error out→N6.error1; N6.error out→error output. <strong>Sequence close after read:</strong> add Flat Sequence <code>S2</code> inside S1 FALSE, frame0 contains N4, frame1 contains N5/N6; pass refnum/text/readerror through nonindexing sequence tunnels. This allows close with a clean input even after read failure. S1 outputs→S0 outputs→P3/P4. Set Read from Text File right-click Convert EOL OFF, Read Lines OFF. Read returns raw full file; parser explicitly accepts LF/CRLF. All unused outputs (cancelled etc.) unconnected.</p>
+<h3>4.2 WriteText.vi</h3>
+<p>Panel/connector P1 File Path=L1; P2 Text String control=L2; P3 error in=L4; P4 error out=R4; othersunassigned. C1 no-error cluster. N1 Unbundle(status); S0 Case; N2 Open/Create/Replace File(operation=<code>replace or create</code>, access=<code>write-only</code>, deny=<code>deny read/write</code>); N3 Unbundle(status); S1 Case; S2 Flat Sequence2frames; N4 Write to Text File; N5 Close File; N6 Merge Errors2inputs.</p>
+<p>Wires: P3→N1.cluster→S0.selector(status). S0 TRUE: P3→P4. S0 FALSE: P1→N2.file path; P3→N2.error in; N2.error out→N3.cluster→S1.selector(status). S1 TRUE: N2.error out→error output. S1 FALSE frame0: N2.refnum→N4.file; P2→N4.text; N2.error out→N4.error in. Frame1: N2.refnum→N5.refnum; C1→N5.error in; N4.error out→N6.error0; N5.error out→N6.error1; N6.error out→S1error output→S0error output→P4. Set Write to Text File right-click Convert EOL OFF. No newline added by wrapper; callers supply exact LF. N4 refnum out can remain unconnected because N2refnum is passed through sequence frame. Close always occurs after any attempted write when open succeeded. Unused outputs unconnected.</p>
+<h3>4.3 RemoveIfExists.vi</h3>
+<p>Purpose: remove only a known generated file if present; preserve unexpected directories and propagate permission errors. Panel P1 File Path=L1, P2 error in=L4, P3 error out=R4; other slots unassigned. Diagram objects: N1 Unbundle(status), S0 error Case, N2 Check if File or Folder Exists, S1 exists Case, N3 File/Directory Info, N4 ErrorIf, N5 Unbundle(status), S2 error Case, N6 Delete; constants C1 I32(7002), C2 String<code>Generated-file path is a folder; choose a clean runtime directory.</code>, C3 BooleanFALSE. P1 must be the nonempty generated path produced by Build Path at each caller; this helper is not a general-purpose deletion UI.</p>
+<p>Wires: P2→N1.cluster; N1.status→S0.selector. S0 TRUE:P2→erroroutput. S0 FALSE:P1→N2.path;P2→N2.error in;N2.file or folder exists?→S1.selector. S1 FALSE:N2.error out→erroroutput. S1 TRUE:P1→N3.path;N2.error out→N3.error in;N3.directory→N4.Condition;C1→N4.Code;C2→N4.Message;N3.error out→N4.error in;N4.error out→N5.cluster;N5.status→S2.selector. S2 TRUE:N4.error out→erroroutput. S2 FALSE:P1→N6.path;N4.error out→N6.error in;C3→N6.recursive?;N6.error out→erroroutput. All S2/S1/S0 output tunnels wired through toP3; no defaults. Exists duplicate path and Info size/timestamps/resolved-path outputs are unused. NI&#39;s Exists VI does <strong>not</strong> have a directory output: that is why N3 is separate. Delete never executes for a directory or after an earlier error.</p>
+<h2 id="section-6">5. Native image, bounds, grid and crop geometry</h2>
+<p>The following embedded geometry chapter is complete. After its section8, continue to main chapter6 (WriteCell).</p>
+<h2 id="section-7">Geometry chapter: LabVIEW image and geometry construction recipe</h2>
+<p>This file is one complete module of the main LabVIEW construction guide. Build the five VIs below in the listed order, saving them in <code>labview/</code>. They perform the assessed image and geometry work in native LabVIEW. No VI in this recipe calls Python, MATLAB, a DLL or an external image processor. The recipe has been reviewed from sources; <strong>it has not been built or executed in LabVIEW</strong>. The course English LabVIEW version is assumed provisionally.</p>
+<p>The shared <code>ErrorIf.vi</code> is constructed in the main guide. Its inputs are Boolean <code>Condition</code>, I32 <code>Code</code>, String <code>Message</code>, standard <code>error in</code>; its output is standard <code>error out</code>. It preserves an existing error and creates the specified error only if Condition is true and no prior error exists.</p>
+<h2 id="section-8">1. Construction notation and exact type rules</h2>
+<ol>
+<li>On the block diagram press <strong>Ctrl+Space</strong> to open Quick Drop, type the exact object name printed below, select that exact primitive/VI from the result list, and press Enter. This is the specified search method; palette paths may differ by version. On macOS use the actual keyboard shortcut shown by <strong>View → Quick Drop</strong> if Ctrl+Space is assigned to the OS. For a project VI, use Quick Drop after adding it to the project, or drag the saved VI from the project tree.</li>
+<li>Press <strong>Ctrl+H</strong> for Context Help. Move the cursor over each terminal before wiring and read its name/type. For picture VIs use the actual named terminal, not a guessed icon position. Right-click an actual terminal → <strong>Create → Control/Indicator/Constant</strong> when instructed; this preserves NI&#39;s exact type.</li>
+<li>Object IDs in this guide are labels to add beside objects as free labels. They are not LabVIEW node names. A wire entry <code>A.out → B.x, C.y</code> means create two branches from the single source A.out to both named destinations. Every listed object is required. <code>out</code> on a one-output primitive means its sole output shown in Context Help; comparison <code>out</code> means its sole Boolean comparison result. <code>x</code> on a one-input conversion means its sole numeric input. Binary arithmetic/Boolean primitive terminals are <code>x</code> and <code>y</code>. Table shorthand <code>array</code> means the primitive&#39;s typed array input, <code>size</code> means Array Size&#39;s size output, <code>element</code> means Index Array&#39;s element/subarray output, and <code>index</code> on Index Array means its single index input. Search 1D Array&#39;s different <code>index</code> output is explicitly mapped in section8. Array indices are numbered from zero. A wire crossing is not a junction unless the wire branches.</li>
+<li>The guide names a structure tunnel <code>S.name</code>. Create it by wiring through that structure border at the named location; add a free label with the name. Inside a Case, the same named tunnel is the same tunnel in both cases. All Case output tunnels are <strong>Use Default If Unwired OFF</strong> and wired in every case. No required value uses an unwired default. For Loops, every tunnel&#39;s indexing state is stated explicitly. Unless stated, an input tunnel is non-indexing, an output tunnel is non-indexing, and there are no shift registers or conditional stop terminals.</li>
+<li>Standard error cluster order is Boolean <code>status</code>, I32 <code>code</code>, String <code>source</code>. Obtain it through actual error terminals. Normal default is FALSE,0,empty string. Wiring an error cluster to a Case selector produces <strong>Error</strong> and <strong>No Error</strong> cases. All five VIs have such an outer error Case: no work runs on incoming error.</li>
+<li>Boolean arrays contain <strong>TRUE for black</strong> and FALSE for white after normalization. The image bitmap is exactly 2D <code>[row,column]</code>. Numeric pixel coordinates, array indices, dimensions, run starts/ends and n are <strong>I32</strong> unless a native picture terminal explicitly requires I16. Empty arrays have length 0; an empty 2D bitmap has dimensions0×0.</li>
+<li>Create scalar numeric constants with Numeric Constant; right-click → Representation → I32/U32/U8 as specified, then enter value. Do not leave DBL constants on integer arithmetic. To cast to I32, Quick Drop <strong>To Long Integer</strong>. To cast to I16 only at a native picture rectangle field, Quick Drop <strong>To Word Integer</strong>. No cast may replace a bounds check.</li>
+<li><strong>Index Array</strong>: wire array first, then enlarge to reveal the needed index terminals. A 2D index has <code>index0</code>=row and <code>index1</code>=column. Leave one index deliberately unwired only where this guide explicitly asks for a whole row/column. <strong>Array Size</strong> of 2D returns a 1D I32 array <code>[height,width]</code>; it does not return width first.</li>
+<li><strong>Build Array</strong> with array inputs must be right-clicked → <strong>Concatenate Inputs</strong> when instructed. <strong>Build Array</strong> with scalar inputs and Concatenate Inputs OFF creates one dimension. A For Loop&#39;s auto-indexed1D Boolean output builds a Boolean vector; its auto-indexed2D input supplies one row per iteration.</li>
+<li>Turn off automatic error dialogs for these subVIs (VI Properties → Execution → uncheck <strong>Enable automatic error handling</strong>); errors propagate through terminals. Add each VI&#39;s purpose, units, error behavior and assumptions to VI Properties → Documentation → VI description. Save all VIs after setting defaults.</li>
+</ol>
+<h2 id="section-9">2. Project-owned connector pattern and common types</h2>
+<p>The current course main connector is absent. These are <strong>project-owned provisional</strong> subVI connectors, not the old billiard connector. Right-click the upper-right front-panel icon → Show Connector; right-click connector → Patterns and select <strong>4×2×2×4 / 12 terminals</strong>. Identify positions by the diagram below. Assign with the wiring tool: click terminal, then front-panel control/indicator. Do not rotate the pattern.</p>
+<pre><code class="language-text">                T1     T2
+       L1    +--------------+    R1
+       L2    |              |    R2
+       L3    |              |    R3
+       L4    +--------------+    R4
+                B1     B2
+</code></pre>
+<p>L1–L4 and R1–R4 run top to bottom; T1/T2 and B1/B2 run left to right. An unused terminal has no assignment; do not attach a hidden control to it.</p>
+<p>Create these project type definitions once, if they were not already created in the main guide:</p>
+<table>
+<thead>
+<tr>
+<th>Type file</th>
+<th>Exact construction</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>GridLines.ctl</code></td>
+<td>Front-panel Cluster containing four <strong>1D arrays of I32 numeric controls</strong> labeled <code>xStart</code>, <code>xEnd</code>, <code>yStart</code>, <code>yEnd</code>. Cluster <strong>Reorder Controls</strong> order0,1,2,3 respectively. All arrays empty default. Customize control; choose <strong>Type Def.</strong>, save in <code>labview/</code>.</td>
+</tr>
+<tr>
+<td><code>RectI32.ctl</code></td>
+<td>Front-panel Cluster containing four <strong>I32 numeric controls</strong> labeled <code>left</code>, <code>top</code>, <code>right</code>, <code>bottom</code>, order0,1,2,3. Default all 0. Type Def., save in <code>labview/</code>. Right/bottom are exclusive.</td>
+</tr>
+</tbody></table>
+<p>A native picture <code>Rectangle</code>/<code>rect</code> cluster is different: actual NI terminal fields are I16. Create it from the actual terminal and preserve that native type/order. Do not connect <code>RectI32.ctl</code> directly to a native rectangle or silently redefine the typedef as I16.</p>
+<table>
+<thead>
+<tr>
+<th>VI</th>
+<th>L1</th>
+<th>L2</th>
+<th>L3</th>
+<th>L4</th>
+<th>R1</th>
+<th>R2</th>
+<th>R3</th>
+<th>R4</th>
+<th>T1</th>
+<th>T2</th>
+<th>B1</th>
+<th>B2</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BoolExtent.vi</td>
+<td>Bits</td>
+<td>unused</td>
+<td>unused</td>
+<td>error in</td>
+<td>First</td>
+<td>EndExclusive</td>
+<td>unused</td>
+<td>error out</td>
+<td>unused</td>
+<td>unused</td>
+<td>unused</td>
+<td>unused</td>
+</tr>
+<tr>
+<td>BlackRuns.vi</td>
+<td>Bits</td>
+<td>unused</td>
+<td>unused</td>
+<td>error in</td>
+<td>Starts</td>
+<td>Ends</td>
+<td>unused</td>
+<td>error out</td>
+<td>unused</td>
+<td>unused</td>
+<td>unused</td>
+<td>unused</td>
+</tr>
+<tr>
+<td>ComputeCellRect.vi</td>
+<td>row</td>
+<td>col</td>
+<td>GridLines</td>
+<td>error in</td>
+<td>Rect</td>
+<td>unused</td>
+<td>unused</td>
+<td>error out</td>
+<td>unused</td>
+<td>unused</td>
+<td>unused</td>
+<td>unused</td>
+</tr>
+<tr>
+<td>ComputeRowsCols.vi</td>
+<td>Bitmap</td>
+<td>unused</td>
+<td>unused</td>
+<td>error in</td>
+<td>n</td>
+<td>GridLines</td>
+<td>unused</td>
+<td>error out</td>
+<td>unused</td>
+<td>unused</td>
+<td>unused</td>
+<td>unused</td>
+</tr>
+<tr>
+<td>ReadImage.vi</td>
+<td>PNG path</td>
+<td>unused</td>
+<td>unused</td>
+<td>error in</td>
+<td>Bitmap</td>
+<td>Picture</td>
+<td>Width</td>
+<td>error out</td>
+<td>unused</td>
+<td>Height</td>
+<td>unused</td>
+<td>unused</td>
+</tr>
+</tbody></table>
+<p>Error codes reserved here:6101 image/path/dimensions,6102 black bounds/scanlines,6103 grid counts/gaps,6104 cell indices/rectangle,6105 palette/calibration. These are local project codes, not official course error numbers.</p>
+<h2 id="section-10">3. BoolExtent.vi — first and last occupied position</h2>
+<h3>3.1 Front panel and diagram objects</h3>
+<p>Create a blank VI and Save As <code>BoolExtent.vi</code>. Add these front-panel objects; <code>C</code>=control and <code>I</code>=indicator:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Panel object</th>
+<th>Type/default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BE.P1</td>
+<td>C <code>Bits</code></td>
+<td>1D Boolean array, empty</td>
+</tr>
+<tr>
+<td>BE.P2</td>
+<td>C <code>error in</code></td>
+<td>standard error cluster, no error</td>
+</tr>
+<tr>
+<td>BE.P3</td>
+<td>I <code>First</code></td>
+<td>I32,0</td>
+</tr>
+<tr>
+<td>BE.P4</td>
+<td>I <code>EndExclusive</code></td>
+<td>I32,0</td>
+</tr>
+<tr>
+<td>BE.P5</td>
+<td>I <code>error out</code></td>
+<td>standard error cluster</td>
+</tr>
+</tbody></table>
+<p>Place <code>BE.S0</code> Case around all processing. Wire BE.P2 to its selector. Its Error case contains BE.K0 I32 constant0 and an error passthrough. Its No Error case contains the following objects:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Diagram object / configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BE.N1</td>
+<td>Array Size, input 1D Boolean, scalar I32 length</td>
+</tr>
+<tr>
+<td>BE.N2</td>
+<td>Search 1D Array; search Boolean TRUE; start index I32 zero</td>
+</tr>
+<tr>
+<td>BE.N3</td>
+<td>Reverse 1D Array</td>
+</tr>
+<tr>
+<td>BE.N4</td>
+<td>Search 1D Array; search Boolean TRUE; start index I32 zero</td>
+</tr>
+<tr>
+<td>BE.N5</td>
+<td>Subtract I32; length minus reversed-found-index</td>
+</tr>
+<tr>
+<td>BE.N6</td>
+<td>Less? I32; first index &lt;0</td>
+</tr>
+<tr>
+<td>BE.K1</td>
+<td>Boolean constant TRUE</td>
+</tr>
+<tr>
+<td>BE.K2</td>
+<td>I32 constant0</td>
+</tr>
+<tr>
+<td>BE.K3</td>
+<td>I32 constant6102</td>
+</tr>
+<tr>
+<td>BE.K4</td>
+<td>String constant <code>No black pixels on the inspected axis.</code></td>
+</tr>
+<tr>
+<td>BE.E1</td>
+<td>ErrorIf.vi</td>
+</tr>
+<tr>
+<td>BE.S1</td>
+<td>Final Case, selector BE.E1.error out; outputs first,end,error</td>
+</tr>
+</tbody></table>
+<h3>3.2 Every wire</h3>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Wires</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Outside BE.S0</td>
+<td>BE.P1 → BE.S0.bits; BE.P2 → BE.S0.selector, BE.S0.err; BE.S0.first → BE.P3; BE.S0.end → BE.P4; BE.S0.error → BE.P5</td>
+</tr>
+<tr>
+<td>BE.S0 Error</td>
+<td>BE.K0 → BE.S0.first, BE.S0.end; BE.S0.err → BE.S0.error</td>
+</tr>
+<tr>
+<td>BE.S0 No Error</td>
+<td>BE.S0.bits → BE.N1.array, BE.N2.array, BE.N3.array; BE.K1 → BE.N2.element, BE.N4.element; BE.K2 → BE.N2.start index, BE.N4.start index, BE.N6.y; BE.N3.reversed array → BE.N4.array; BE.N1.size → BE.N5.x; BE.N4.index → BE.N5.y; BE.N2.index → BE.N6.x, BE.S1.first; BE.N5.out → BE.S1.end; BE.K2 → BE.S1.zero; BE.N6.out → BE.E1.Condition; BE.K3 → BE.E1.Code; BE.K4 → BE.E1.Message; BE.S0.err → BE.E1.error in; BE.E1.error out → BE.S1.selector, BE.S1.err; BE.S1.first out → BE.S0.first; BE.S1.end out → BE.S0.end; BE.S1.error out → BE.S0.error</td>
+</tr>
+<tr>
+<td>BE.S1 No Error</td>
+<td>BE.S1.first → BE.S1.first out; BE.S1.end → BE.S1.end out; BE.S1.err → BE.S1.error out</td>
+</tr>
+<tr>
+<td>BE.S1 Error</td>
+<td>BE.S1.zero → BE.S1.first out, BE.S1.end out; BE.S1.err → BE.S1.error out</td>
+</tr>
+</tbody></table>
+<p>No loops, no shift registers. Search returning−1 is checked before outputs are accepted. EndExclusive is <strong>length − reverse-search-index</strong>, not length−index−1.</p>
+<h3>3.3 Checkpoint</h3>
+<p>Enter <code>[F,F,T,T,F,T,F]</code>: expect First 2, EndExclusive 6, clear error. Enter <code>[T]</code>:0,1,clear. Enter all FALSE or empty:6102 and both numeric outputs0. Supply error statusTRUE/code 123/source<code>seed</code>: expect that same error and zero outputs. Save; this checkpoint is a test to be performed by the group, not an already observed result.</p>
+<h2 id="section-11">4. BlackRuns.vi — exact stroke intervals, including edge strokes</h2>
+<h3>4.1 Objects</h3>
+<p>Create/save <code>BlackRuns.vi</code>. Front panel:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Panel object</th>
+<th>Type/default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BR.P1</td>
+<td>C <code>Bits</code></td>
+<td>1D Boolean array, empty</td>
+</tr>
+<tr>
+<td>BR.P2</td>
+<td>C <code>error in</code></td>
+<td>standard error cluster</td>
+</tr>
+<tr>
+<td>BR.P3</td>
+<td>I <code>Starts</code></td>
+<td>1D I32 array, empty</td>
+</tr>
+<tr>
+<td>BR.P4</td>
+<td>I <code>Ends</code></td>
+<td>1D I32 array, empty</td>
+</tr>
+<tr>
+<td>BR.P5</td>
+<td>I <code>error out</code></td>
+<td>standard error cluster</td>
+</tr>
+</tbody></table>
+<p><code>BR.S0</code> is the outer error Case. Error case has BR.K0 empty 1D I32 array. No Error case objects:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Object/configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>BR.K1</td>
+<td>1D Boolean array constant containing exactly <code>[FALSE]</code></td>
+</tr>
+<tr>
+<td>BR.K2</td>
+<td>I32 constant1</td>
+</tr>
+<tr>
+<td>BR.N1</td>
+<td>Build Array, three array inputs, <strong>Concatenate Inputs ON</strong>, order leadingFALSE / Bits / trailingFALSE</td>
+</tr>
+<tr>
+<td>BR.N2</td>
+<td>Array Size on original Bits</td>
+</tr>
+<tr>
+<td>BR.N3</td>
+<td>Add I32, N+1</td>
+</tr>
+<tr>
+<td>BR.F1</td>
+<td>For Loop, N wired N+1, parallelism disabled, no conditional stop, no SR; pad input non-indexing; two conditional indexing outputs</td>
+</tr>
+<tr>
+<td>BR.F1.N1</td>
+<td>Add I32, i+1</td>
+</tr>
+<tr>
+<td>BR.F1.N2</td>
+<td>Index Array on padded1D vector at i</td>
+</tr>
+<tr>
+<td>BR.F1.N3</td>
+<td>Index Array on padded1D vector at i+1</td>
+</tr>
+<tr>
+<td>BR.F1.N4</td>
+<td>NOT on previous bit</td>
+</tr>
+<tr>
+<td>BR.F1.N5</td>
+<td>NOT on current bit</td>
+</tr>
+<tr>
+<td>BR.F1.N6</td>
+<td>AND, rising = NOT previous AND current</td>
+</tr>
+<tr>
+<td>BR.F1.N7</td>
+<td>AND, falling = previous AND NOT current</td>
+</tr>
+</tbody></table>
+<h3>4.2 Every wire and loop tunnel</h3>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Wires</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Outside BR.S0</td>
+<td>BR.P1 → BR.S0.bits; BR.P2 → BR.S0.selector, BR.S0.err; BR.S0.starts → BR.P3; BR.S0.ends → BR.P4; BR.S0.error → BR.P5</td>
+</tr>
+<tr>
+<td>BR.S0 Error</td>
+<td>BR.K0 → BR.S0.starts, BR.S0.ends; BR.S0.err → BR.S0.error</td>
+</tr>
+<tr>
+<td>BR.S0 No Error</td>
+<td>BR.K1 → BR.N1.input0, BR.N1.input2; BR.S0.bits → BR.N1.input1, BR.N2.array; BR.N2.size → BR.N3.x; BR.K2 → BR.N3.y, BR.F1.one; BR.N3.out → BR.F1.N; BR.N1.array → BR.F1.pad; BR.F1.starts → BR.S0.starts; BR.F1.ends → BR.S0.ends; BR.S0.err → BR.S0.error</td>
+</tr>
+<tr>
+<td>BR.F1 body</td>
+<td>BR.F1.i → BR.F1.N1.x, BR.F1.N2.index, BR.F1.starts.value, BR.F1.ends.value; BR.F1.one → BR.F1.N1.y; BR.F1.N1.out → BR.F1.N3.index; BR.F1.pad → BR.F1.N2.array, BR.F1.N3.array; BR.F1.N2.element → BR.F1.N4.x, BR.F1.N7.x; BR.F1.N3.element → BR.F1.N5.x, BR.F1.N6.y; BR.F1.N4.out → BR.F1.N6.x; BR.F1.N5.out → BR.F1.N7.y; BR.F1.N6.out → BR.F1.starts.condition; BR.F1.N7.out → BR.F1.ends.condition</td>
+</tr>
+</tbody></table>
+<p>For each of <code>BR.F1.starts</code> and <code>BR.F1.ends</code>: wire i to an output tunnel, right-click that tunnel → <strong>Tunnel Mode → Conditional</strong> (conditional indexing). Wire the corresponding Boolean to the small condition terminal now exposed beside that same tunnel. Both value inputs are I32; both output arrays are1D I32. Do not use Last Value or Concatenating mode. Indexing is disabled on pad and one inputs. The loop iterates i=0 through original length N inclusive, comparing padded[i] and padded[i+1]. It does not read beyond the padded length N+2. No previous-bit SR is needed.</p>
+<h3>4.3 Checkpoint</h3>
+<table>
+<thead>
+<tr>
+<th>Bits</th>
+<th>Starts</th>
+<th>Ends</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><code>[F,T,T,F,T,F]</code></td>
+<td><code>[1,4]</code></td>
+<td><code>[3,5]</code></td>
+</tr>
+<tr>
+<td><code>[T,T,F,T]</code></td>
+<td><code>[0,3]</code></td>
+<td><code>[2,4]</code></td>
+</tr>
+<tr>
+<td><code>[T,T]</code></td>
+<td><code>[0]</code></td>
+<td><code>[2]</code></td>
+</tr>
+<tr>
+<td><code>[F,F]</code> or empty</td>
+<td>empty</td>
+<td>empty</td>
+</tr>
+</tbody></table>
+<p>These are half-open intervals <code>[start,end)</code>. The empty/no-stroke case is not a BlackRuns error; ComputeRowsCols rejects it as an invalid grid. Incoming error passes through and produces empty output arrays. Save.</p>
+<h2 id="section-12">5. ComputeCellRect.vi — one crop, with bounds checked before indexing</h2>
+<h3>5.1 Front panel and constants</h3>
+<p>Create/save <code>ComputeCellRect.vi</code> and assign the connector from section2.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Panel object</th>
+<th>Type/default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CR.P1</td>
+<td>C <code>row</code></td>
+<td>I32,0; zero-based</td>
+</tr>
+<tr>
+<td>CR.P2</td>
+<td>C <code>col</code></td>
+<td>I32,0; zero-based</td>
+</tr>
+<tr>
+<td>CR.P3</td>
+<td>C <code>GridLines</code></td>
+<td>GridLines.ctl, four empty 1D I32 arrays</td>
+</tr>
+<tr>
+<td>CR.P4</td>
+<td>C <code>error in</code></td>
+<td>standard error cluster</td>
+</tr>
+<tr>
+<td>CR.P5</td>
+<td>I <code>Rect</code></td>
+<td>RectI32.ctl, all 0</td>
+</tr>
+<tr>
+<td>CR.P6</td>
+<td>I <code>error out</code></td>
+<td>standard error cluster</td>
+</tr>
+</tbody></table>
+<p>Place these diagram constants outside the outer Case: <code>CR.K0</code> RectI32 constant all 0; <code>CR.K1</code> I32 zero; <code>CR.K2</code> I32 one; <code>CR.K3</code> I32 two; <code>CR.K4</code> I32 three; <code>CR.K5</code> I32 ten; <code>CR.K6</code> I32 256; <code>CR.K7</code> I32 4096; <code>CR.K8</code> I32 6104; <code>CR.K9</code> String <code>Invalid grid-line arrays or cell row/column.</code>; <code>CR.K10</code> String <code>Cell interior rectangle is invalid or outside 10..256 pixels.</code>.</p>
+<p><code>CR.S0</code> is outer error Case. Its No Error case contains CR.S1 after input validation, and CR.S1.No Error contains CR.S2 after rectangle validation. All three have output tunnels <code>rect out</code>,<code>error out</code>. Their Error cases contain only zero-Rect and error passthrough wires. The tables below name every input and output tunnel; constants crossing a border use a named tunnel with the same constant suffix (e.g. <code>S1.K5</code>).</p>
+<h3>5.2 Array/index validation objects (inside CR.S0.No Error)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Exact object / configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CR.U1</td>
+<td>Unbundle By Name, four fields xStart,xEnd,yStart,yEnd from GridLines</td>
+</tr>
+<tr>
+<td>CR.A1 / CR.A2 / CR.A3 / CR.A4</td>
+<td>Four Array Size objects, respectively xStart,xEnd,yStart,yEnd; scalar I32 lengths</td>
+</tr>
+<tr>
+<td>CR.N1</td>
+<td>Subtract I32, xStart-length minus1 = n</td>
+</tr>
+<tr>
+<td>CR.N2</td>
+<td>Quotient &amp; Remainder I32, n divided by2; remainder used</td>
+</tr>
+<tr>
+<td>CR.C1</td>
+<td>Not Equal?, xStart-length vs xEnd-length</td>
+</tr>
+<tr>
+<td>CR.C2</td>
+<td>Not Equal?, xStart-length vs yStart-length</td>
+</tr>
+<tr>
+<td>CR.C3</td>
+<td>Not Equal?, yStart-length vs yEnd-length</td>
+</tr>
+<tr>
+<td>CR.C4</td>
+<td>Less?, xStart-length &lt;3</td>
+</tr>
+<tr>
+<td>CR.C5</td>
+<td>Less?, row &lt;0</td>
+</tr>
+<tr>
+<td>CR.C6</td>
+<td>Less?, col &lt;0</td>
+</tr>
+<tr>
+<td>CR.C7</td>
+<td>Greater Or Equal?, row &gt;=n</td>
+</tr>
+<tr>
+<td>CR.C8</td>
+<td>Greater Or Equal?, col &gt;=n</td>
+</tr>
+<tr>
+<td>CR.C9</td>
+<td>Not Equal?, remainder !=0</td>
+</tr>
+<tr>
+<td>CR.B1</td>
+<td>Build Array,9 Boolean scalar inputs, Concatenate OFF</td>
+</tr>
+<tr>
+<td>CR.O1</td>
+<td>Or Array Elements, Boolean array → scalar</td>
+</tr>
+<tr>
+<td>CR.E1</td>
+<td>ErrorIf.vi</td>
+</tr>
+</tbody></table>
+<p>Wires:</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Outer diagram</td>
+<td>CR.P1 → CR.S0.row; CR.P2 → CR.S0.col; CR.P3 → CR.S0.lines; CR.P4 → CR.S0.selector, CR.S0.err; CR.K0 → CR.S0.K0; CR.K1 → CR.S0.K1; CR.K2 → CR.S0.K2; CR.K3 → CR.S0.K3; CR.K4 → CR.S0.K4; CR.K5 → CR.S0.K5; CR.K6 → CR.S0.K6; CR.K7 → CR.S0.K7; CR.K8 → CR.S0.K8; CR.K9 → CR.S0.K9; CR.K10 → CR.S0.K10; CR.S0.rect out → CR.P5; CR.S0.error out → CR.P6</td>
+</tr>
+<tr>
+<td>CR.S0 Error</td>
+<td>CR.S0.K0 → CR.S0.rect out; CR.S0.err → CR.S0.error out</td>
+</tr>
+<tr>
+<td>CR.S0 No Error: lengths</td>
+<td>CR.S0.lines → CR.U1.cluster; CR.U1.xStart → CR.A1.array, CR.S1.xStart; CR.U1.xEnd → CR.A2.array, CR.S1.xEnd; CR.U1.yStart → CR.A3.array, CR.S1.yStart; CR.U1.yEnd → CR.A4.array, CR.S1.yEnd; CR.A1.size → CR.N1.x, CR.C1.x, CR.C2.x, CR.C4.x; CR.A2.size → CR.C1.y; CR.A3.size → CR.C2.y, CR.C3.x; CR.A4.size → CR.C3.y; CR.S0.K2 → CR.N1.y; CR.N1.out → CR.N2.x, CR.C7.y, CR.C8.y; CR.S0.K3 → CR.N2.y; CR.S0.K4 → CR.C4.y</td>
+</tr>
+<tr>
+<td>CR.S0 No Error: indices</td>
+<td>CR.S0.row → CR.C5.x, CR.C7.x, CR.S1.row; CR.S0.col → CR.C6.x, CR.C8.x, CR.S1.col; CR.S0.K1 → CR.C5.y, CR.C6.y, CR.C9.y; CR.N2.remainder → CR.C9.x</td>
+</tr>
+<tr>
+<td>CR.S0 No Error: error chain</td>
+<td>CR.C1.out → CR.B1.input0; CR.C2.out → CR.B1.input1; CR.C3.out → CR.B1.input2; CR.C4.out → CR.B1.input3; CR.C5.out → CR.B1.input4; CR.C6.out → CR.B1.input5; CR.C7.out → CR.B1.input6; CR.C8.out → CR.B1.input7; CR.C9.out → CR.B1.input8; CR.B1.array → CR.O1.Boolean array; CR.O1.logical OR → CR.E1.Condition; CR.S0.K8 → CR.E1.Code; CR.S0.K9 → CR.E1.Message; CR.S0.err → CR.E1.error in; CR.E1.error out → CR.S1.selector, CR.S1.err</td>
+</tr>
+<tr>
+<td>CR.S0 No Error: S1 constants/results</td>
+<td>CR.S0.K0 → CR.S1.K0; CR.S0.K1 → CR.S1.K1; CR.S0.K2 → CR.S1.K2; CR.S0.K5 → CR.S1.K5; CR.S0.K6 → CR.S1.K6; CR.S0.K7 → CR.S1.K7; CR.S0.K8 → CR.S1.K8; CR.S0.K10 → CR.S1.K10; CR.S1.rect out → CR.S0.rect out; CR.S1.error out → CR.S0.error out</td>
+</tr>
+<tr>
+<td>CR.S1 Error</td>
+<td>CR.S1.K0 → CR.S1.rect out; CR.S1.err → CR.S1.error out</td>
+</tr>
+</tbody></table>
+<h3>5.3 Rectangle computation objects (inside CR.S1.No Error)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Object/configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CR.N3 / CR.N4</td>
+<td>Add I32, col+1 / row+1</td>
+</tr>
+<tr>
+<td>CR.I1</td>
+<td>Index Array xEnd[col] = left</td>
+</tr>
+<tr>
+<td>CR.I2</td>
+<td>Index Array xStart[col+1] = right</td>
+</tr>
+<tr>
+<td>CR.I3</td>
+<td>Index Array yEnd[row] = top</td>
+</tr>
+<tr>
+<td>CR.I4</td>
+<td>Index Array yStart[row+1] = bottom</td>
+</tr>
+<tr>
+<td>CR.N5 / CR.N6</td>
+<td>Subtract I32, right−left / bottom−top</td>
+</tr>
+<tr>
+<td>CR.C10 / CR.C11</td>
+<td>Less? width&lt;10 / Greater? width&gt;256</td>
+</tr>
+<tr>
+<td>CR.C12 / CR.C13</td>
+<td>Less? height&lt;10 / Greater? height&gt;256</td>
+</tr>
+<tr>
+<td>CR.C14 / CR.C15</td>
+<td>Less? left&lt;0 / Less? top&lt;0</td>
+</tr>
+<tr>
+<td>CR.C16 / CR.C17</td>
+<td>Greater? right&gt;4096 / Greater? bottom&gt;4096</td>
+</tr>
+<tr>
+<td>CR.B2</td>
+<td>Build Array,8 Boolean scalar inputs, Concatenate OFF</td>
+</tr>
+<tr>
+<td>CR.O2</td>
+<td>Or Array Elements</td>
+</tr>
+<tr>
+<td>CR.E2</td>
+<td>ErrorIf.vi</td>
+</tr>
+<tr>
+<td>CR.U2</td>
+<td>Bundle By Name with RectI32 base cluster; fields left,top,right,bottom</td>
+</tr>
+<tr>
+<td>CR.S2</td>
+<td>Case selected by CR.E2.error out</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>CR.S1 No Error: indices</td>
+<td>CR.S1.col → CR.N3.x, CR.I1.index; CR.S1.row → CR.N4.x, CR.I3.index; CR.S1.K2 → CR.N3.y, CR.N4.y; CR.N3.out → CR.I2.index; CR.N4.out → CR.I4.index; CR.S1.xEnd → CR.I1.array; CR.S1.xStart → CR.I2.array; CR.S1.yEnd → CR.I3.array; CR.S1.yStart → CR.I4.array</td>
+</tr>
+<tr>
+<td>CR.S1 No Error: geometry</td>
+<td>CR.I1.element → CR.N5.y, CR.C14.x, CR.U2.left; CR.I2.element → CR.N5.x, CR.C16.x, CR.U2.right; CR.I3.element → CR.N6.y, CR.C15.x, CR.U2.top; CR.I4.element → CR.N6.x, CR.C17.x, CR.U2.bottom; CR.N5.out → CR.C10.x, CR.C11.x; CR.N6.out → CR.C12.x, CR.C13.x; CR.S1.K5 → CR.C10.y, CR.C12.y; CR.S1.K6 → CR.C11.y, CR.C13.y; CR.S1.K1 → CR.C14.y, CR.C15.y; CR.S1.K7 → CR.C16.y, CR.C17.y; CR.S1.K0 → CR.U2.input cluster, CR.S2.zeroRect</td>
+</tr>
+<tr>
+<td>CR.S1 No Error: final gate</td>
+<td>CR.C10.out → CR.B2.input0; CR.C11.out → CR.B2.input1; CR.C12.out → CR.B2.input2; CR.C13.out → CR.B2.input3; CR.C14.out → CR.B2.input4; CR.C15.out → CR.B2.input5; CR.C16.out → CR.B2.input6; CR.C17.out → CR.B2.input7; CR.B2.array → CR.O2.Boolean array; CR.O2.logical OR → CR.E2.Condition; CR.S1.K8 → CR.E2.Code; CR.S1.K10 → CR.E2.Message; CR.S1.err → CR.E2.error in; CR.E2.error out → CR.S2.selector, CR.S2.err; CR.U2.output cluster → CR.S2.goodRect; CR.S2.rect out → CR.S1.rect out; CR.S2.error out → CR.S1.error out</td>
+</tr>
+<tr>
+<td>CR.S2 No Error</td>
+<td>CR.S2.goodRect → CR.S2.rect out; CR.S2.err → CR.S2.error out</td>
+</tr>
+<tr>
+<td>CR.S2 Error</td>
+<td>CR.S2.zeroRect → CR.S2.rect out; CR.S2.err → CR.S2.error out</td>
+</tr>
+</tbody></table>
+<p>No loops, no shift registers. Only S1.No Error contains Index Array on the four coordinate arrays, so invalid lengths/indices cannot reach it. All potentially invalid rectangles are withheld by S2.</p>
+<h3>5.4 Checkpoint</h3>
+<p>Set xStart=<code>[0,20,40]</code>, xEnd=<code>[2,22,42]</code>, yStart=<code>[0,18,36]</code>, yEnd=<code>[2,20,38]</code>. row0,col0 → Rect=<code>left2,top2,right20,bottom18</code>; row1,col1 →<code>22,20,40,36</code>. Width18 and height16 are valid nonsquare crops. row2, col−1, mismatched array lengths, or an interior width9 must return6104 and Rect all 0. Incoming error is preserved. Save.</p>
+<h2 id="section-13">6. ComputeRowsCols.vi — image bounds, scanlines and valid grid</h2>
+<h3>6.1 Panel, constants and error Cases</h3>
+<p>Create/save <code>ComputeRowsCols.vi</code>. Panel objects: <code>GC.P1</code> C Bitmap 2D Boolean empty; <code>GC.P2</code> C error in; <code>GC.P3</code> I n I32 zero; <code>GC.P4</code> I GridLines GridLines.ctl; <code>GC.P5</code> I error out. Use connector section2. The bitmap is the normalized black-TRUE array from ReadImage.</p>
+<p>Diagram constants outside all Cases:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Type/value</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GC.K0</td>
+<td>GridLines.ctl constant, all four arrays empty</td>
+</tr>
+<tr>
+<td>GC.K1 / GC.K2 / GC.K3 / GC.K4</td>
+<td>I32 values0 /1 /2 /10</td>
+</tr>
+<tr>
+<td>GC.K5 / GC.K6</td>
+<td>I32 values32 /4096</td>
+</tr>
+<tr>
+<td>GC.K7 / GC.K8</td>
+<td>I32 6101 / String <code>Image dimensions must be 32..4096 pixels.</code></td>
+</tr>
+<tr>
+<td>GC.K9 / GC.K10</td>
+<td>I32 6102 / String <code>Grid bounds do not contain the required top+10/left+10 scanlines.</code></td>
+</tr>
+<tr>
+<td>GC.K11 / GC.K12</td>
+<td>I32 6103 / String <code>Grid must have equal even row/column counts of at least two.</code></td>
+</tr>
+</tbody></table>
+<p>Structure nesting: GC.S0 outer error gate; S0.No Error validates dimensions then GC.S1; S1.No Error derives bounds then GC.S2; S2.No Error counts strokes then GC.S3; S3.No Error validates cell interiors then GC.S4 final gate. All five Cases have output tunnels <code>n out</code>,<code>lines out</code>,<code>error out</code>. Every Error case explicitly returns zero,empty-lines,the input error. All Case tunnels have Use Default If Unwired OFF.</p>
+<h3>6.2 Dimension check (GC.S0.No Error)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Object/configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GC.A1</td>
+<td>Array Size on Bitmap,1D I32 <code>[height,width]</code></td>
+</tr>
+<tr>
+<td>GC.I1 / GC.I2</td>
+<td>Index Array on dimensions at0(height)/1(width)</td>
+</tr>
+<tr>
+<td>GC.C1 / GC.C2</td>
+<td>Less? height&lt;32 / Greater? height&gt;4096</td>
+</tr>
+<tr>
+<td>GC.C3 / GC.C4</td>
+<td>Less? width&lt;32 / Greater? width&gt;4096</td>
+</tr>
+<tr>
+<td>GC.B1 / GC.O1</td>
+<td>Build Array4 Boolean inputs Concatenate OFF / Or Array Elements</td>
+</tr>
+<tr>
+<td>GC.E1</td>
+<td>ErrorIf.vi</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Outside GC.S0</td>
+<td>GC.P1 → GC.S0.bitmap; GC.P2 → GC.S0.selector, GC.S0.err; GC.K0 → GC.S0.K0; GC.K1 → GC.S0.K1; GC.K2 → GC.S0.K2; GC.K3 → GC.S0.K3; GC.K4 → GC.S0.K4; GC.K5 → GC.S0.K5; GC.K6 → GC.S0.K6; GC.K7 → GC.S0.K7; GC.K8 → GC.S0.K8; GC.K9 → GC.S0.K9; GC.K10 → GC.S0.K10; GC.K11 → GC.S0.K11; GC.K12 → GC.S0.K12; GC.S0.n out → GC.P3; GC.S0.lines out → GC.P4; GC.S0.error out → GC.P5</td>
+</tr>
+<tr>
+<td>GC.S0 Error</td>
+<td>GC.S0.K1 → GC.S0.n out; GC.S0.K0 → GC.S0.lines out; GC.S0.err → GC.S0.error out</td>
+</tr>
+<tr>
+<td>GC.S0 No Error: checks</td>
+<td>GC.S0.bitmap → GC.A1.array, GC.S1.bitmap; GC.A1.size → GC.I1.array, GC.I2.array; GC.S0.K1 → GC.I1.index; GC.S0.K2 → GC.I2.index; GC.I1.element → GC.C1.x, GC.C2.x; GC.I2.element → GC.C3.x, GC.C4.x; GC.S0.K5 → GC.C1.y, GC.C3.y; GC.S0.K6 → GC.C2.y, GC.C4.y; GC.C1.out → GC.B1.input0; GC.C2.out → GC.B1.input1; GC.C3.out → GC.B1.input2; GC.C4.out → GC.B1.input3; GC.B1.array → GC.O1.Boolean array; GC.O1.logical OR → GC.E1.Condition; GC.S0.K7 → GC.E1.Code; GC.S0.K8 → GC.E1.Message; GC.S0.err → GC.E1.error in; GC.E1.error out → GC.S1.selector, GC.S1.err</td>
+</tr>
+<tr>
+<td>GC.S0 No Error: constants/results</td>
+<td>GC.S0.K0 → GC.S1.K0; GC.S0.K1 → GC.S1.K1; GC.S0.K2 → GC.S1.K2; GC.S0.K3 → GC.S1.K3; GC.S0.K4 → GC.S1.K4; GC.S0.K9 → GC.S1.K9; GC.S0.K10 → GC.S1.K10; GC.S0.K11 → GC.S1.K11; GC.S0.K12 → GC.S1.K12; GC.S1.n out → GC.S0.n out; GC.S1.lines out → GC.S0.lines out; GC.S1.error out → GC.S0.error out</td>
+</tr>
+<tr>
+<td>GC.S1 Error</td>
+<td>GC.S1.K1 → GC.S1.n out; GC.S1.K0 → GC.S1.lines out; GC.S1.err → GC.S1.error out</td>
+</tr>
+</tbody></table>
+<h3>6.3 Bounding rectangle and scan positions (GC.S1.No Error)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Object/configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GC.F1</td>
+<td>For Loop; auto-index Bitmap rows at input <code>row</code>; no N wire, no SR, no stop; auto-index scalar occupied output</td>
+</tr>
+<tr>
+<td>GC.F1.O1</td>
+<td>Or Array Elements on one Boolean row</td>
+</tr>
+<tr>
+<td>GC.T1</td>
+<td>Transpose 2D Array; used only to derive column occupancy</td>
+</tr>
+<tr>
+<td>GC.F2</td>
+<td>For Loop; auto-index transposed rows at input <code>col</code>; no N wire, no SR, no stop; auto-index scalar occupied output</td>
+</tr>
+<tr>
+<td>GC.F2.O1</td>
+<td>Or Array Elements on one original-image column</td>
+</tr>
+<tr>
+<td>GC.V1 / GC.V2</td>
+<td>BoolExtent.vi, respectively row occupancy / column occupancy</td>
+</tr>
+<tr>
+<td>GC.N1 / GC.N2</td>
+<td>Add I32, top+10 / left+10</td>
+</tr>
+<tr>
+<td>GC.C5 / GC.C6</td>
+<td>Greater Or Equal?, scanRow&gt;=bottomExclusive / scanCol&gt;=rightExclusive</td>
+</tr>
+<tr>
+<td>GC.O2</td>
+<td>OR two Booleans</td>
+</tr>
+<tr>
+<td>GC.E2</td>
+<td>ErrorIf.vi</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GC.S1 No Error: occupancy</td>
+<td>GC.S1.bitmap → GC.F1.row, GC.T1.2D array, GC.S2.bitmap; GC.T1.transposed array → GC.F2.col; GC.F1.occupied → GC.V1.Bits; GC.F2.occupied → GC.V2.Bits; GC.S1.err → GC.V1.error in; GC.V1.error out → GC.V2.error in</td>
+</tr>
+<tr>
+<td>GC.F1 body</td>
+<td>GC.F1.row → GC.F1.O1.Boolean array; GC.F1.O1.logical OR → GC.F1.occupied</td>
+</tr>
+<tr>
+<td>GC.F2 body</td>
+<td>GC.F2.col → GC.F2.O1.Boolean array; GC.F2.O1.logical OR → GC.F2.occupied</td>
+</tr>
+<tr>
+<td>GC.S1 No Error: bounds</td>
+<td>GC.V1.First → GC.N1.x; GC.V2.First → GC.N2.x; GC.S1.K4 → GC.N1.y, GC.N2.y; GC.N1.out → GC.C5.x, GC.S2.scanRow; GC.N2.out → GC.C6.x, GC.S2.scanCol; GC.V1.EndExclusive → GC.C5.y; GC.V2.EndExclusive → GC.C6.y; GC.C5.out → GC.O2.x; GC.C6.out → GC.O2.y; GC.O2.out → GC.E2.Condition; GC.S1.K9 → GC.E2.Code; GC.S1.K10 → GC.E2.Message; GC.V2.error out → GC.E2.error in; GC.E2.error out → GC.S2.selector, GC.S2.err</td>
+</tr>
+<tr>
+<td>GC.S1 No Error: constants/results</td>
+<td>GC.S1.K0 → GC.S2.K0; GC.S1.K1 → GC.S2.K1; GC.S1.K2 → GC.S2.K2; GC.S1.K3 → GC.S2.K3; GC.S1.K11 → GC.S2.K11; GC.S1.K12 → GC.S2.K12; GC.S2.n out → GC.S1.n out; GC.S2.lines out → GC.S1.lines out; GC.S2.error out → GC.S1.error out</td>
+</tr>
+<tr>
+<td>GC.S2 Error</td>
+<td>GC.S2.K1 → GC.S2.n out; GC.S2.K0 → GC.S2.lines out; GC.S2.err → GC.S2.error out</td>
+</tr>
+</tbody></table>
+<p>Do not transpose the production bitmap. Only T1&#39;s branch is transposed, for the column OR calculation. F1 emits one occupancy Boolean per image row; F2 one per image column. A blank image produces6102 from BoolExtent and never reaches scanline indexing.</p>
+<h3>6.4 Stroke counting and square/even validation (GC.S2.No Error)</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Object/configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GC.I3</td>
+<td>Index Array 2D, row index wired scanRow; <strong>column index deliberately unwired</strong> →1D full horizontal scan</td>
+</tr>
+<tr>
+<td>GC.I4</td>
+<td>Index Array 2D, <strong>row index deliberately unwired</strong>; column index wired scanCol →1D full vertical scan</td>
+</tr>
+<tr>
+<td>GC.V3 / GC.V4</td>
+<td>BlackRuns.vi for horizontal / vertical scan</td>
+</tr>
+<tr>
+<td>GC.A2 / GC.A3</td>
+<td>Array Size, horizontal Starts / vertical Starts</td>
+</tr>
+<tr>
+<td>GC.N3 / GC.N4</td>
+<td>Subtract I32 lengths−1 →columns/rows</td>
+</tr>
+<tr>
+<td>GC.N5</td>
+<td>Quotient &amp; Remainder I32, columns/2</td>
+</tr>
+<tr>
+<td>GC.C7</td>
+<td>Not Equal? columns vs rows</td>
+</tr>
+<tr>
+<td>GC.C8</td>
+<td>Less? columns&lt;2</td>
+</tr>
+<tr>
+<td>GC.C9</td>
+<td>Not Equal? columns remainder !=0</td>
+</tr>
+<tr>
+<td>GC.B2 / GC.O3</td>
+<td>Build Array3 Boolean scalar inputs, Concatenate OFF / Or Array Elements</td>
+</tr>
+<tr>
+<td>GC.E3</td>
+<td>ErrorIf.vi</td>
+</tr>
+<tr>
+<td>GC.U1</td>
+<td>Bundle By Name on empty GridLines.ctl, all four field entries</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GC.S2 No Error: scans</td>
+<td>GC.S2.bitmap → GC.I3.array, GC.I4.array; GC.S2.scanRow → GC.I3.index0; GC.S2.scanCol → GC.I4.index1; GC.I3.element → GC.V3.Bits; GC.I4.element → GC.V4.Bits; GC.S2.err → GC.V3.error in; GC.V3.error out → GC.V4.error in</td>
+</tr>
+<tr>
+<td>GC.S2 No Error: counts</td>
+<td>GC.V3.Starts → GC.A2.array, GC.U1.xStart; GC.V3.Ends → GC.U1.xEnd; GC.V4.Starts → GC.A3.array, GC.U1.yStart; GC.V4.Ends → GC.U1.yEnd; GC.S2.K0 → GC.U1.input cluster; GC.A2.size → GC.N3.x; GC.A3.size → GC.N4.x; GC.S2.K2 → GC.N3.y, GC.N4.y; GC.N3.out → GC.N5.x, GC.C7.x, GC.C8.x, GC.S3.n; GC.N4.out → GC.C7.y; GC.S2.K3 → GC.N5.y, GC.C8.y; GC.N5.remainder → GC.C9.x; GC.S2.K1 → GC.C9.y</td>
+</tr>
+<tr>
+<td>GC.S2 No Error: error gate</td>
+<td>GC.C7.out → GC.B2.input0; GC.C8.out → GC.B2.input1; GC.C9.out → GC.B2.input2; GC.B2.array → GC.O3.Boolean array; GC.O3.logical OR → GC.E3.Condition; GC.S2.K11 → GC.E3.Code; GC.S2.K12 → GC.E3.Message; GC.V4.error out → GC.E3.error in; GC.E3.error out → GC.S3.selector, GC.S3.err; GC.U1.output cluster → GC.S3.lines; GC.S2.K0 → GC.S3.K0; GC.S2.K1 → GC.S3.K1; GC.S3.n out → GC.S2.n out; GC.S3.lines out → GC.S2.lines out; GC.S3.error out → GC.S2.error out</td>
+</tr>
+<tr>
+<td>GC.S3 Error</td>
+<td>GC.S3.K1 → GC.S3.n out; GC.S3.K0 → GC.S3.lines out; GC.S3.err → GC.S3.error out</td>
+</tr>
+</tbody></table>
+<p>Starts/Ends lengths are equal by construction of BlackRuns with FALSE padding. Every stroke count contributes one fewer cell; do not divide that number again by2. The transition-to-stroke conversion already happened inside BlackRuns.</p>
+<h3>6.5 Validate all horizontal/vertical interiors (GC.S3.No Error)</h3>
+<p>Place <code>GC.F3</code> For Loop; wire N=n, parallelism disabled, no stop terminal. Add <strong>one initialized standard-error shift register</strong> by right-clicking its left border → Add Shift Register. Call its terminals <code>err.L</code> and <code>err.R</code>. It is initialized from GC.S3.err outside the loop. <code>lines</code> and <code>zero</code> inputs are non-indexing. Inside place <code>GC.F3.V1</code> and <code>GC.F3.V2</code>, two ComputeCellRect.vi instances. Outside loop place <code>GC.S4</code> final error Case.</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GC.S3 No Error, loop inputs</td>
+<td>GC.S3.n → GC.F3.N, GC.S4.n; GC.S3.lines → GC.F3.lines, GC.S4.lines; GC.S3.K1 → GC.F3.zero, GC.S4.zero; GC.S3.K0 → GC.S4.emptyLines; GC.S3.err → GC.F3.err.L.initializer</td>
+</tr>
+<tr>
+<td>GC.F3 body</td>
+<td>GC.F3.zero → GC.F3.V1.row, GC.F3.V2.col; GC.F3.i → GC.F3.V1.col, GC.F3.V2.row; GC.F3.lines → GC.F3.V1.GridLines, GC.F3.V2.GridLines; GC.F3.err.L.current → GC.F3.V1.error in; GC.F3.V1.error out → GC.F3.V2.error in; GC.F3.V2.error out → GC.F3.err.R.next</td>
+</tr>
+<tr>
+<td>GC.S3 No Error, after loop</td>
+<td>GC.F3.err.R.final → GC.S4.selector, GC.S4.err; GC.S4.n out → GC.S3.n out; GC.S4.lines out → GC.S3.lines out; GC.S4.error out → GC.S3.error out</td>
+</tr>
+<tr>
+<td>GC.S4 No Error</td>
+<td>GC.S4.n → GC.S4.n out; GC.S4.lines → GC.S4.lines out; GC.S4.err → GC.S4.error out</td>
+</tr>
+<tr>
+<td>GC.S4 Error</td>
+<td>GC.S4.zero → GC.S4.n out; GC.S4.emptyLines → GC.S4.lines out; GC.S4.err → GC.S4.error out</td>
+</tr>
+</tbody></table>
+<p>Both Rect outputs inside F3 are explicitly unused. The n calls at row0 visit every horizontal cell gap; the n calls at col0 visit every vertical gap. They therefore check all widths/heights without a second raster scan. A first failure remains in the SR and subsequent calls skip work using their outer Error case. n is at least2 before F3, but its SR is still initialized, never left to prior-run memory.</p>
+<h3>6.6 Checkpoint and geometry scope</h3>
+<p>After ReadImage is built, the supplied 6x6/8x8/bad4 PNGs should produce n=6/n=8/n=4 and no geometry error. The bad4 puzzle is geometrically valid; MATLAB later diagnoses its puzzle contradiction. <code>Binaro_5x6_Bad.png</code> contains 6 rows/5 columns and must fail 6103. A valid edge-touching grid must retain its first/last strokes. A blank image, interior gap 9 or 257, odd square grid, even rectangular grid, or scan outside the detected bounds must produce the corresponding error and empty outputs.</p>
+<p>This policy assumes an axis-aligned grid, no extraneous black marks outside it, and usable scanlines 10 pixels inside the detected top/left border. It detects malformed strokes that violate its shape/gap checks; it cannot prove that every apparently valid grid has no missing pair of strokes. The Python surrogate verifies source geometry expectations only; it does not replace these native checks. Save.</p>
+<h2 id="section-14">7. ReadImage.vi — native PNG, white background and black-TRUE polarity</h2>
+<h3>7.1 Panel and fixed interface</h3>
+<p>Create/save <code>ReadImage.vi</code>. Use section2 connector. There are <strong>no calibration controls on the connector</strong>. The fallback calibration constants described below are internal and used only when NI returns an empty/default palette.</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Panel object</th>
+<th>Exact type/default</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.P1</td>
+<td>C <code>PNG path</code></td>
+<td>Path, empty</td>
+</tr>
+<tr>
+<td>RI.P2</td>
+<td>C <code>error in</code></td>
+<td>standard error cluster</td>
+</tr>
+<tr>
+<td>RI.P3</td>
+<td>I <code>Bitmap</code></td>
+<td>2D Boolean array, empty 0×0</td>
+</tr>
+<tr>
+<td>RI.P4</td>
+<td>I <code>Picture</code></td>
+<td>native2D picture, created from Draw Flattened Pixmap <code>new picture</code>; empty</td>
+</tr>
+<tr>
+<td>RI.P5</td>
+<td>I <code>Width</code></td>
+<td>I32,0</td>
+</tr>
+<tr>
+<td>RI.P6</td>
+<td>I <code>Height</code></td>
+<td>I32,0</td>
+</tr>
+<tr>
+<td>RI.P7</td>
+<td>I <code>error out</code></td>
+<td>standard error cluster</td>
+</tr>
+</tbody></table>
+<p>Set the 2D Picture indicator background to white: open View → Tools Palette, select the Set Color/coloring tool, right-click the picture&#39;s drawing area to open its color picker, and select white (RGB255,255,255). This is also required for the main VI&#39;s Picture indicator. ReadImage returns the native picture, not a resized screenshot. Width/Height report the pixel dimensions for inspection. The main guide uses a manually sized scrollable picture display; no image scaling occurs here.</p>
+<p>Structure nesting is RI.S0 outer error gate → S1 path-valid gate → S2 PNG-read-success gate → S3 original-dimensions-valid gate → S4 conversion-valid gate → S5 final palette/polarity-valid gate. Each named Case has output tunnels <code>bitmap out</code>,<code>picture out</code>,<code>width out</code>,<code>height out</code>,<code>error out</code>. All Cases are error-cluster Cases with Error and No Error. Error cases return empty bitmap, empty picture,0,0,and the incoming error. No image conversion VI is invented to have error terminals: only Read PNG File and project ErrorIf nodes have error terminals in this network.</p>
+<p>For <strong>each exact Case row below</strong>, place the listed three default constants <strong>inside that case&#39;s Error frame</strong> and make the listed wires. This table completely defines all six Error frames; the No Error frames are specified afterward.</p>
+<table>
+<thead>
+<tr>
+<th>Error frame</th>
+<th>Constant IDs/types</th>
+<th>Every Error-frame wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.S0.Error</td>
+<td>RI.S0.D1 empty 2D Boolean; RI.S0.D2 empty native picture; RI.S0.D3 I32 0</td>
+<td>D1→RI.S0.bitmap out; D2→RI.S0.picture out; D3→RI.S0.width out,RI.S0.height out; RI.S0.err→RI.S0.error out</td>
+</tr>
+<tr>
+<td>RI.S1.Error</td>
+<td>RI.S1.D1 empty 2D Boolean; RI.S1.D2 empty native picture; RI.S1.D3 I32 0</td>
+<td>D1→RI.S1.bitmap out; D2→RI.S1.picture out; D3→RI.S1.width out,RI.S1.height out; RI.S1.err→RI.S1.error out</td>
+</tr>
+<tr>
+<td>RI.S2.Error</td>
+<td>RI.S2.D1 empty 2D Boolean; RI.S2.D2 empty native picture; RI.S2.D3 I32 0</td>
+<td>D1→RI.S2.bitmap out; D2→RI.S2.picture out; D3→RI.S2.width out,RI.S2.height out; RI.S2.err→RI.S2.error out</td>
+</tr>
+<tr>
+<td>RI.S3.Error</td>
+<td>RI.S3.D1 empty 2D Boolean; RI.S3.D2 empty native picture; RI.S3.D3 I32 0</td>
+<td>D1→RI.S3.bitmap out; D2→RI.S3.picture out; D3→RI.S3.width out,RI.S3.height out; RI.S3.err→RI.S3.error out</td>
+</tr>
+<tr>
+<td>RI.S4.Error</td>
+<td>RI.S4.D1 empty 2D Boolean; RI.S4.D2 empty native picture; RI.S4.D3 I32 0</td>
+<td>D1→RI.S4.bitmap out; D2→RI.S4.picture out; D3→RI.S4.width out,RI.S4.height out; RI.S4.err→RI.S4.error out</td>
+</tr>
+<tr>
+<td>RI.S5.Error</td>
+<td>RI.S5.D1 empty 2D Boolean; RI.S5.D2 empty native picture; RI.S5.D3 I32 0</td>
+<td>D1→RI.S5.bitmap out; D2→RI.S5.picture out; D3→RI.S5.width out,RI.S5.height out; RI.S5.err→RI.S5.error out</td>
+</tr>
+</tbody></table>
+<p>In each row D1/D2/D3 is the fully prefixed ID in that row, not one shared object. Create each D2 by copying a correctly typed empty picture constant created from the actual Draw Flattened Pixmap <code>picture</code> terminal.</p>
+<h3>7.2 Path and PNG reading</h3>
+<p>Place inside RI.S0.No Error: <code>RI.N1</code> Path To String; <code>RI.N2</code> String Length; <code>RI.C1</code> Equal? I32; <code>RI.K1</code> I32 0; <code>RI.K2</code> I32 6101; <code>RI.K3</code> String <code>Select a PNG file path.</code>; <code>RI.E1</code> ErrorIf.vi; <code>RI.S1</code> Case.</p>
+<p>Place inside RI.S1.No Error: <code>RI.PNG</code> <strong>Read PNG File.vi</strong>; <code>RI.K4</code> <strong>U8</strong>128 for <code>Transparency Thresh</code>; <code>RI.S2</code> Case. NI&#39;s threshold converts alpha to a transparent/opaque mask. With white conversion background, fully transparent margins become white. This is <strong>binary mask handling</strong>, not a claim of mathematically exact fractional-alpha compositing. The supplied fixtures and a transparent-margin fixture must pass native tests.</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>Outside RI.S0</td>
+<td>RI.P1→RI.S0.path; RI.P2→RI.S0.selector,RI.S0.err; RI.S0.bitmap out→RI.P3; RI.S0.picture out→RI.P4; RI.S0.width out→RI.P5; RI.S0.height out→RI.P6; RI.S0.error out→RI.P7</td>
+</tr>
+<tr>
+<td>RI.S0.No Error</td>
+<td>RI.S0.path→RI.N1.path,RI.S1.path; RI.N1.string→RI.N2.string; RI.N2.length→RI.C1.x; RI.K1→RI.C1.y; RI.C1.out→RI.E1.Condition; RI.K2→RI.E1.Code; RI.K3→RI.E1.Message; RI.S0.err→RI.E1.error in; RI.E1.error out→RI.S1.selector,RI.S1.err</td>
+</tr>
+<tr>
+<td>RI.S1.No Error</td>
+<td>RI.S1.path→RI.PNG.path to PNG file; RI.S1.err→RI.PNG.error in; RI.K4→RI.PNG.Transparency Thresh; RI.PNG.image data→RI.S2.data; RI.PNG.error out→RI.S2.selector,RI.S2.err</td>
+</tr>
+</tbody></table>
+<p>Read PNG File&#39;s returned <code>path</code> is explicitly unused. Its <code>image data</code> is passed as the entire original native cluster, not rebuilt from bytes. This preserves the native padding and transparency mask. Do not wire an empty path and rely on its file dialog.</p>
+<h3>7.3 Original rectangle and dimension check</h3>
+<p>Inside RI.S2.No Error, place:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Object/configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.U1</td>
+<td>Unbundle By Name on native PNG image data, select <code>Rectangle</code> only</td>
+</tr>
+<tr>
+<td>RI.U2</td>
+<td>Unbundle By Name on that native Rectangle; fields left,top,right,bottom, each I16</td>
+</tr>
+<tr>
+<td>RI.T1 / RI.T2 / RI.T3 / RI.T4</td>
+<td>To Long Integer, respective left/top/right/bottom to I32</td>
+</tr>
+<tr>
+<td>RI.N3 / RI.N4</td>
+<td>Subtract I32, right−left = Width / bottom−top = Height</td>
+</tr>
+<tr>
+<td>RI.K5 / RI.K6 / RI.K7</td>
+<td>I32 0 /32 /4096</td>
+</tr>
+<tr>
+<td>RI.K8 / RI.K9</td>
+<td>I32 6101 / String <code>PNG rectangle must start at zero and have width/height 32..4096.</code></td>
+</tr>
+<tr>
+<td>RI.C2 / RI.C3</td>
+<td>Less? Width&lt;32 / Greater? Width&gt;4096</td>
+</tr>
+<tr>
+<td>RI.C4 / RI.C5</td>
+<td>Less? Height&lt;32 / Greater? Height&gt;4096</td>
+</tr>
+<tr>
+<td>RI.C6 / RI.C7</td>
+<td>Not Equal? left!=0 / top!=0</td>
+</tr>
+<tr>
+<td>RI.B1 / RI.O1</td>
+<td>Build Array6 Boolean scalar inputs Concatenate OFF / Or Array Elements</td>
+</tr>
+<tr>
+<td>RI.E2</td>
+<td>ErrorIf.vi</td>
+</tr>
+<tr>
+<td>RI.S3</td>
+<td>Error Case</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.S2.No Error: native rectangle</td>
+<td>RI.S2.data→RI.U1.cluster,RI.S3.data; RI.U1.Rectangle→RI.U2.cluster,RI.S3.rect; RI.U2.left→RI.T1.x; RI.U2.top→RI.T2.x; RI.U2.right→RI.T3.x; RI.U2.bottom→RI.T4.x; RI.T1.out→RI.N3.y,RI.C6.x; RI.T2.out→RI.N4.y,RI.C7.x; RI.T3.out→RI.N3.x; RI.T4.out→RI.N4.x</td>
+</tr>
+<tr>
+<td>RI.S2.No Error: size checks</td>
+<td>RI.N3.out→RI.C2.x,RI.C3.x,RI.S3.width; RI.N4.out→RI.C4.x,RI.C5.x,RI.S3.height; RI.K6→RI.C2.y,RI.C4.y; RI.K7→RI.C3.y,RI.C5.y; RI.K5→RI.C6.y,RI.C7.y; RI.C2.out→RI.B1.input0; RI.C3.out→RI.B1.input1; RI.C4.out→RI.B1.input2; RI.C5.out→RI.B1.input3; RI.C6.out→RI.B1.input4; RI.C7.out→RI.B1.input5; RI.B1.array→RI.O1.Boolean array; RI.O1.logical OR→RI.E2.Condition; RI.K8→RI.E2.Code; RI.K9→RI.E2.Message; RI.S2.err→RI.E2.error in; RI.E2.error out→RI.S3.selector,RI.S3.err</td>
+</tr>
+</tbody></table>
+<p>The origin check is a defensive project policy for decoded PNGs, which are expected to start at0,0. Cast each I16 field to I32 <strong>before</strong> subtracting. The original native Rectangle cluster goes unchanged to RI.S3.rect; it is not the project&#39;s RectI32 cluster.</p>
+<h3>7.4 Conversion, palette length and shape checks</h3>
+<p>Inside RI.S3.No Error, place:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Object/configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.DRAW</td>
+<td>Draw Flattened Pixmap.vi</td>
+</tr>
+<tr>
+<td>RI.PIX</td>
+<td>Picture to Pixmap.vi</td>
+</tr>
+<tr>
+<td>RI.UNF</td>
+<td>Unflatten Pixmap.vi; use its <strong>1-bit pixmap</strong> output only</td>
+</tr>
+<tr>
+<td>RI.K10</td>
+<td>Empty native picture constant, created from RI.DRAW.picture</td>
+</tr>
+<tr>
+<td>RI.K11</td>
+<td>I32 1, depth</td>
+</tr>
+<tr>
+<td>RI.K12</td>
+<td>U32 <code>0x00FFFFFF</code> (decimal16777215), Background Color white</td>
+</tr>
+<tr>
+<td>RI.K13 / RI.K14</td>
+<td>I32 0 /I32 2</td>
+</tr>
+<tr>
+<td>RI.K15 / RI.K16</td>
+<td>I32 6101 / String <code>Converted bitmap size or depth does not match the PNG.</code></td>
+</tr>
+<tr>
+<td>RI.K17 / RI.K18</td>
+<td>I32 6105 / String <code>The 1-bit conversion returned an invalid palette length.</code></td>
+</tr>
+<tr>
+<td>RI.A1 / RI.I1 / RI.I2</td>
+<td>Array Size raw2D bitmap →I32 dimensions; Index Array dimensions at0/1</td>
+</tr>
+<tr>
+<td>RI.U3</td>
+<td>Unbundle By Name on RI.PIX.image data; <code>image depth</code> field I32</td>
+</tr>
+<tr>
+<td>RI.A2</td>
+<td>Array Size returned colors U32 array</td>
+</tr>
+<tr>
+<td>RI.C8 / RI.C9</td>
+<td>Not Equal? raw-height vs original-height / raw-width vs original-width</td>
+</tr>
+<tr>
+<td>RI.C10</td>
+<td>Not Equal? image depth vs1</td>
+</tr>
+<tr>
+<td>RI.B2 / RI.O2</td>
+<td>Build Array3 Boolean scalar inputs Concatenate OFF / Or Array Elements</td>
+</tr>
+<tr>
+<td>RI.E3</td>
+<td>ErrorIf.vi for shape/depth</td>
+</tr>
+<tr>
+<td>RI.C11 / RI.C12 / RI.O3</td>
+<td>Not Equal? palette length vs0 / Not Equal? palette length vs2 / AND</td>
+</tr>
+<tr>
+<td>RI.E4</td>
+<td>ErrorIf.vi for palette length</td>
+</tr>
+<tr>
+<td>RI.S4</td>
+<td>Error Case</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.S3.No Error: conversion</td>
+<td>RI.K10→RI.DRAW.picture; RI.S3.data→RI.DRAW.image data; RI.DRAW.new picture→RI.PIX.picture,RI.S4.picture; RI.S3.rect→RI.PIX.rect; RI.K11→RI.PIX.depth; RI.K12→RI.PIX.Background Color; RI.PIX.image data→RI.UNF.image data,RI.U3.cluster; RI.UNF.1-bit pixmap→RI.A1.array,RI.S4.raw; RI.UNF.colors→RI.A2.array,RI.S4.colors</td>
+</tr>
+<tr>
+<td>RI.S3.No Error: converted dimensions</td>
+<td>RI.A1.size→RI.I1.array,RI.I2.array; RI.K13→RI.I1.index; RI.K11→RI.I2.index; RI.I1.element→RI.C8.x; RI.S3.height→RI.C8.y,RI.S4.height; RI.I2.element→RI.C9.x; RI.S3.width→RI.C9.y,RI.S4.width; RI.U3.image depth→RI.C10.x; RI.K11→RI.C10.y; RI.C8.out→RI.B2.input0; RI.C9.out→RI.B2.input1; RI.C10.out→RI.B2.input2; RI.B2.array→RI.O2.Boolean array; RI.O2.logical OR→RI.E3.Condition; RI.K15→RI.E3.Code; RI.K16→RI.E3.Message; RI.S3.err→RI.E3.error in</td>
+</tr>
+<tr>
+<td>RI.S3.No Error: palette validation</td>
+<td>RI.A2.size→RI.C11.x,RI.C12.x,RI.S4.paletteLength; RI.K13→RI.C11.y; RI.K14→RI.C12.y; RI.C11.out→RI.O3.x; RI.C12.out→RI.O3.y; RI.O3.out→RI.E4.Condition; RI.K17→RI.E4.Code; RI.K18→RI.E4.Message; RI.E3.error out→RI.E4.error in; RI.E4.error out→RI.S4.selector,RI.S4.err</td>
+</tr>
+</tbody></table>
+<p>RI.PIX.<code>new picture</code>, RI.UNF.<code>top left</code>, RI.UNF.<code>24-bit pixmap</code>, <code>8-bit pixmap</code>, <code>4-bit pixmap</code>, and <code>mask</code> outputs are explicitly unused. Only1-bit pixmap is valid at depth 1. Width/Height are verified against raw array shape; native conversion has no error terminals, so these checks are essential.</p>
+<h3>7.5 Palette mapping and final normalization</h3>
+<p>Inside RI.S4.No Error, place <code>RI.K19</code> I32 0, <code>RI.C13</code> Equal? paletteLength==0, <code>RI.PC</code> Boolean Case selected by C13, <code>RI.NOTRAW</code> NOT (on 2D Boolean array), <code>RI.SELECT</code> Select, and <code>RI.S5</code> final error Case. RI.PC has inputs <code>raw</code>,<code>colors</code>,<code>err</code>; outputs <code>blackBit</code>,<code>error out</code>. It contains no unwired Case outputs.</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.S4.No Error: branch and output gate</td>
+<td>RI.S4.paletteLength→RI.C13.x; RI.K19→RI.C13.y; RI.C13.out→RI.PC.selector; RI.S4.raw→RI.PC.raw,RI.NOTRAW.x,RI.SELECT.t; RI.S4.colors→RI.PC.colors; RI.S4.err→RI.PC.err; RI.PC.blackBit→RI.SELECT.s; RI.NOTRAW.out→RI.SELECT.f; RI.SELECT.out→RI.S5.bitmap; RI.S4.picture→RI.S5.picture; RI.S4.width→RI.S5.width; RI.S4.height→RI.S5.height; RI.PC.error out→RI.S5.selector,RI.S5.err</td>
+</tr>
+<tr>
+<td>RI.S5.No Error</td>
+<td>RI.S5.bitmap→RI.S5.bitmap out; RI.S5.picture→RI.S5.picture out; RI.S5.width→RI.S5.width out; RI.S5.height→RI.S5.height out; RI.S5.err→RI.S5.error out</td>
+</tr>
+</tbody></table>
+<p>For the two-color palette case <strong>RI.PC.FALSE</strong>, create these objects inside that case:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Object/configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.PC.K1 / RI.PC.K2</td>
+<td>I32 0 /I32 1 (palette indices)</td>
+</tr>
+<tr>
+<td>RI.PC.K3</td>
+<td>U32 256</td>
+</tr>
+<tr>
+<td>RI.PC.K4 / RI.PC.K5</td>
+<td>I32 6105 / String <code>Palette entries have equal brightness; cannot identify black.</code></td>
+</tr>
+<tr>
+<td>RI.PC.I1 / RI.PC.I2</td>
+<td>Index Array colors[0] /colors[1], U32</td>
+</tr>
+<tr>
+<td>RI.PC.Q1 / RI.PC.Q2 / RI.PC.Q3</td>
+<td>Three Quotient &amp; Remainder U32 for color0&#39;s base256 bytes</td>
+</tr>
+<tr>
+<td>RI.PC.Q4 / RI.PC.Q5 / RI.PC.Q6</td>
+<td>Three Quotient &amp; Remainder U32 for color1&#39;s base256 bytes</td>
+</tr>
+<tr>
+<td>RI.PC.A1 / RI.PC.A2</td>
+<td>Add U32 for color0 B+G then +R</td>
+</tr>
+<tr>
+<td>RI.PC.A3 / RI.PC.A4</td>
+<td>Add U32 for color1 B+G then +R</td>
+</tr>
+<tr>
+<td>RI.PC.C1</td>
+<td>Equal? brightness0==brightness1</td>
+</tr>
+<tr>
+<td>RI.PC.C2</td>
+<td>Less? brightness1&lt;brightness0; TRUE means index1 is black</td>
+</tr>
+<tr>
+<td>RI.PC.E1</td>
+<td>ErrorIf.vi</td>
+</tr>
+</tbody></table>
+<p>All RGB extraction uses U32, so sums up to 765 cannot overflow a byte. The highest byte is ignored after three quotient/remainder stages.</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.PC.FALSE indices</td>
+<td>RI.PC.colors→RI.PC.I1.array,RI.PC.I2.array; RI.PC.K1→RI.PC.I1.index; RI.PC.K2→RI.PC.I2.index; RI.PC.I1.element→RI.PC.Q1.x; RI.PC.I2.element→RI.PC.Q4.x; RI.PC.K3→RI.PC.Q1.y,RI.PC.Q2.y,RI.PC.Q3.y,RI.PC.Q4.y,RI.PC.Q5.y,RI.PC.Q6.y</td>
+</tr>
+<tr>
+<td>RI.PC.FALSE color0</td>
+<td>RI.PC.Q1.quotient→RI.PC.Q2.x; RI.PC.Q2.quotient→RI.PC.Q3.x; RI.PC.Q1.remainder→RI.PC.A1.x; RI.PC.Q2.remainder→RI.PC.A1.y; RI.PC.A1.out→RI.PC.A2.x; RI.PC.Q3.remainder→RI.PC.A2.y</td>
+</tr>
+<tr>
+<td>RI.PC.FALSE color1</td>
+<td>RI.PC.Q4.quotient→RI.PC.Q5.x; RI.PC.Q5.quotient→RI.PC.Q6.x; RI.PC.Q4.remainder→RI.PC.A3.x; RI.PC.Q5.remainder→RI.PC.A3.y; RI.PC.A3.out→RI.PC.A4.x; RI.PC.Q6.remainder→RI.PC.A4.y</td>
+</tr>
+<tr>
+<td>RI.PC.FALSE select/error</td>
+<td>RI.PC.A2.out→RI.PC.C1.x,RI.PC.C2.y; RI.PC.A4.out→RI.PC.C1.y,RI.PC.C2.x; RI.PC.C1.out→RI.PC.E1.Condition; RI.PC.K4→RI.PC.E1.Code; RI.PC.K5→RI.PC.E1.Message; RI.PC.err→RI.PC.E1.error in; RI.PC.C2.out→RI.PC.blackBit; RI.PC.E1.error out→RI.PC.error out</td>
+</tr>
+</tbody></table>
+<p>RI.PC.Q3.quotient and RI.PC.Q6.quotient are unused. <code>quotient</code> is the native terminal <code>floor(x/y)</code>; <code>remainder</code> is <code>x-y*floor(x/y)</code>. The darker palette entry is classified as black. Raw TRUE maps to entry1, so SELECT preserves the raw bitmap if blackBit TRUE; otherwise it negates the whole bitmap once.</p>
+<p>For the empty/default palette case <strong>RI.PC.TRUE</strong>, create these objects inside that case:</p>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Object/configuration</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.PC.FK1</td>
+<td>Boolean constant labeled <code>DefaultPaletteCalibrated</code>, initial FALSE</td>
+</tr>
+<tr>
+<td>RI.PC.FK2</td>
+<td>Boolean constant labeled <code>DefaultBlackBit</code>, initial TRUE; not used successfully until calibrated</td>
+</tr>
+<tr>
+<td>RI.PC.FK3 / RI.PC.FK4</td>
+<td>I32 0 /I32 20</td>
+</tr>
+<tr>
+<td>RI.PC.FK5</td>
+<td>I32 6105</td>
+</tr>
+<tr>
+<td>RI.PC.FK6</td>
+<td>String constant <code>Default 1-bit palette needs calibration. Use Binairo_6x6.png and section 7.6. Raw black(0,0)=%d; raw white(20,20)=%d.</code></td>
+</tr>
+<tr>
+<td>RI.PC.FI1 / RI.PC.FI2</td>
+<td>Index Array 2D on raw, respective coordinates(0,0)/(20,20)</td>
+</tr>
+<tr>
+<td>RI.PC.FB1 / RI.PC.FB2</td>
+<td>Boolean To (0,1), producing numeric0/1</td>
+</tr>
+<tr>
+<td>RI.PC.FT1 / RI.PC.FT2</td>
+<td>To Long Integer, convert numeric probe results to I32</td>
+</tr>
+<tr>
+<td>RI.PC.FM1</td>
+<td>Format Into String, format FK6, arguments probeBlack then probeWhite, initial string empty</td>
+</tr>
+<tr>
+<td>RI.PC.FK7</td>
+<td>String constant empty</td>
+</tr>
+<tr>
+<td>RI.PC.FN1</td>
+<td>NOT on DefaultPaletteCalibrated</td>
+</tr>
+<tr>
+<td>RI.PC.FE1</td>
+<td>ErrorIf.vi</td>
+</tr>
+</tbody></table>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.PC.TRUE probes</td>
+<td>RI.PC.raw→RI.PC.FI1.array,RI.PC.FI2.array; RI.PC.FK3→RI.PC.FI1.index0,RI.PC.FI1.index1; RI.PC.FK4→RI.PC.FI2.index0,RI.PC.FI2.index1; RI.PC.FI1.element→RI.PC.FB1.Boolean; RI.PC.FI2.element→RI.PC.FB2.Boolean; RI.PC.FB1.out→RI.PC.FT1.x; RI.PC.FB2.out→RI.PC.FT2.x; RI.PC.FT1.out→RI.PC.FM1.input 1; RI.PC.FT2.out→RI.PC.FM1.input 2; RI.PC.FK6→RI.PC.FM1.format string; RI.PC.FK7→RI.PC.FM1.initial string</td>
+</tr>
+<tr>
+<td>RI.PC.TRUE guarded mapping</td>
+<td>RI.PC.FK1→RI.PC.FN1.x; RI.PC.FN1.out→RI.PC.FE1.Condition; RI.PC.FK5→RI.PC.FE1.Code; RI.PC.FM1.resulting string→RI.PC.FE1.Message; RI.PC.err→RI.PC.FM1.error in; RI.PC.FM1.error out→RI.PC.FE1.error in; RI.PC.FK2→RI.PC.blackBit; RI.PC.FE1.error out→RI.PC.error out</td>
+</tr>
+</tbody></table>
+<p>The raw shape has already passed width/height&gt;=32, so both probe coordinates are in range. They are <strong>known-color calibration coordinates only for the specified 6x6 fixture</strong>, not universal detectors. A default FALSE calibration flag causes a clear 6105 and empty production outputs; it never guesses silently.</p>
+<h3>7.6 Literal narrow default-palette calibration</h3>
+<p>This procedure is needed <strong>only</strong> if the error message exactly says “Default 1-bit palette needs calibration.” A valid two-entry returned palette requires no calibration changes.</p>
+<ol>
+<li>Open <code>ReadImage.vi</code>. Set <code>PNG path</code> to the supplied <strong>Binairo_6x6.png</strong>; verify the basename exactly and use the preserved course copy. Set error in to no error. Run once.</li>
+<li>Read the complete error-source text. The file&#39;s pixel(row0,col0) is on its black outer stroke; pixel(row20,col20) is white inside its top-left empty cell. The message prints both raw bits as0/1. Save a screenshot showing PNG path and the entire error text.</li>
+<li>If it prints <strong>black=1, white=0</strong>, open the block diagram, display RI.PC.TRUE, leave <code>DefaultBlackBit</code> TRUE and set <code>DefaultPaletteCalibrated</code> TRUE. If it prints <strong>black=0, white=1</strong>, set <code>DefaultBlackBit</code> FALSE and <code>DefaultPaletteCalibrated</code> TRUE. These are the only two accepted branches. If both are equal, keep calibration FALSE, preserve the VI and return the screenshot/log for repair; do not choose an arbitrary mapping.</li>
+<li>Save ReadImage.vi, then run the same 6x6 input again. Require clear error, Width 454, Height 431, Bitmap(row0,col0)=TRUE and Bitmap(row20,col20)=FALSE. Change the array display indices to these exact coordinates to inspect the values. If either expectation fails, reset <code>DefaultPaletteCalibrated</code> FALSE, save and return the evidence.</li>
+<li>Run supplied 8x8; require Width 610, Height 577 and clear error. Check Bitmap(row5,col2)=TRUE on the border and Bitmap(row30,col30)=FALSE in the top-left empty cell. Then perform ComputeRowsCols&#39;s checkpoint. Keep the calibration screenshot with native evidence and note LabVIEW/OS version. Recalibrate after moving to a different LabVIEW/default-palette environment.</li>
+</ol>
+<p>This is a finite verification of NI&#39;s default palette on the native computer. The group chooses no algorithm, thresholds or architecture. The initial package remains complete; the only conditional setup is explicitly bounded and verified. ReadImage calibration does not inspect or invent the MATLAB-launcher&#39;s separate connector.</p>
+<h3>7.7 Connect every nested output and finish</h3>
+<p>Each arrow below is a wire in the indicated enclosing No Error case. These are the five distinct output tunnels, not a cluster to be bundled.</p>
+<table>
+<thead>
+<tr>
+<th>Scope</th>
+<th>Every result wire</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>RI.S4.No Error</td>
+<td>RI.S5.bitmap out→RI.S4.bitmap out; RI.S5.picture out→RI.S4.picture out; RI.S5.width out→RI.S4.width out; RI.S5.height out→RI.S4.height out; RI.S5.error out→RI.S4.error out</td>
+</tr>
+<tr>
+<td>RI.S3.No Error</td>
+<td>RI.S4.bitmap out→RI.S3.bitmap out; RI.S4.picture out→RI.S3.picture out; RI.S4.width out→RI.S3.width out; RI.S4.height out→RI.S3.height out; RI.S4.error out→RI.S3.error out</td>
+</tr>
+<tr>
+<td>RI.S2.No Error</td>
+<td>RI.S3.bitmap out→RI.S2.bitmap out; RI.S3.picture out→RI.S2.picture out; RI.S3.width out→RI.S2.width out; RI.S3.height out→RI.S2.height out; RI.S3.error out→RI.S2.error out</td>
+</tr>
+<tr>
+<td>RI.S1.No Error</td>
+<td>RI.S2.bitmap out→RI.S1.bitmap out; RI.S2.picture out→RI.S1.picture out; RI.S2.width out→RI.S1.width out; RI.S2.height out→RI.S1.height out; RI.S2.error out→RI.S1.error out</td>
+</tr>
+<tr>
+<td>RI.S0.No Error</td>
+<td>RI.S1.bitmap out→RI.S0.bitmap out; RI.S1.picture out→RI.S0.picture out; RI.S1.width out→RI.S0.width out; RI.S1.height out→RI.S0.height out; RI.S1.error out→RI.S0.error out</td>
+</tr>
+</tbody></table>
+<p>No loops or shift registers occur in ReadImage. Save it and its defaults. Native checks: missing path, nonexistent file, non-PNG renamed .png, corrupt PNG, valid6x6/8x8, transparent margins and incoming seeded error. Failures must show a useful native/project error and all production outputs empty/zero. For valid images compare displayed picture, black/white polarity and reported dimensions before proceeding to the main guide&#39;s binary-writing section.</p>
+<h2 id="section-15">8. Native evidence and reviewed references</h2>
+<p>After all five VIs are constructed, return: the actual 5 VI files plus GridLines/RectI32 typedefs; front panels with the checkpoint values; block-diagram screenshots covering all Case frames and connector panes; exact native errors when any checkpoint differs; LabVIEW version and OS. A screenshot of a successful C command is not evidence of native image conversion or geometry. Keep originals separately and follow the one-writer-per-VI rule.</p>
+<p>Assignment references use physical PDF pages: P00.PPI_Projet.2026.2.pdf pp24–27; Exo.Proj.Binairo.LabVIEW.1.pdf pp3–11,14–16. Current shape rule is even square grid count; a rectangular pixel image is allowed. Course diagrams are instructional illustrations; this text supplies the missing object/connection detail and still requires native execution.</p>
+<p>Primary NI references checked for the stated primitives and terminal meanings:</p>
+<ul>
+<li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/vi-lib/picture/png-llb/read-png-file-vi.html">Read PNG File</a>: path, image-data cluster, error terminals and U8 transparency threshold.</li>
+<li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/vi-lib/picture/picture-llb/draw-flattened-pixmap-vi.html">Draw Flattened Pixmap</a>: picture input/output and original image-data/mask handling.</li>
+<li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/vi-lib/picture/pictutil-llb/picture-to-pixmap-vi.html">Picture to Pixmap</a>: I32 depth, U32 background, native I16 rect and possible default/empty palette.</li>
+<li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/vi-lib/picture/pixmap-llb/unflatten-pixmap-vi.html">Unflatten Pixmap</a>:1-bit Boolean output and mapping through colors[0]/colors[1]; use only the output for the requested depth.</li>
+<li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/search-1d-array.html">Search 1D Array</a>: <code>index of element</code> returns−1 on no match. In this guide <code>.array</code> means its <code>1D array</code> input and <code>.index</code> means that output.</li>
+<li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/quotient-remainder.html">Quotient &amp; Remainder</a>: <code>.quotient</code> in tables means <code>floor(x/y)</code>; <code>.remainder</code> means <code>x-y*floor(x/y)</code>.</li>
+<li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/transpose-2d-array.html">Transpose 2D Array</a> and <a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/or-array-elements.html">Or Array Elements</a>: native row/column occupancy construction.</li>
+<li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/format-into-string.html">Format Into String</a> and <a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/boolean-to-0-1.html">Boolean To (0,1)</a>: diagnostic formatting, propagated format error and explicit I16-to-I32 probe conversions.</li>
+</ul>
+<p>No native execution is claimed by citing API documentation. If a documented primitive&#39;s actual Context Help shows an unexpected incompatible terminal/type, preserve a screenshot of the exact VI/path and report it; do not attach a different type by coercion or add a guessed terminal.</p>
+<h2 id="section-16">9. Completed source/wiring self-review and remaining native boundary</h2>
+<p>The authored recipe was checked for the following consistency points: all five connector maps agree with their front-panel directions/types; every Case output is assigned in every frame; invalid indices are gated before cell-coordinate access; every error output reaches the caller; the only SR is GC.F3&#39;s initialized error SR; every other loop has explicit bounds/indexing and no retained state; BlackRuns includes the final padded comparison and correctly returns exclusive right-edge endpoints; bitmap dimensions remain row/column while C serialization is separately width/height; project rectangle fields are I32 and native picture fields remain I16; conversion VIs have no invented error terminals; Format Into String&#39;s actual error terminals are chained in the fallback; palette normalization is applied once, only after shape/depth/palette validation. CR.N2.quotient and GC.N5.quotient are explicitly unused, as are the already listed extra native-picture outputs.</p>
+<p>This is <strong>author self-review of a construction recipe</strong>, not an independent executed-VI review. Native primitive placement, saved typedef linkage, all diagram wires, default-palette calibration where needed, alpha-mask appearance and checkpoint results remain for the group&#39;s construction/testing evidence. No source or method is outsourced; no native success is asserted prematurely.</p>
+<h2 id="section-17">6. WriteCell.vi - exact header and row-major pixels</h2>
+<p>Panel/connector: P1 Cell Boolean2D control=L1; P2 File Path control=L2; P3 error in=L4; P4 error out=R4. All other connector terminals unassigned. Cell is already cropped by Array Subset in ReadCase. Image dimensions come from its array shape.</p>
+<p>Objects: C1 I32(0); C2 I32(1); C3 I32(10); C4 I32(256); C5 U8(0); C6 U8(1); C7 BooleanFALSE (prepend); C8 noerrorcluster; N1 Unbundle(status); S0 errorCase; N2 Array Size; N3 Index Array expanded2outputs indexes0,1; N4 To Unsigned Long Integer(height); N5 To Unsigned Long Integer(width); N6 Build Array2scalarinputs; N7 In Range and Coerce(height); N8 In Range and Coerce(width); N9 AND; N10 NOT; N11 ErrorIf; C9 code7003; C10 String<code>Cell dimensions outside10..256.</code>; N12 Unbundle(status); S1 errorCase; N13 Open/Create/Replace File(replace or create,write-only,deny read/write); N14 Unbundle(status); S2 errorCase; S3 outer For; S4 inner For; N15 Select; N16 Reshape Array; N17 Multiply; N18 Write to Binary File(header); N19 Write to Binary File(pixels); N20 Close File; N21 Merge Errors2inputs; S5 FlatSequence2frames. Byte order constants for N18/N19 created from terminal and set <strong>little-endian enum2</strong>, never native/default. N7/N8 Include upper limit TRUE, Include lower limitTRUE.</p>
+<p>Wires before S1: P3→N1.cluster;N1.status→S0.selector. S0 TRUE:P3→P4. FALSE:P1→N2.array;N2.sizes→N3.array; C1→N3.index0;C2→N3.index1;N3.element0(height)→N4.x and N7.x and N17.x;N3.element1(width)→N5.x and N8.x and N17.y;C3→N7.lower/N8.lower;C4→N7.upper/N8.upper;N7.in range?→N9.x;N8.in range?→N9.y;N9.output→N10.x;N10.output→N11.Condition;C9→N11.Code;C10→N11.Message;P3→N11.error in;N11.error out→N12.cluster;N12.status→S1.selector. S1 TRUE:N11.error out→output. S1 FALSE proceeds below.</p>
+<p>Header wires: N5.widthU32→N6.input0;N4.heightU32→N6.input1. Build Array concatenate inputs OFF creates1D U32[2] EXACTLY width,height.</p>
+<p>Pixel conversion wires: P1→S3 left auto-index tunnel (inside isBoolean1D row). S3.N unwired (auto-index controls length). That row→S4 left auto-index tunnel (inside Boolean scalar). S4.N unwired. Inner Boolean→N15.s;C6→N15.t;C5→N15.f;N15.output→S4 right auto-index tunnel(U8row);S4 U8row→S3 right auto-index tunnel(U8matrix). S3matrix→N16.array;N17.product→N16.dimension size0. Leave only ONE dimension input on Reshape Array; output is row-major1D U8. No shift registers in these conversion loops. Their zero-size possibilities are prevented by dimension guards.</p>
+<p>File wires: P2→N13.path;N11.error out→N13.error in;N13.error out→N14.cluster;N14.status→S2.selector. S2 TRUE:N13.error out→erroroutput. S2 FALSE contains S5. Frame0:N13.refnum→N18.file;N6.array→N18.data;C7→N18.prepend;little-endian2→N18.byte order;N13.error out→N18.error in;N18.refnum out→N19.file;N16.array→N19.data;C7→N19.prepend;little-endian2→N19.byte order;N18.error out→N19.error in. Frame1:N13.refnum→N20.refnum;C8→N20.error in;N19.error out→N21.error0;N20.error out→N21.error1;N21.error out→S2→S1→S0→P4. Sequence frame1 cannot start before both writes finish. Header/pixel writes share the SAME refnum so the second write appends at position8. Passing the path again would overwrite the header and is wrong.</p>
+<p>Checkpoint: create a development test VI with Boolean2D40columns×35rows, allFALSE except oneTRUE at row2,col9. WriteCell must create1408bytes: header <code>28 00 00 00 23 00 00 00</code>, byte offset8+2*40+9=97 is1, all other payload bytes0. Use the binary inspection helper in chapter14; this test catches width/height swap and column-major flattening. It is intentionally non-square.</p>
+<h2 id="section-18">7. BuildOCRCommand.vi - thresholds and host quoting</h2>
+<p>Panel/connector: P1 Runtime Path=L1; P2 Thresholds cluster(control; order empty,zero,one allDBL defaults98,90,90)=L2; P3 Windows? Boolean controlTRUE=L3; P4 error in=L4; P5 Command String indicator=R1; P6 error out=R4; all other slots unassigned. Runtime is derived by main; OCR input is always runtime/Cell.bin. Provisional command-path policy: only runtime/executable paths containing letters, digits, spaces, slash, backslash, colon, dot, underscore and hyphen are accepted on Windows. Select a simple writable project location. This avoids shell expansion, including percent/exclamation/ampersand. A source image filename can contain an apostrophe because it is read natively and escaped for MATLAB, never passed to OCR&#39;s shell. POSIX runtime paths are single-quote escaped as below.</p>
+<p>Diagram: C1 String<code>OCR.exe</code>;C2 String<code>OCR</code>;C3 String<code>Cell.bin</code>; C4 I32(0);C5 DBL(0);C6 DBL(100);C7 code7004;C8 message<code>Invalid OCR thresholds or command path; thresholds must have at most four decimal places.</code>;C9 emptyString;N1 Unbundle status;S0 guard;N2 Unbundle By Name3fields(thresholds);N3 In Range(empty),N4 In Range(zero),N5 In Range(one), include both boundsTRUE;N6 Compound Arithmetic AND6inputs;N7 Select(executablebasename);N8 Build Path(exe);N9 Build Path(cell);N10 Path To String(exe);N11 Path To String(cell);S1 WindowsCase;N12 ErrorIf;N13 Unbundle(status);S2 guard;N14 Format Into String. Instantiate N12/N13/S2/N14 separately inside each host case, with suffix .WIN or .POSIX; the common wiring paragraph below applies to exactly these two explicitly enumerated copies.</p>
+<p>Wires common: P4→N1.cluster→S0.selector(status). S0 TRUE:C9→P5,P4→P6. S0 FALSE:P2→N2.cluster;N2.empty→N3.x;N2.zero→N4.x;N2.one→N5.x;C5→N3/N4/N5.lower;C6→N3/N4/N5.upper;N3/N4/N5.in range?→N6.inputs0/1/2. NaN is outside ranges. P3→N7.s;C1→N7.t;C2→N7.f;P1→N8.base/N9.base;N7.output→N8.name;C3→N9.name;N8.path→N10.path;N9.path→N11.path;P3→S1.selector.</p>
+<p>Before hostCase S1 inside S0 FALSE, add the following exact precision validation. The LabVIEW UI accepts only thresholds representable by a decimal string with at most4 places; C itself still accepts its documented decimal grammar. Set all threshold control displays to fixed-point4 decimal places, but do not rely on display rounding to validate the stored value. Add QF1,QF2,QF3 Format Into String (one DBL argument each), QP1,QP2,QP3 Fract/Exp String To Number(default DBL0,use system decimal point FALSE,offsetI32zero), QE1,QE2,QE3 Equal?DBL. Constants QK1String<code>%.;%.4f</code>,QK2I32zero,QK3DBLzero,QK4BooleanFALSE. Exact finite fields j=1,2,3 correspond to N2.empty,N2.zero,N2.one, respectively. For each of these three field/node pairs: field→QFj.argument0 and QEj.x;QK1→QFj.format;QFj.result→QPj.string;QK2→QPj.offset;QK3→QPj.default;QK4→QPj.use system decimal point?;QPj.number→QEj.y. QE1.result→N6.input3;QE2.result→N6.input4;QE3.result→N6.input5. Format error chain: P4→QF1.error in;QF1out→QF2in;QF2out→QF3in. QF3.error out is the host branch&#39;s prior error (explicit wires below). The formatted roundtrip must equal the original DBL exactly; e.g.98,90.1250 pass and99.99999 fails7004 instead of silently becoming100.0000. Empty initial strings follow chapter2 convention.</p>
+<p>S1 TRUE objects W1 Match Regular Expression, W2 Equal?, W3 String Length, W4 AND, W5 NOT, W6 String constant<code>^[A-Za-z0-9 _.:/\\-]+$</code>;W7 BooleanFALSE for multiline/ignorecase;W8 I32zero. N11.cellPath→W1.input;W6→W1.regex;W8→W1.offset;W7→W1.multiline?/ignore case?;QF3.error out→W1.error in;W1.offset past match→W2.x;N11.cellPath→W3.string;W3.length→W2.y;N6.output→W4.x;W2.output→W4.y;W4.output→W5.input;W5.output→N12.Condition;W1.error out→N12.error in. This path check covers runtime because fixed suffix is appended. W9 format string in <strong>normal display</strong>: <code>%s</code> is not used here for locale; use the literal file <code>ocr_windows_format.txt</code> below. N10.exePath→N14.argument0;N11.cellPath→N14.argument1;N2.empty/zero/one→N14.arguments2/3/4. Format string contains <code>%.;</code> to force decimal point (NI numeric-format syntax), as supplied in resources. W9→N14.format string.</p>
+<p>S1 FALSE objects U1 Search and Replace String (replace all TRUE, regex mode OFF), U2 identical;Cq String single apostrophe;Cqq String <strong><code>&#39;&quot;&#39;&quot;&#39;</code></strong> (five characters apostrophe,doublequote,apostrophe,doublequote,apostrophe);U3 NOT;U4 format string from ocr_posix_format.txt. N10.string→U1.input;N11.string→U2.input;Cq→U1/U2.search;Cqq→U1/U2.replace;BooleanTRUE→U1/U2.replace all?;I32zero→U1/U2.offset. N6.output→U3.input;U3.output→N12.Condition;QF3.error out→N12.error in;U1.result→N14.arg0;U2.result→N14.arg1;N2.empty/zero/one→N14.args2/3/4;U4→N14.format string.</p>
+<p>Both host cases: C7→N12.Code;C8→N12.Message;N12.error out→N13.cluster→S2.selector(status). S2 TRUE:C9→commandoutput;N12.error out→erroroutput. S2 FALSE:N12.error out→N14.error in;N14.result→commandoutput;N14.error out→erroroutput. S2→S1→S0→P5/P6. All Format Into String optional initial-string input empty; unused outputsunconnected. The three numeric parameters must remain decimals with a dot on French-locale systems; checkpoint prints expected strings before running anything.</p>
+<p>Copy formats from resources/ into block diagram NORMAL-display string constants (do not interpret backslash escapes when pasting). Remove only the file&#39;s final LF; no command newline required:</p>
+<pre><code class="language-text">Windows: %.;cmd /d /s /c &quot;&quot;%s&quot; &quot;%s&quot; %.4f %.4f %.4f&quot;
+POSIX:   %.;&#39;%s&#39; &#39;%s&#39; %.4f %.4f %.4f
+</code></pre>
+<p><code>%.;</code> is LabVIEW&#39;s decimal-separator directive; it is consumed by Format Into String, not passed to C. Expected Windows result for a manual test directory: <code>cmd /d /s /c &quot;&quot;C:\Binairo Test\OCR.exe&quot; &quot;C:\Binairo Test\Cell.bin&quot; 98.0000 90.0000 90.0000&quot;</code>. Native System Exec must be tested on the actual OS; do not infer Windows behavior from a Mac run.</p>
+<h2 id="section-19">8. ParseCellValue.vi - strict one-line grammar</h2>
+<p>Panel/connector: P1 Text String control=L1;P2 error in=L4;P3 MATLAB Token String indicator=R1;P4 Percent DBL indicator=R2;P5 error out=R4;other slotsunassigned.</p>
+<p>Objects C1 emptyString,C2 DBL0,C3 I32zero,C4 code7005,C5 message<code>Malformed CellValue.txt; inspect raw text and OCR logs.</code>;C6 regex string from resources/cellvalue_regex.txt;C7 BooleanFALSE. N1 Unbundle(status);S0 guard;N2 Match Regular Expression(expand2submatches);N3 String Length;N4 Equal?;N5 NOT;N6 ErrorIf;N7 Unbundle(status);S1 guard;N8 Fract/Exp String To Number(DBL default0;use system decimal point FALSE);N9 In Range and Coerce(include bothTRUE,lower0,upper100);N10 NOT;N11 ErrorIf;N12 Unbundle(status);S2 guard;S3 Case selected by symbolString. Normal-display regex is:</p>
+<pre><code class="language-text">^d:&#39;([01 ])&#39;,([0-9]{1,3}\.[0-9]{4})%\r?\n$
+</code></pre>
+<p>Wire P2→N1.cluster→S0.selector. S0TRUE:C1→P3,C2→P4,P2→P5. S0FALSE:P1→N2.input;C6→N2.regex;C3→N2.offset;C7→N2.multiline?/ignorecase?;P2→N2.error in;P1→N3.string;N2.offset past match→N4.x;N3.length→N4.y;N4.output→N5.input;N5.output→N6.Condition;C4→N6.Code;C5→N6.Message;N2.error out→N6.error in. N6.error out→N7.cluster→S1.selector. TRUE returns emptyToken,0,N6error. FALSE:N2.submatch2(percent chars)→N8.string;C3→N8.offset;C2→N8.default;C7→N8.use system decimal point?;N8.number→N9.x;DBL0→N9.lower;DBL100→N9.upper;N9.in range?→N10.input;N10.output→N11.Condition;C4→N11.Code;C5→N11.Message;N6.error out→N11.error in;N11.error out→N12.cluster→S2.selector. S2TRUE returns empty,0,error. S2FALSE:N2.submatch1→S3.selector; S3 case<code>0</code> creates String<code>0</code>;case<code>1</code> creates String<code>1</code>;case<code> </code> (one space) creates String<code>NaN</code>;DEFAULT contains N13D ErrorIf.vi and C8D BooleanTRUE: C1→DEFAULT tokenoutput; C2→DEFAULT percentoutput; C8D→N13D.Condition; C4→N13D.Code; C5→N13D.Message; N11.error out→N13D.error in; N13D.error out→DEFAULT erroroutput. Nondefault S3cases outputtheir token,N8.number,N11error. Connect through S2/S1/S0 toP3/P4/P5. Regex check ensures source contains exactlyone matchedline and no suffix; an empty no-match offset-1 cannot equal nonnegative inputlength. All unused regex outputsunconnected. If a node calls the second submatch <code>substring2</code>, Context Help distinguishes it from <code>whole match</code>.</p>
+<p>Checkpoint panel test strings (set string display to backslash to enter LF then back to normal): <code>d:&#39; &#39;,100.0000%\n</code>→NaN; <code>d:&#39;0&#39;,93.7500%\n</code>→0; <code>d:&#39;1&#39;,90.0000%\r\n</code>→1. Missing newline, 101.0000, symbol2, comma decimal, extra newline or garbage→7005. No malformed input silently becomesNaN.</p>
+<h2 id="section-20">9. ReadCase.vi - crop, write, execute, parse</h2>
+<p>Panel/connector: P1 Bitmap Boolean2D=L1;P2 GridLines cluster=L2;P3 CellIndex cluster(order rowI32,colI32;0,0)=L3;P4 error in=L4;P5 Runtime Path=T1;P6 Thresholds cluster=T2;P7 Windows?TRUE=B1;P8 Token String indicator=R1;P9 Percent DBL indicator=R2;P10 Diagnostics String indicator=R3;P11 error out=R4;B2unassigned.</p>
+<p>Objects:N1 Unbundle(status);S0guard;N2 Unbundle By Name(row,col);N3 ComputeCellRect.vi;N4 UnbundleByName(left,top,right,bottom);N5 Subtract(width);N6 Subtract(height);N7 Array Subset(2D);N8 BuildPath(Cell.bin);N9 WriteCell.vi;N10 BuildOCRCommand.vi;N11 System Exec.vi;N12 NotEqual?returncode0;N13 StringLength(stderr);N14 Greater?0;N15 OR;N16 Format Into String diagnostics;N17 ErrorIf;N18 BuildPath(CellValue.txt);N19 ReadText.vi;N20 ParseCellValue.vi;N22 Merge Errors2inputs;N23 RemoveIfExists.vi (insideS1FALSE). Constants: C1 StringCell.bin;C2 StringCellValue.txt;C3 I32zero;C4 BooleanTRUE;C5 emptyString;C6 DBLzero;C7 code7006;C8 U32(65536);C10 no-error cluster(FALSE,0,empty);C9 format<code>Return code: %d\nstdout:\n%s\nstderr:\n%s\n</code> entered with backslash-display enabled so actualLFs;N21 Unbundle(status);S1guard.</p>
+<p>S0guard: P4→N1.cluster→S0.selector;TRUE outputs emptyToken,0,emptyDiagnostics,P4error. FALSE wires: P3→N2.cluster;P2→N3.GridLines;N2.row→N3.row;N2.col→N3.col;P4→N3.error in;N3.Rect→N4.cluster;N4.right→N5.x;N4.left→N5.y;N4.bottom→N6.x;N4.top→N6.y;P1→N7.array;N4.top→N7.indexrow;N6.output→N7.lengthrow;N4.left→N7.indexcol;N5.output→N7.lengthcol. N3error→N21cluster→S1selector;S1TRUE outputsdefaults,N3error. S1FALSE:P5→N8.base/N18.base;C1→N8.name;C2→N18.name;N7.subarray→N9.Cell;N8.path→N9.File;N18.path→N23.File;N3.error out→N23.error in;N23.error out→N9.error in;P5→N10.Runtime;P6→N10.Thresholds;P7→N10.Windows?;N9.error out→N10.error in. N10.Command→N11.command line;P5→N11.working directory;C4→N11.wait until completion?;C4→N11.run minimized?;C8→N11.expected output size;C5→N11.standard input;N10.error out→N11.error in.</p>
+<p>Process status: N11.return code→N12.x and N16.arg0;C3→N12.y;N11.standard error→N13.string and N16.arg2;N11.standard output→N16.arg1;N13.length→N14.x;C3→N14.y;N12.result→N15.x;N14.result→N15.y;N15.result→N17.Condition;C7→N17.Code;C9→N16.format;N16.result→N17.Message and Diagnosticsoutput;C10→N16.error in;N11.error out→N22.error0;N16.error out→N22.error1;N22.error out→N17.error in. N18.path→N19.File;N17.error out→N19.error in;N19.Text→N20.Text;N19.error out→N20.error in;N20.Token→tokenoutput;N20.Percent→percentoutput;N20.error out→erroroutput. ThroughS1/S0→P8/P9/P10/P11. Diagnostics are formatted with the explicitly wired C10 clean error; N22 preserves both process and formatting errors. N23 removes the previous cell result on EVERY cell before writing/launching, so a zero-exit executable producing no file cannot reuse the preceding cell’s value.</p>
+<p>The WriteCell/command/SystemExec/read/parse error chain prevents reading a stale file. C also removes its old result. For each iteration preserve diagnostic indicator even on failure. Pure ArraySubset can compute beforeS1 guard, but WriteCell only sees it after validated rectangle and clearerror. No subprocess is launched for an invalid rectangle.</p>
+<h2 id="section-21">10. BuildML.vi - actual script generated from OCR results</h2>
+<p>Panel/connector P1 MatrixText String=L1;P2 Source PNG Path=L2;P3 Options cluster(order solveWithMatlabTRUE,showPDFTRUE)=L3;P4 error in=L4;P5 Runtime Path=T1;P6 Script Path indicator=R1;P7 Script Text indicator=R2;P8 error out=R4;R3,T2,B1,B2unassigned.</p>
+<p>N1 Unbundle(status),S0guard;N2 BuildPath(solve_template.txt);N3 ReadText.vi;N4 Unbundle(options);N5 Select(String1/0 solve);N6 Select(String1/0 show);N7 PathToString(source);N8 SearchAndReplaceString(apostrophe doubling);N9 Replace(matrixmarker);N10 Replace(solvemarker);N11 Replace(showmarker);N12 Replace(sourcemarker LAST);N13 BuildPath(solve.m);N14 WriteText.vi. Each replace is native Search and Replace String, replaceallTRUE, offsetI32zero, regular-expression modeOFF. Its literal backslashes are not regex escapes. Constants names/values: C1<code>solve_template.txt</code>;C2<code>solve.m</code>;C3<code>1</code>;C4<code>0</code>;C5<code>&#39;</code>;C6<code>&#39;&#39;</code>;C7<code>@MATRIX@</code>;C8<code>@SOLVE@</code>;C9<code>@SHOW@</code>;C10<code>@SOURCE@</code>;C11 emptyString;C12 emptyPath;C13TRUE;C14I32zero.</p>
+<p>P4→N1cluster→S0selector;TRUE outputs emptyPath,emptyString,P4error. FALSE:P5→N2.base/N13.base;C1→N2.name;C2→N13.name;N2.path→N3.File;P4→N3.error in;P3→N4.cluster;N4.solve→N5.s;C3→N5.t;C4→N5.f;N4.show→N6.s;C3→N6.t;C4→N6.f;P2→N7.path;N7.string→N8.input;C5→N8.search;C6→N8.replace. N3.Text→N9.input;C7→N9.search;P1→N9.replace;N9.result→N10.input;C8→N10.search;N5.output→N10.replace;N10.result→N11.input;C9→N11.search;N6.output→N11.replace;N11.result→N12.input;C10→N12.search;N8.result→N12.replace. C13→N8/N9/N10/N11/N12.replaceall;C14→allfive.offset. N13.path→N14.File and ScriptPathoutput;N12.result→N14.Text and ScriptTextoutput;N3.error out→N14.error in;N14.error out→outputerror. S0outputs→P6/P7/P8. All unused replacement offset/count outputsunconnected. Validate inputsource noLF/CR/NUL in main sourceguard; filenames containing marker-looking text remain literal because source is substituted last. No unresolved marker string is allowed except inside the literal source filename.</p>
+<p>Checkpoint: inspect saved solve.m using a text editor. It must show a matrix from current OCR, row delimiters <code>;</code> plusLF, blankcells<code>NaN</code>, escaped source apostrophes as<code>&#39;&#39;</code>, logical(1/0) flags and RunBinairo call. Exact skeleton is resources/solve_template.txt; copying sample_driver.m instead fails the assessed generation requirement.</p>
+<h2 id="section-22">11. CheckMatlabStatus.vi - completion cannot be inferred from a PDF alone</h2>
+<p>Panel/connector P1 Runtime Path=L1;P2 Launch Diagnostics String=L2;P3 error in=L4;P4 Status String indicator=R1;P5 error out=R4;other slotsunassigned. Objects C1<code>MatlabStatus.txt</code>;C2<code>MatlabError.txt</code>;C3emptyString;C4String<code>OK\n</code>;C5String<code>UNSOLVABLE\n</code>;C6code7007;N1Unbundle(status);S0guard;N2BuildPath(status);N3ReadText;S1Case on raw text;N4ErrorIf;N5BuildPath(error);N6ReadText;N7ConcatenateStrings3inputs. C4/C5 entered in backslash display with actual LF.</p>
+<p>P3→N1cluster→S0selector. S0TRUE:P2diagnostics→P4Status;P3→P5error (never read old status). FALSE:P1→N2base/N5base;C1→N2name;C2→N5name;N2path→N3File;P3→N3errorin;N3Text→S1selector. Case exact<code>OK</code>+LF: String<code>Completed: PDF written.</code>→Statusoutput,N3error→erroroutput. Case exact<code>UNSOLVABLE</code>+LF: BooleanTRUE→N4Condition;C6→N4Code;String<code>Grid is unsolvable; inspect the generated error PDF.</code>→N4Message;N3error→N4errorin;N4errorout→erroroutput and same message→Statusoutput. DEFAULT: N5path→N6File;cleanerrorconstant→N6errorin;P2→N7input0;String<code>MATLAB did not report OK. Full report: </code>→N7input1;N6Text→N7input2;N7string→N4Message and Statusoutput;TRUE→N4Condition;C6→N4Code;N3error→N4errorin;N4errorout→erroroutput. If error file is missing, its secondary read error is deliberately not substituted for the primary missing/bad status; Status still contains original launch diagnostics. S1→S0→P4/P5. Shared-lookingN4 objects in different cases are distinct instances labelledN4.UNSOLVABLE/N4.DEFAULT in the diagram. No missing status is treated as success.</p>
+<h2 id="section-23">12. LaunchMatlabAdapter.vi - complete direct path and bounded course interface</h2>
+<p>The course supplies MP_LaunchMatlabScript4.vi, copied unmodified in course_materials and runtime. A strings-only binary inspection confirmed references to System Exec and path utilities but cannot establish its connector labels/types/positions. <strong>No connector terminals are invented here.</strong> A direct native LabVIEW System Exec route below is fully specified so the package is constructible before that inspection. It still launches MATLAB and exchanges disk files natively; it does not move assessed image/grid work elsewhere. Use the supplied launcher once its real interface is confirmed.</p>
+<h3>12.1 Adapter panel and cleanup</h3>
+<p>Panel/connector P1 Runtime Path=L1;P2 MATLAB Executable Path=L2;P3 Windows? BooleanTRUE=L3;P4 error in=L4;P5 Use Course Launcher? BooleanFALSE=T1;P6 Script Path indicator=R1;P7 Diagnostics String indicator=R2;P8 error out=R4;R3,T2,B1,B2unassigned. Default direct mode is provisional until the course launcher has been inspected. User selects installed MATLAB executable inP2 (for example bin/matlab.exe onWindows, bin/matlab onmacOS); no personal installation path is embedded in code. MATLAB2019a+ <code>-batch</code> is assumed for direct mode. If older MATLAB is required, use the course launcher after native interface inspection and return version evidence.</p>
+<p>N1Unbundle(status);S0guard;N2BuildPath(solve.m);N3BuildPath(MatlabStatus.txt);N4BuildPath(MatlabError.txt);N5RemoveIfExists;N6RemoveIfExists;S1Case onP5;N7SystemExec;N8FormatIntoString(diagnostics);N9NotEqual returncode0;N10ErrorIf;C1emptyString;C2noerror;C3I32zero;C4BooleanTRUE;C5U32(65536);C6code7008. P4→N1cluster→S0selector. TRUE:emptyPath→P6;emptyString→P7;P4→P8. FALSE:P1→N2/N3/N4base;literalnames→theirname;N2path→P6;N3path→N5File;P4→N5errorin;N4path→N6File;N5errorout→N6errorin;P5→S1selector. Stale-status cleanup finishes before launch. The selected launcher receives N6error and never runs on a prior error. Main also removes the expected old PDF before this adapter, chapter13.</p>
+<h3>12.2 Direct route (S1 FALSE)</h3>
+<p>Create BuildMatlabCommand.vi. Panel/connector: P1 Runtime Path=L1;P2 MATLAB Executable Path=L2;P3 Windows? BooleanTRUE=L3;P4 error in=L4;P5 Command String=R1;P6 error out=R4;remaining unassigned. Defaults emptypaths,TRUE,noerror,emptystring. Objects E0 Unbundle(status),G0 errorCase,E1 Path To String(executable),E2 Path To String(script),E3 BuildPath,E12 StringLength(executable),E13 Equal?,E14 ErrorIf(nonempty),G1 hostCase. Constants K0 I32zero,K1String<code>solve.m</code>,K2Stringempty,K3I32(7008),K4String<code>Select the installed MATLAB executable.</code>,K5BooleanFALSE.</p>
+<p>P4→E0.cluster;E0.status→G0.selector. G0 TRUE:K2→commandoutput;P4→erroroutput. G0 FALSE:P1→E3.base;K1→E3.name;E3.path→E2.path;P2→E1.path;E1.string→E12.string;E12.length→E13.x;K0→E13.y;E13.result→E14.Condition;K3→E14.Code;K4→E14.Message;P4→E14.error in;P3→G1.selector. Bring executable string,script string,E14error into G1 through nonindexing tunnels named exe,script,err. G1 command/error outputs→G0outputs→P5/P6.</p>
+<p>G1 TRUE (Windows) objects E4/E5 Match Regular Expression, W1/W2 StringLength, W3/W4 Equal?,W5AND,W6NOT,W7ErrorIf,E6FormatIntoString;constants WK1 normal-display regex from resources/windows_command_path_regex.txt,WK2I32zero,WK3BooleanFALSE,WK4I32(7008),WK5String<code>Unsafe or missing MATLAB command path.</code>,WK6format from resources/matlab_windows_format.txt. G1.exe→E4.string/W1.string;G1.script→E5.string/W2.string;WK1→E4/E5.regex;WK2→E4/E5.offset;WK3→E4/E5.multiline?/ignore case?;G1.err→E4.error in;E4.error out→E5.error in;E4.offset past match→W3.x;W1.length→W3.y;E5.offset past match→W4.x;W2.length→W4.y;W3.result→W5.x;W4.result→W5.y;W5.result→W6.x;W6.result→W7.Condition;WK4→W7.Code;WK5→W7.Message;E5.error out→W7.error in;WK6→E6.format;G1.exe→E6.argument0;G1.script→E6.argument1;W7.error out→E6.error in;E6.result→G1commandoutput;E6.error out→G1erroroutput.</p>
+<p>G1 FALSE (POSIX) objects E7/E8/E10 SearchAndReplaceString(replaceallTRUE,regexmodeOFF),E9ConcatenateStrings3inputs,E11FormatIntoString;constants UK1singlequote<code>&#39;</code>,UK2five-character shell quote<code>&#39;&quot;&#39;&quot;&#39;</code>,UK3two singlequotes<code>&#39;&#39;</code>,UK4String<code>run(&#39;</code>,UK5String<code>&#39;)</code>,UK6BooleanTRUE,UK7I32zero,UK8format from resources/matlab_posix_format.txt. G1.exe→E7.input;UK1→E7.search;UK2→E7.replace;G1.script→E8.input;UK1→E8.search;UK3→E8.replace;UK4→E9.input0;E8.result→E9.input1;UK5→E9.input2;E9.result→E10.input;UK1→E10.search;UK2→E10.replace;UK6→E7/E8/E10.replaceall;UK7→E7/E8/E10.offset;UK8→E11.format;E7.result→E11.argument0;E10.result→E11.argument1;G1.err→E11.error in;E11.result→G1commandoutput;E11.error out→G1erroroutput. Unused replace counts/offsets are unconnected. All constants are normal-display literal strings. No implicit shell cd: SystemExec workingdirectory is set separately.
+Literal formats, no final LF in the constant:</p>
+<pre><code class="language-text">Windows: cmd /d /s /c &quot;&quot;%s&quot; -wait -batch &quot;run(&#39;%s&#39;)&quot;&quot;
+POSIX:   &#39;%s&#39; -batch &#39;%s&#39;
+</code></pre>
+<p>Back in adapter S1FALSE: N11BuildMatlabCommand withP1Runtime,P2Executable,P3Windows,N6errorin. N11Command→N7commandline;P1→N7workingdirectory;C4→N7waituntilcompletion?;C4→N7runminimized?;C5→N7expectedoutputsize;C1→N7standardinput;N11errorout→N7errorin. N7returncode→N9.x;C3→N9.y;N7returncode/stdout/stderr→N8formatargs0/1/2;format<code>Return code: %d\nstdout:\n%s\nstderr:\n%s\n</code> uses actualLF. C2→N8errorin;N8result→N10Message and Diagnosticsoutput;N9result→N10Condition;C6→N10Code;MergeErrors(N7error,N8error)→N10errorin;N10errorout→erroroutput. MATLAB may emit warnings to stderr; direct mode retains them inDiagnostics but requires both zeroexit and the fresh status check. Unlike C&#39;s strict stderr-empty contract, it does not classify every MATLAB warning as fatal. S1/S0outputs→P7/P8.</p>
+<h3>12.3 Course route (S1 TRUE) and literal interface inspection</h3>
+<p>Until inspection is complete, this case contains ErrorIf(TRUE,7009,<code>Course launcher connector not yet inspected; use direct mode or complete section12.3.</code>,N6error)→erroroutput; same message→Diagnosticsoutput. This is an explicit guarded alternative, not a fake functional supplied VI. Direct mode remains fully constructible. Do not set Use Course Launcher TRUE until the following single boundary is completed.</p>
+<ol>
+<li>Open the preserved copy MP_LaunchMatlabScript4.vi manually in LabVIEW. Do not save over the course original. Save a working copy beside the other source VIs only if the professor&#39;s distribution permits adaptation; otherwise leave unchanged and wrap it.</li>
+<li>Ctrl+H. Show connector pane. For each occupied terminal, click it and observe the highlighted control/indicator; right-clicknumeric controls &gt; Representation. Record the exact label, input/output direction, type and connectorposition in resources/LAUNCHER_INTERFACE_RECORD.txt. Screenshot the entire frontpanel with connector and ContextHelp. Do not infer names from Billard or from compressed binary strings.</li>
+<li>Ctrl+E to its diagram. Locate the course-mentioned test-script option and ensure the production route will be used. Record literal expected script input: basename, path or string, and whether it appends <code>.m</code>. Inspect workingdirectory and whether it waits until completion. Inspect which errors it returns and whether stderr filtering is enabled. Do not blanket-ignore errors. Capture the relevant diagram and VI version in File &gt; VI Properties &gt; General.</li>
+<li>Place the real suppliedVI in adapterS1TRUE. For <strong>each actual script-name/path input</strong>, right-click its terminal&gt;Create Control to obtain the exact type; if Path, connect N2.path; if String fullpath, connect PathToString(N2.path); if basenameString as proven by its diagram, connect constant<code>solve</code> or<code>solve.m</code> EXACTLY as that diagram requires. Use the recorded rule, not a guess. This is the sole course-dependent wiring boundary that cannot be concretely named without native inspection.</li>
+<li>If it has errorin/out, connect N6error→actualerrorin and actualerrorout→adaptererroroutput. If noerrorin, place it inside a Case selected by N6.status: TRUE returnsN6error without calling;FALSE calls it. If noerrorout, downstream CheckMatlabStatus still requires a fresh status; retain launch evidence and do not claim process-level diagnostics are available. If an actual executable-path control exists, connectP2 after converting its proven type; otherwise document how the suppliedVI locatesMATLAB and test missingMATLAB behavior.</li>
+<li>If it returns stdout/stderr/exitcode, build the exact same diagnostics and nonzeroexit guard as directmode using those <strong>recorded actual outputs</strong>. If it does not, set Diagnostics to<code>Course launcher: inspect its returned error and fresh status files.</code> and rely on its actualerror plus CheckMatlabStatus. If it launches asynchronously, keep Course mode disabled and return the inspection record; directmode is already synchronous and complete. Do not insert a guessed fixed sleep.</li>
+<li>Save adapter source; return the record and screenshots for exact terminal reconciliation. Run an intentional success and error script, verify fresh statuses and exit behavior. Only then save Use Course Launcher TRUE as default if course compatibility is established. This guide does not assert that this inspection has happened.</li>
+</ol>
+<p>Course source: Exo.Proj.Binairo.LabVIEW.2.pdf physicalp6. That source gives purpose/co-location/test-switch behavior, not enough machine-readable connector metadata. The old2025 connector is not a replacement.</p>
+<h2 id="section-24">13. BinairoSolver.vi — the complete main pipeline</h2>
+<h3>13.1 Panel, connector and defaults</h3>
+<ol>
+<li>Save a new VI as <code>labview/BinairoSolver.vi</code>. Apply the chapter2 connector pattern. Add the following exact panel objects; clusters use order from left to right in this table. Arrange inputs on the left, picture and results on the right. Large strings use scrollbar-visible multiline displays. The executable path is selected once per installation and saved as a default only on that team&#39;s working copy.</li>
+</ol>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Exact label</th>
+<th>Object/type/default</th>
+<th>Connector</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>M.P1</td>
+<td>PNG path</td>
+<td>Path control, empty, browse existing file</td>
+<td>L1</td>
+</tr>
+<tr>
+<td>M.P2</td>
+<td>Thresholds</td>
+<td>Cluster control: empty DBL98, zero DBL90, one DBL90</td>
+<td>L2</td>
+</tr>
+<tr>
+<td>M.P3</td>
+<td>Options</td>
+<td>Cluster control: solveWithMatlab BooleanTRUE, showPDF BooleanTRUE</td>
+<td>L3</td>
+</tr>
+<tr>
+<td>M.P4</td>
+<td>error in</td>
+<td>Standard error control, no error</td>
+<td>L4</td>
+</tr>
+<tr>
+<td>M.P5</td>
+<td>MATLAB Executable</td>
+<td>Path control, empty</td>
+<td>T1</td>
+</tr>
+<tr>
+<td>M.P6</td>
+<td>Windows?</td>
+<td>Boolean switch TRUE; set FALSE on macOS/Linux</td>
+<td>T2</td>
+</tr>
+<tr>
+<td>M.P7</td>
+<td>Use Course Launcher?</td>
+<td>Boolean switch FALSE</td>
+<td>B1</td>
+</tr>
+<tr>
+<td>M.P8</td>
+<td>Original image</td>
+<td>Native 2D Picture indicator, empty</td>
+<td>R1</td>
+</tr>
+<tr>
+<td>M.P9</td>
+<td>Matrix text</td>
+<td>String indicator empty</td>
+<td>R2</td>
+</tr>
+<tr>
+<td>M.P10</td>
+<td>Status and diagnostics</td>
+<td>String indicator empty</td>
+<td>R3</td>
+</tr>
+<tr>
+<td>M.P11</td>
+<td>error out</td>
+<td>Standard error indicator</td>
+<td>R4</td>
+</tr>
+<tr>
+<td>M.P12</td>
+<td>Runtime directory</td>
+<td>Path indicator empty</td>
+<td>Unassigned</td>
+</tr>
+<tr>
+<td>M.P13</td>
+<td>Grid size</td>
+<td>I32 indicator0</td>
+<td>Unassigned</td>
+</tr>
+<tr>
+<td>M.P14</td>
+<td>Bitmap</td>
+<td>2D Boolean indicator empty</td>
+<td>Unassigned</td>
+</tr>
+<tr>
+<td>M.P15</td>
+<td>Generated script</td>
+<td>String indicator empty</td>
+<td>Unassigned</td>
+</tr>
+<tr>
+<td>M.P16</td>
+<td>PDF path</td>
+<td>Path indicator empty</td>
+<td>Unassigned</td>
+</tr>
+</tbody></table>
+<p>B2 remains unassigned. Set P8 drawing-area background to white with the coloring tool as in geometry7.1. Right-click P8 &gt; Visible Items &gt; Horizontal Scrollbar and Vertical Scrollbar. Drag its drawing-area corner to give a readable approximately650-by620-pixel area; this accommodates the supplied610-by577 image. Scroll to origin before a screenshot. This changes only the panel display, never the bitmap. Input path/control defaults must not be fabricated. Save no-error defaults and empty result indicators before distribution. There is no Run/Stop Boolean or outer While Loop: toolbar Run executes one image once. Keep one pipeline running per runtime directory because Cell.bin and status filenames are deliberately shared.</p>
+<ol start="2">
+<li>Add these diagram constants: M.C0 I32zero; M.C4 I32four; M.CE emptyString; M.CP emptyPath; M.CB emptyBoolean2D; M.CPic empty native2DPicture (create constant from P8 terminal); M.CT BooleanTRUE; M.CF BooleanFALSE; M.CNoErr standard no-error cluster; M.CSourceRegex normal-display string from <code>resources/source_png_regex.txt</code>; M.CSourceCode I32(7010); M.CSourceMessage String<code>Select a nonempty PNG path without newline or NUL characters.</code>; M.CPdfSuffix String<code>.pdf</code>; M.CSpace String with one ASCIIspace; M.CRowEnd String <code>; </code> entered in backslash display (semicolon then actualLF); M.CRowLog String<code>row=%d col=%d %s </code> as actualLF; M.CFailure String<code>Pipeline stopped. Inspect error out and the diagnostics below. </code> as actualLF. Give all constants their stated IDs.</li>
+</ol>
+<h3>13.2 Paths and validation, with all branches</h3>
+<ol start="3">
+<li><p>Place M.N1 Current VI&#39;s Path; M.N2 Strip Path; M.N3 Unbundle By Name(status); M.S0 Case(error); M.N4 Path To String(source); M.N5 Match Regular Expression; M.N6 String Length; M.N7 Equal?; M.N8 NOT; M.N9 ErrorIf; M.N10 ReadImage.vi; M.N11 ComputeRowsCols.vi. Place M.N12 Unbundle(status), M.S1 Case(error). Current VI&#39;s Path has no input. M.N1.path→M.N2.path; M.N2.stripped path→M.P12 and runtime tunnels in subsequent structures. This works from the saved VI in runtime; do not build an executable distribution at this stage because embedded-VI paths need another policy.</p>
+</li>
+<li><p>M.P4→M.N3.cluster; M.N3.status→M.S0.selector. S0 TRUE wires M.CPic→pictureout, M.CB→bitmapout, M.C0→nout, M.CE→matrixout/scriptout, M.CP→pdfout, M.CFailure→statusout, M.P4→errorout. In S0 FALSE: M.P1→M.N4.path; M.N4.string→M.N5.string and M.N6.string; M.CSourceRegex→M.N5.regular expression; M.C0→M.N5.offset; M.CF→M.N5.multiline?/ignore case?; M.P4→M.N5.error in; M.N5.offset past match→M.N7.x; M.N6.length→M.N7.y; M.N7.result→M.N8.x; M.N8.result→M.N9.Condition; M.CSourceCode→M.N9.Code; M.CSourceMessage→M.N9.Message; M.N5.error out→M.N9.error in. This anchored regex checks the complete path, including <code>.png</code> case-insensitively. Existence and content are checked by ReadImage.</p>
+</li>
+<li><p>M.P1→M.N10.PNG path; M.N9.error out→M.N10.error in; M.N10.Bitmap→M.N11.Bitmap and bitmapout; M.N10.Picture→pictureout; M.N10.error out→M.N11.error in; M.N11.n→nout; M.N11.error out→M.N12.cluster→M.S1.selector(status). N10.Width/Height remain unconnected because ComputeRowsCols checks the bitmap. S1 TRUE: M.CE→matrixout/scriptout, M.CP→pdfout, M.CFailure→statusout, M.N11.error out→errorout. Picture/bitmap/n bypass S1, but stay inside S0. S1 FALSE contains all remaining operations. No OCR/script/MATLAB starts on malformed geometry.</p>
+</li>
+<li><p>In S1 FALSE add M.N13 Strip Path(source), M.N14 String Length, M.N15 Subtract, M.N16 String Subset, M.N17 Concatenate Strings2inputs, M.N18 Build Path. M.P1→M.N13.path; M.N13.name→M.N14.string and M.N16.string; M.N14.length→M.N15.x; M.C4→M.N15.y; M.C0→M.N16.offset; M.N15.result→M.N16.length; M.N16.substring→M.N17.input0; M.CPdfSuffix→M.N17.input1; M.N2.stripped path→M.N18.base; M.N17.string→M.N18.name; M.N18.path→pdfout. The extension was validated before subtracting4. <code>foo.png</code> produces runtime/foo.pdf, matching BinairoOutputPath.m. Source Strip Path&#39;s directory output is unused.</p>
+</li>
+<li><p>Place exactly six Build Path nodes M.B1..M.B6 and six RemoveIfExists.vi instances M.D1..M.D6. Constants M.F1..M.F6 are respectively <code>CellValue.txt</code>, <code>CellValue.txt.tmp</code>, <code>solve.m</code>, <code>MatlabStatus.txt</code>, <code>MatlabError.txt</code>, <code>MatlabRun.log</code>. For each k in the explicitly finite set1,2,3,4,5,6: M.N2.stripped path→M.Bk.base; M.Fk→M.Bk.name; M.Bk.path→M.Dk.File. Error chain is M.N11.error out→M.D1.error in; D1out→D2in; D2out→D3in; D3out→D4in; D4out→D5in; D5out→D6in. Add M.D7 RemoveIfExists: M.N18.path→D7.File; D6.error out→D7.error in. This removes only generated files once valid source/geometry is known. On invalid geometry a previous file may remain on disk, but is never reported as fresh success; the UI error is authoritative. Cell.bin is replaced per cell; source PNG is never deleted.</p>
+</li>
+</ol>
+<h3>13.3 The two literal row/column loops</h3>
+<ol start="8">
+<li><p>Place M.LR outer For Loop inside S1 FALSE. M.N11.n→LR.N; disable parallelism; no conditional stop. Add exactly three initialized shift registers: <code>matrix.L/R</code> String initialized M.CE, <code>diag.L/R</code> String initialized M.CE, <code>err.L/R</code> standard error initialized M.D7.error out. Nonindexing input tunnels bring n, Bitmap(N10), GridLines(N11), Runtime(N2), Thresholds(P2), Windows(P6), constants CE,CSpace,CRowEnd,CRowLog,CNoErr,C0. No automatic indexing tunnels anywhere in LR. The fixed n is even and &gt;=2 from geometry. LR.i is the row index.</p>
+</li>
+<li><p>Inside LR place M.LC inner For Loop. LR.n tunnel→LC.N; disable parallelism; no conditional stop. Add exactly three initialized shift registers: <code>row.L/R</code> String initialized LR.CE from outside LC, <code>diag.L/R</code> String initialized LR.diag.L, <code>err.L/R</code> standard error initialized LR.err.L. Nonindexing tunnels bring LR.i as <code>rowIndex</code>, Bitmap, GridLines, Runtime, Thresholds, Windows, CSpace,CRowLog,CNoErr,C0. LC.i is the column index. No auto-indexing tunnels in LC. Do not wire the index from the wrong loop into rowIndex.</p>
+</li>
+<li><p>In LC place M.I1 Unbundle(status), M.IS Case(error), M.I2 Bundle2elements, M.I3 ReadCase.vi, M.I4 Equal?, M.I5 Select(String), M.I6 Concatenate Strings3inputs, M.I7 Format Into String3arguments, M.I8 Concatenate Strings2inputs, M.I9 Merge Errors2inputs, M.I10 Unbundle(status), M.IS2 Case(error). Create M.ICIndex cluster constant(order rowI32=0,colI32=0) and replace M.I2 with <strong>Bundle By Name</strong> using this constant; fields row,col. This preserves the field names expected by ReadCase. Create M.ICEmpty emptyString. All these objects except I1/IS are inside IS FALSE.</p>
+</li>
+<li><p>LC.err.L→I1.cluster; I1.status→IS.selector. IS TRUE: LC.row.L→rowout; LC.diag.L→diagout; LC.err.L→errout. IS FALSE: M.ICIndex→I2.input cluster; LC.rowIndex→I2.row; LC.i→I2.col; LC.Bitmap→I3.Bitmap; LC.GridLines→I3.GridLines; I2.cluster→I3.CellIndex; LC.Runtime→I3.Runtime; LC.Thresholds→I3.Thresholds; LC.Windows→I3.Windows?; LC.err.L→I3.error in.</p>
+</li>
+<li><p>LC.i→I4.x; LC.C0→I4.y; I4.result→I5.s; M.ICEmpty→I5.t; LC.CSpace→I5.f; LC.row.L→I6.input0; I5.output→I6.input1; I3.Token→I6.input2. Thus first token has no leading space; subsequent tokens have one separator. No numeric conversion of NaN is needed to generate valid MATLAB source.</p>
+</li>
+<li><p>LC.CRowLog→I7.format string; LC.rowIndex→I7.argument0; LC.i→I7.argument1; I3.Diagnostics→I7.argument2; LC.CNoErr→I7.error in; LC.diag.L→I8.input0; I7.result→I8.input1; I3.error out→I9.error0; I7.error out→I9.error1; I9.error out→I10.cluster→IS2.selector(status). IS2 TRUE: LC.row.L→rowout; I8.result→diagout; I9.error out→errout. IS2 FALSE: I6.result→rowout; I8.result→diagout; I9.error out→errout. IS2→IS output tunnels; IS.rowout→LC.row.R; IS.diagout→LC.diag.R; IS.errout→LC.err.R. Every register is wired exactly once in every case. A failed cell preserves the existing partial row but blocks all subsequent calls; it cannot insert a fake blank. I3.Percent is unused here but available for a probe in ReadCase.</p>
+</li>
+<li><p>After LC, inside LR, place M.R1 Concatenate Strings3inputs. LR.matrix.L→R1.input0; LC.row.R(final outside)→R1.input1; LR.CRowEnd→R1.input2; R1.result→LR.matrix.R; LC.diag.R(final)→LR.diag.R; LC.err.R(final)→LR.err.R. Empty/partial rows after failure may be visible for diagnosis, but BuildML&#39;s error guard prevents writing or launching them. Neither loop stops early, so shift-register output is always well-defined; after first failure subsequent iterations perform no file/process work.</p>
+</li>
+</ol>
+<h3>13.4 Generate, launch, verify and present errors</h3>
+<ol start="15">
+<li><p>After LR in S1 FALSE, place M.N19 BuildML.vi, M.N20 LaunchMatlabAdapter.vi, M.N21 CheckMatlabStatus.vi, M.N22 Concatenate Strings3inputs, M.N23 Unbundle(status), M.S2 Case(error), M.N24 Concatenate Strings2inputs. Wire LR.matrix.R(final)→N19.MatrixText and matrixout; M.P1→N19.Source PNG; M.P3→N19.Options; M.N2.stripped path→N19.Runtime; LR.err.R(final)→N19.error in; N19.Script Text→scriptout. N19.Script Path is unused because adapter derives the same fixed name.</p>
+</li>
+<li><p>M.N2.stripped path→N20.Runtime and N21.Runtime; M.P5→N20.MATLAB Executable; M.P6→N20.Windows?; M.P7→N20.Use Course Launcher?; N19.error out→N20.error in; N20.Diagnostics→N21.Launch Diagnostics; N20.error out→N21.error in. N20.Script Path is unused. N21.error out→errorout and N23.cluster; N23.status→S2.selector. LR.diag.R(final)→N22.input0; N20.Diagnostics→N22.input1; N21.Status→N22.input2. S2 FALSE:N22.result→statusout. S2 TRUE:M.CFailure→N24.input0;N22.result→N24.input1;N24.result→statusout. Error source/code appear in P11, so even an early failure with no subprocess text is fully visible.</p>
+</li>
+<li><p>Join S1 output tunnels into S0 outputs as described: matrix/script/pdf/status/error; picture/bitmap/n bypass S1 from step5. S0 picture→P8; matrix→P9; status→P10; error→P11; n→P13; bitmap→P14; script→P15; pdf→P16. Runtime P12 is wired directly at step3. Every tunnel is wired in TRUE and FALSE. Run arrow must be unbroken before testing. No Simple Error Handler modal dialogue is needed: P11 displays the complete standard error cluster.</p>
+</li>
+<li><p>Save source VIs and project; close all VIs, assemble into runtime again, then open <strong>runtime/BinairoSolver.vi</strong>. Select the known6x6 PNG and installed MATLAB executable. Keep98/90/90, Windows TRUE on Windows, direct launcher FALSE for Use Course Launcher, both Options TRUE. Set the panel window large enough that P9/P10/P11 can be read. The first successful run must show n=6, the exact matrix from BinairoExamples.m, a generated script and fresh PDF/status. This is the expected observation, not a claimed measured result.</p>
+</li>
+</ol>
+<h2 id="section-25">14. Checkpoints, native tests and return packet</h2>
+<h3>14.1 Small checkpoint VI for binary serialization</h3>
+<ol>
+<li>Save <code>labview/CheckWriteCell.vi</code>, no connector assignments. Panel Q.P1 Path outputFile control empty, Q.P2 error out indicator. Diagram Q.N1 Initialize Array(BooleanFALSE,dimensions35,40), Q.N2 Replace Array Subset, Q.N3 WriteCell.vi; constants Q.CF FALSE,Q.CT TRUE,Q.C35 I32(35),Q.C40 I32(40),Q.C2 I32(2),Q.C9 I32(9),Q.CE noerrorcluster.</li>
+<li>Q.CF→N1.element; Q.C35→N1.dimension size0; Q.C40→N1.dimension size1; N1.array→N2.array; Q.C2→N2.indexrow; Q.C9→N2.indexcol; Q.CT→N2.new element; N2.array→N3.Cell; Q.P1→N3.File; Q.CE→N3.error in; N3.error out→Q.P2. No loops/cases. Choose a disposable file path, e.g. runtime/Asymmetric.bin; run once. Never point at a course fixture.</li>
+<li>In a terminal at project root, paste <code>python tests/inspect_cell.py runtime/Asymmetric.bin --expect-asymmetric</code> (Windows <code>py -3</code> may replace python). Expect width40,height35,1408bytes, only black index89 (row2,col9), payload0/1. The helper only inspects files; it does not replace native serialization. Return the JSON output and actual file on failure.</li>
+</ol>
+<h3>14.2 Checkpoints in exact order</h3>
+<ol>
+<li>ErrorIf tests chapter3, ReadText/WriteText roundtrip raw LF, RemoveIfExists absent/file/directory branches. Use disposable paths only; directory must remain intact and produce7002.</li>
+<li>Geometry guide ReadImage polarity/decode checks, BlackRuns synthetic edge-touching arrays, ComputeRowsCols6/8/4/nonsquare cases, ComputeCellRect first/last/invalid index. Capture the named indicators at each failed checkpoint.</li>
+<li>CheckWriteCell asymmetric test above. Then use ReadCase with row0,col0 of6x6 and inspect Cell.bin: width72,height68,total4904. Supplied Cell0.bin uses74x74 and is a different bordered fixture.</li>
+<li>ParseCellValue exact good/bad strings in chapter8. BuildOCRCommand verify dot decimals under French/Swiss locale. Run actual C through native System Exec: success means clear error, return0, no stdout/stderr and strict parsed result.</li>
+<li>BuildML manually inspect generated rows, NaN, source apostrophe escaping and options. Verify the saved file equals the Script Text indicator byte-for-byte apart from editor display of newline.</li>
+<li>Run native MATLAB tests exactly from MATLAB_OPERATOR_GUIDE.md; retain evidence even if they fail. Complete course-launcher interface record only if using that alternative. Direct launcher must wait and return real exit status; Windows format includes <code>-wait -batch</code>.</li>
+<li>Full pipeline tests1–13 in TEST_PACKAGE.md, including all four option combinations, invalid inputs, missing executables, runtime relocation and injected MATLAB failure. These are all required acceptance checks; passing one6x6 screenshot does not close native verification.</li>
+</ol>
+<h3>14.3 What to capture without writing test code</h3>
+<ol>
+<li>Create <code>evidence/labview_YYYYMMDD/</code> at project root using the actual date. Copy <code>resources/NATIVE_EVIDENCE_FORM.txt</code> there, open it in a text editor and fill the observed version/test/status fields. Use actual names, never guessed results.</li>
+<li>For a failure, do not run another cell/image first: it would overwrite shared files. Save all VIs, copy runtime/Cell.bin, CellValue.txt if present, solve.m, MatlabStatus.txt, MatlabError.txt, MatlabRun.log and relevant PDF into that evidence folder. Keep source PNG with excluded private materials, recording its exact filename/hash in evidence.</li>
+<li>Save main front panel and failing diagram screenshots with object IDs. Include Context Help for a terminal mismatch, Error List if arrow broken, and complete P11 status/code/source. Right-click string indicators &gt; Copy Data (or select text and copy) and paste into UTF-8 text files. For ReadCase capture return code, stdout and stderr separately using probes/indicators created from N11&#39;s actual output terminals; creating an indicator does not change the dataflow. Restore original diagram layout afterward if desired.</li>
+<li>Copy final authoritative <code>.vi</code>, <code>.ctl</code>, <code>.lvproj</code> into labview/ before packaging. Close LabVIEW before making the copy. Keep the supplied unmodified launcher separately so it is never confused with an edited wrapper.</li>
+<li>Paste <code>python tools/collect_native_evidence.py --label LV01</code> from project root (or <code>py -3 ...</code> on Windows); this collects existing generated files and a source hash inventory into a dated evidence folder. It never claims PASS, copies no PNG/course materials into Git, and never operates MATLAB/LabVIEW. Add screenshots and the filled form to the generated folder. Zip that folder plus updated labview/ and return it to this task, or follow TEAM_GITHUB_GUIDE to push allowed files.</li>
+<li>A teammate&#39;s local edits are not backed up until pushed or returned and committed here. One person owns each VI; preserve both conflicting binary versions and use the reconciliation steps in TEAM_GITHUB_GUIDE. After evidence returns, this task reviews actual native results, repairs the package and updates verification status before the report/submission is finalized.</li>
+</ol>
+<h3>14.4 Finish criteria and narrow remaining boundary</h3>
+<p>The first-delivery recipe includes every project-owned VI, typedef, loop/case, serialization, command, parser, script generation and main error chain. It does not contain authored functional <code>.vi</code> files, because construction is explicitly the group&#39;s next step. The supplied launcher is an existing binary included unchanged; its real connector remains the only source-dependent native inspection boundary and has a guarded alternative with a complete synchronous launch recipe. Official current main-connector and final error/submission rules remain provisional, as logged in PROFESSOR_QUESTIONS.md. Geometry assumptions and palette calibration are explicit in the geometry chapter. Native execution may expose version/type/wiring differences; return exact evidence rather than treating this written recipe as execution proof.</p>
+<footer>Binairo2026 project documentation · Markdown source is authoritative. All native results must be supplied by the team.</footer></main></body></html>
