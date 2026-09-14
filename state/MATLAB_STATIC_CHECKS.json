@@ -1,0 +1,85 @@
+{
+  "native_execution": false,
+  "checks": [
+    {
+      "file": "BinairoGridValid.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "DirectValues.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "CreateBinairoFigure.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "CheckVectorUniqueOk.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "SolveBinairo.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "BinairoExamples.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "CheckVectorOk.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "CheckValidMove.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "BinairoWriteText.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "printGrid.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "DispBinairo.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "sample_driver.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "BinairoShapeOK.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "DisplayBinairo.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "BinairoOutputPath.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    },
+    {
+      "file": "RunBinairo.m",
+      "explicit_runtime_loops": 0,
+      "source_review_only": true
+    }
+  ]
+}
