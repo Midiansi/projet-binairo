@@ -1,0 +1,356 @@
+{
+  "environment": "macOS-26.6.2-arm64-arm-64bit",
+  "python": "3.12.14 (main, Aug 25 2026, 13:50:33) [Clang 22.1.3 ]",
+  "executable": "OCR",
+  "native_matlab": false,
+  "native_labview": false,
+  "tests": [
+    {
+      "test": "supplied_Cell0.bin",
+      "status": "PASS",
+      "seconds": 0.0392
+    },
+    {
+      "test": "supplied_Cell1.bin",
+      "status": "PASS",
+      "seconds": 0.034
+    },
+    {
+      "test": "supplied_CellEmpty.bin",
+      "status": "PASS",
+      "seconds": 0.0033
+    },
+    {
+      "test": "exact32_digit0",
+      "status": "PASS",
+      "seconds": 0.0036
+    },
+    {
+      "test": "bottom_right_rectangular_digit0",
+      "status": "PASS",
+      "seconds": 0.0052
+    },
+    {
+      "test": "exact32_digit1",
+      "status": "PASS",
+      "seconds": 0.0034
+    },
+    {
+      "test": "bottom_right_rectangular_digit1",
+      "status": "PASS",
+      "seconds": 0.0037
+    },
+    {
+      "test": "small_empty",
+      "status": "PASS",
+      "seconds": 0.0028
+    },
+    {
+      "test": "small_nonempty",
+      "status": "PASS",
+      "seconds": 0.0034
+    },
+    {
+      "test": "empty_equality_is_not_empty",
+      "status": "PASS",
+      "seconds": 0.0035
+    },
+    {
+      "test": "blank_strict_greater",
+      "status": "PASS",
+      "seconds": 0.0029
+    },
+    {
+      "test": "upper_dimension_empty",
+      "status": "PASS",
+      "seconds": 0.0033
+    },
+    {
+      "test": "invalid_width_0",
+      "status": "PASS",
+      "seconds": 0.0028
+    },
+    {
+      "test": "invalid_height_0",
+      "status": "PASS",
+      "seconds": 0.0034
+    },
+    {
+      "test": "invalid_width_1",
+      "status": "PASS",
+      "seconds": 0.0041
+    },
+    {
+      "test": "invalid_height_1",
+      "status": "PASS",
+      "seconds": 0.0032
+    },
+    {
+      "test": "invalid_width_9",
+      "status": "PASS",
+      "seconds": 0.0027
+    },
+    {
+      "test": "invalid_height_9",
+      "status": "PASS",
+      "seconds": 0.0029
+    },
+    {
+      "test": "invalid_width_257",
+      "status": "PASS",
+      "seconds": 0.0037
+    },
+    {
+      "test": "invalid_height_257",
+      "status": "PASS",
+      "seconds": 0.0036
+    },
+    {
+      "test": "invalid_width_4294967295",
+      "status": "PASS",
+      "seconds": 0.0031
+    },
+    {
+      "test": "invalid_height_4294967295",
+      "status": "PASS",
+      "seconds": 0.0027
+    },
+    {
+      "test": "short_header_0",
+      "status": "PASS",
+      "seconds": 0.0027
+    },
+    {
+      "test": "short_header_1",
+      "status": "PASS",
+      "seconds": 0.0032
+    },
+    {
+      "test": "short_header_2",
+      "status": "PASS",
+      "seconds": 0.0037
+    },
+    {
+      "test": "short_header_3",
+      "status": "PASS",
+      "seconds": 0.0036
+    },
+    {
+      "test": "short_header_4",
+      "status": "PASS",
+      "seconds": 0.0028
+    },
+    {
+      "test": "short_header_5",
+      "status": "PASS",
+      "seconds": 0.0027
+    },
+    {
+      "test": "short_header_6",
+      "status": "PASS",
+      "seconds": 0.0028
+    },
+    {
+      "test": "short_header_7",
+      "status": "PASS",
+      "seconds": 0.0029
+    },
+    {
+      "test": "short_payload",
+      "status": "PASS",
+      "seconds": 0.0037
+    },
+    {
+      "test": "excess_payload",
+      "status": "PASS",
+      "seconds": 0.0031
+    },
+    {
+      "test": "illegal_pixel",
+      "status": "PASS",
+      "seconds": 0.0028
+    },
+    {
+      "test": "big_endian_rejected",
+      "status": "PASS",
+      "seconds": 0.0027
+    },
+    {
+      "test": "no_match",
+      "status": "PASS",
+      "seconds": 0.0029
+    },
+    {
+      "test": "margin_vs_raw_disagreement",
+      "status": "PASS",
+      "seconds": 0.0078
+    },
+    {
+      "test": "exact_tie_select_zero",
+      "status": "PASS",
+      "seconds": 0.0067
+    },
+    {
+      "test": "oracle_noise_0",
+      "status": "PASS",
+      "seconds": 0.0043
+    },
+    {
+      "test": "oracle_noise_1",
+      "status": "PASS",
+      "seconds": 0.0042
+    },
+    {
+      "test": "oracle_noise_2",
+      "status": "PASS",
+      "seconds": 0.0042
+    },
+    {
+      "test": "oracle_noise_3",
+      "status": "PASS",
+      "seconds": 0.0031
+    },
+    {
+      "test": "oracle_noise_4",
+      "status": "PASS",
+      "seconds": 0.0055
+    },
+    {
+      "test": "oracle_noise_5",
+      "status": "PASS",
+      "seconds": 0.0041
+    },
+    {
+      "test": "oracle_noise_6",
+      "status": "PASS",
+      "seconds": 0.0033
+    },
+    {
+      "test": "oracle_noise_7",
+      "status": "PASS",
+      "seconds": 0.0035
+    },
+    {
+      "test": "oracle_noise_8",
+      "status": "PASS",
+      "seconds": 0.0051
+    },
+    {
+      "test": "oracle_noise_9",
+      "status": "PASS",
+      "seconds": 0.004
+    },
+    {
+      "test": "oracle_noise_10",
+      "status": "PASS",
+      "seconds": 0.0031
+    },
+    {
+      "test": "oracle_noise_11",
+      "status": "PASS",
+      "seconds": 0.0037
+    },
+    {
+      "test": "bad_threshold_''",
+      "status": "PASS",
+      "seconds": 0.0035
+    },
+    {
+      "test": "bad_threshold_'-1'",
+      "status": "PASS",
+      "seconds": 0.0036
+    },
+    {
+      "test": "bad_threshold_'101'",
+      "status": "PASS",
+      "seconds": 0.0031
+    },
+    {
+      "test": "bad_threshold_'nan'",
+      "status": "PASS",
+      "seconds": 0.0026
+    },
+    {
+      "test": "bad_threshold_'inf'",
+      "status": "PASS",
+      "seconds": 0.0024
+    },
+    {
+      "test": "bad_threshold_'90x'",
+      "status": "PASS",
+      "seconds": 0.0028
+    },
+    {
+      "test": "bad_threshold_'90,1'",
+      "status": "PASS",
+      "seconds": 0.0034
+    },
+    {
+      "test": "bad_threshold_' 90'",
+      "status": "PASS",
+      "seconds": 0.0037
+    },
+    {
+      "test": "bad_threshold_'90 '",
+      "status": "PASS",
+      "seconds": 0.0029
+    },
+    {
+      "test": "bad_threshold_'1e2'",
+      "status": "PASS",
+      "seconds": 0.0025
+    },
+    {
+      "test": "bad_threshold_'0x64'",
+      "status": "PASS",
+      "seconds": 0.0026
+    },
+    {
+      "test": "argc_user_arguments_0",
+      "status": "PASS",
+      "seconds": 0.0024
+    },
+    {
+      "test": "argc_user_arguments_1",
+      "status": "PASS",
+      "seconds": 0.0025
+    },
+    {
+      "test": "argc_user_arguments_2",
+      "status": "PASS",
+      "seconds": 0.0031
+    },
+    {
+      "test": "argc_user_arguments_3",
+      "status": "PASS",
+      "seconds": 0.0023
+    },
+    {
+      "test": "argc_user_arguments_5",
+      "status": "PASS",
+      "seconds": 0.002
+    },
+    {
+      "test": "argc_user_arguments_6",
+      "status": "PASS",
+      "seconds": 0.0021
+    },
+    {
+      "test": "missing_input",
+      "status": "PASS",
+      "seconds": 0.0023
+    },
+    {
+      "test": "output_path_is_nonempty_directory",
+      "status": "PASS",
+      "seconds": 0.0039
+    },
+    {
+      "test": "output_beside_input_with_spaces_apostrophe",
+      "status": "PASS",
+      "seconds": 0.0041
+    }
+  ],
+  "pass": 69,
+  "fail": 0
+}
