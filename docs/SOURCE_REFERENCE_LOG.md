@@ -65,3 +65,5 @@ These establish primitive behavior, not execution of our VIs. Checked2026-09-14/
 - NI [Format Into String](https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/format-into-string.html): formatting errors must be retained; initial string and growable argument positions explicitly defined.
 - MathWorks [MATLAB startup on Windows](https://www.mathworks.com/help/matlab/ref/matlabwindows.html): direct Windows adapter uses `-wait -batch` to wait for process completion and obtain exit status.
 - Geometry's full primary API list appears in LABVIEW_GEOMETRY_GUIDE section8, covering PNG threshold, native picture/rectangle/depth/palette terminals, search and row/column primitives.
+
+- NI [Open/Create/Replace File](https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/open-create-replace-file.html) and [Delete](https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/delete.html): final check corrected optional-input labels. Open uses disable buffering, not an invented deny/advisory terminal; Delete uses entire hierarchy and confirm, bothFALSE.

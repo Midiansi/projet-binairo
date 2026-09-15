@@ -10,3 +10,5 @@ Verified earlier stage commits:
 - 42cba4ee10c7922d3d16f3167290c17682071872 — MATLAB implementation/source review.
 
 Final-stage commits and exact archive/off-device hash are recorded in the delivery receipt after successful push verification. A local commit is never treated as off-device backup. The separate original/transcript backup remains a manual pending copy, documented in TEAM_GITHUB_GUIDE.
+
+Verified stage4:4142dfb1c8c3d2447e3c2641c188b280f1040120 — complete LabVIEW recipes and first-delivery guides; origin/main hash matched and repository private=true after push. Final package audit changes follow as a separate commit.

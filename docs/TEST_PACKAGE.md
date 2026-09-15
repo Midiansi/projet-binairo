@@ -33,3 +33,7 @@ Use the complete LABVIEW_CONSTRUCTION_GUIDE.md checkpoints. Do these tests in or
 ## Native failure evidence packet
 
 Record actual OS, CPU, LabVIEW and MATLAB versions, compiler/version and last git commit. Save main front panel showing inputs/status/error; relevant diagram including object IDs; Context Help for the failing terminal; every error cluster status/code/source; OCR return code/stdout/stderr; Cell.bin and CellValue.txt; generated solve.m; MatlabStatus.txt, MatlabError.txt and MatlabRun.log; PDF if any. Return a zip named with date and test ID. Keep the original input separately with its filename/hash. Native results have no effect on verification status until inspected; failures are expected to lead to repairs, not manual code improvisation.
+
+## Ready-made supplemental native images
+
+Use all8 files in tests/fixtures/labview/, following EXPECTED.json and its README. These are AI-designed, not official course cases: valid empty4x4, transparent-margin4x4, odd3x3, even rectangular4x6, too-small9px gaps, too-large257px gaps, all-white image and corruptPNG. Exact expected geometry or decoder failures are recorded; every native result remains PENDING. Valid empty grids require a valid solution, not one unique matrix. These files supply the transparent-margin and invalid-input checkpoints mentioned in the guide without requiring the reader to draw or program an image.
