@@ -1,5 +1,6 @@
 function printGrid(grid)
-% PRINTGRID Command Window debug view; NaN visibly represents an empty cell.
-% Supplied interface; AI-assisted team implementation, 2026.
+% PRINTGRID Afficher la grille ; NaN represente une case vide.
+% Fonction conservee car elle figure dans SolveBinairoHeader.m.
+% Implementation avec assistance de Codex, 2026.
 disp(grid);
 end

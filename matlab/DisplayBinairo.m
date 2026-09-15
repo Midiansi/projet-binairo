@@ -1,29 +1,29 @@
 function DisplayBinairo(Original, Solution, file, feasible)
-% DISPLAYBINAIRO Save the course-styled PDF in this runtime directory.
-% Exact signature from current MATLAB exercise 1 p1.
-% AI-assisted team implementation, 2026. Human attribution: project report.
-[pdfPath, ~] = BinairoOutputPath(file);
-if exist(pdfPath, 'file') == 2
-    delete(pdfPath);
+% DISPLAYBINAIRO Enregistrer le PDF dans le dossier des fonctions MATLAB.
+% Signature exacte de l'exercice MATLAB 1, page 1.
+% Implementation avec assistance de Codex, 2026.
+[cheminPdf, ~] = CheminPdfBinairo(file);
+if exist(cheminPdf, 'file') == 2
+    delete(cheminPdf);
 end
-fig = CreateBinairoFigure(Original, Solution, file, feasible);
-closeFigure = onCleanup(@() close(fig)); %#ok<NASGU>
-temporary = [tempname(fileparts(pdfPath)) '.pdf'];
-removeTemporary = onCleanup(@() DeleteTemporary(temporary)); %#ok<NASGU>
-print(fig, temporary, '-dpdf', '-painters');
-info = dir(temporary);
+figureBinairo = CreerFigureBinairo(Original, Solution, file, feasible);
+fermerFigure = onCleanup(@() close(figureBinairo)); %#ok<NASGU>
+temporaire = [tempname(fileparts(cheminPdf)) '.pdf'];
+supprimerTemporaire = onCleanup(@() SupprimerTemporaire(temporaire)); %#ok<NASGU>
+print(figureBinairo, temporaire, '-dpdf', '-painters');
+info = dir(temporaire);
 if isempty(info) || info.bytes == 0
-    error('Binairo:PDFWrite', 'MATLAB did not create a nonempty PDF.');
+    error('Binairo:EcriturePDF', 'MATLAB ne produit aucun PDF non vide.');
 end
-[ok, message] = movefile(temporary, pdfPath, 'f');
+[ok, message] = movefile(temporaire, cheminPdf, 'f');
 if ~ok
-    error('Binairo:PDFWrite', 'Could not save PDF: %s', message);
+    error('Binairo:EcriturePDF', 'Impossible de sauvegarder le PDF : %s', message);
 end
-fprintf('PDF written: %s\n', pdfPath);
+fprintf('PDF enregistre : %s\n', cheminPdf);
 end
 
-function DeleteTemporary(file)
-if exist(file, 'file') == 2
-    delete(file);
+function SupprimerTemporaire(fichier)
+if exist(fichier, 'file') == 2
+    delete(fichier);
 end
 end

@@ -1,7 +1,6 @@
-/* EPFL ME-213 Binairo 2026. AI-assisted implementation by Codex.
- * Team author names: to be supplied before submission; see docs report.
- * Contract and provisional choices: docs/INTERFACE_CONTRACT.md. */
-#include "ocr.h"
+/* EPFL ME-213 Binairo 2026. Implementation avec assistance de Codex.
+ * Noms des membres de l'equipe a renseigner avant remise. */
+#include "reconnaissance.h"
 
 #include <errno.h>
 #include <locale.h>
@@ -9,198 +8,188 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* File-only deletion preserves a directory accidentally named CellValue.txt.
- * ISO remove() may delete an empty directory on POSIX. These equivalent APIs
- * are the only platform-specific operations used by the C executable.
- */
+/* Ces appels suppriment uniquement des fichiers, jamais un repertoire. */
 #ifdef _WIN32
 #include <io.h>
-#define DeleteFileOnly _unlink
+#define SupprimerFichierSeul _unlink
 #else
 #include <unistd.h>
-#define DeleteFileOnly unlink
+#define SupprimerFichierSeul unlink
 #endif
 
-static const char OutputName[] = "CellValue.txt";
-static const char TemporaryName[] = "CellValue.txt.tmp";
+/* CellValue.txt est le nom repete dans les documents techniques.
+ * Le nom Cell1Value.txt de la page des exemples est une coquille. */
+static const char NomSortie[] = "CellValue.txt";
+static const char NomTemporaire[] = "CellValue.txt.tmp";
 
-static int IsSeparator(char character)
+static int EstSeparateur(char caractere)
 {
 #ifdef _WIN32
-    return character == '/' || character == '\\';
+    return caractere == '/' || caractere == '\\';
 #else
-    return character == '/';
+    return caractere == '/';
 #endif
 }
 
-/* Allocate a sibling path without relying on the process current directory.
- * On Windows, preserve C: in drive-relative inputs as well as / and \\.
- */
-static int OutputPaths(const char *input, char **output, char **temporary,
+static int ConstruireCheminsSortie(const char *entree, char **sortie, char **temporaire,
                        const char **description)
 {
-    const char *base = input;
-    const char *cursor;
-    size_t prefix;
-    if (*input == '\0') {
-        *description = "input path must not be empty";
-        return OCR_ARGUMENT_ERROR;
+    const char *nomBase = entree;
+    const char *curseur;
+    size_t longueurPrefixe;
+    if (*entree == '\0') {
+        *description = "le chemin d'entree ne doit pas etre vide";
+        return OCR_ERREUR_ARGUMENT;
     }
 #ifdef _WIN32
-    if (((input[0] >= 'A' && input[0] <= 'Z') ||
-         (input[0] >= 'a' && input[0] <= 'z')) && input[1] == ':') {
-        base = input + 2;
+    if (((entree[0] >= 'A' && entree[0] <= 'Z') ||
+         (entree[0] >= 'a' && entree[0] <= 'z')) && entree[1] == ':') {
+        nomBase = entree + 2;
     }
 #endif
-    for (cursor = input; *cursor != '\0'; ++cursor) {
-        if (IsSeparator(*cursor)) {
-            base = cursor + 1;
+    for (curseur = entree; *curseur != '\0'; ++curseur) {
+        if (EstSeparateur(*curseur)) {
+            nomBase = curseur + 1;
         }
     }
-    if (*base == '\0' || strcmp(base, ".") == 0 || strcmp(base, "..") == 0) {
-        *description = "input path must name a file";
-        return OCR_ARGUMENT_ERROR;
+    if (*nomBase == '\0' || strcmp(nomBase, ".") == 0 || strcmp(nomBase, "..") == 0) {
+        *description = "le chemin d'entree doit designer un fichier";
+        return OCR_ERREUR_ARGUMENT;
     }
-    /* Do not delete the input itself during stale-output cleanup. Windows
-     * filenames are case-insensitive, and the same often holds on macOS.
-     */
+
     {
-        char folded[sizeof TemporaryName];
-        const size_t length = strlen(base);
-        if (length < sizeof folded) {
-            size_t index;
-            for (index = 0; index <= length; ++index) {
-                const char ch = base[index];
-                folded[index] = (ch >= 'A' && ch <= 'Z') ?
-                                (char)(ch - 'A' + 'a') : ch;
+        char minuscules[sizeof NomTemporaire];
+        const size_t longueur = strlen(nomBase);
+        if (longueur < sizeof minuscules) {
+            size_t indice;
+            for (indice = 0; indice <= longueur; ++indice) {
+                const char caractere = nomBase[indice];
+                minuscules[indice] = (caractere >= 'A' && caractere <= 'Z') ?
+                                (char)(caractere - 'A' + 'a') : caractere;
             }
-            if (strcmp(folded, "cellvalue.txt") == 0 ||
-                strcmp(folded, "cellvalue.txt.tmp") == 0) {
-                *description = "input filename conflicts with a reserved OCR output name";
-                return OCR_ARGUMENT_ERROR;
+            if (strcmp(minuscules, "cellvalue.txt") == 0 ||
+                strcmp(minuscules, "cellvalue.txt.tmp") == 0) {
+                *description = "le nom d'entree est reserve a une sortie OCR";
+                return OCR_ERREUR_ARGUMENT;
             }
         }
     }
-    prefix = (size_t)(base - input);
-    if (prefix > SIZE_MAX - sizeof TemporaryName) {
-        *description = "input path is too long";
-        return OCR_ARGUMENT_ERROR;
+    longueurPrefixe = (size_t)(nomBase - entree);
+    if (longueurPrefixe > SIZE_MAX - sizeof NomTemporaire) {
+        *description = "le chemin d'entree est trop long";
+        return OCR_ERREUR_ARGUMENT;
     }
-    *output = malloc(prefix + sizeof OutputName);
-    *temporary = malloc(prefix + sizeof TemporaryName);
-    if (*output == NULL || *temporary == NULL) {
-        *description = "cannot allocate output paths";
-        return OCR_INPUT_ERROR;
+    *sortie = malloc(longueurPrefixe + sizeof NomSortie);
+    *temporaire = malloc(longueurPrefixe + sizeof NomTemporaire);
+    if (*sortie == NULL || *temporaire == NULL) {
+        *description = "impossible d'allouer les chemins de sortie";
+        return OCR_ERREUR_LECTURE;
     }
-    memcpy(*output, input, prefix);
-    memcpy(*output + prefix, OutputName, sizeof OutputName);
-    memcpy(*temporary, input, prefix);
-    memcpy(*temporary + prefix, TemporaryName, sizeof TemporaryName);
-    return OCR_OK;
+    memcpy(*sortie, entree, longueurPrefixe);
+    memcpy(*sortie + longueurPrefixe, NomSortie, sizeof NomSortie);
+    memcpy(*temporaire, entree, longueurPrefixe);
+    memcpy(*temporaire + longueurPrefixe, NomTemporaire, sizeof NomTemporaire);
+    return OCR_SUCCES;
 }
 
-static int RemoveOldFile(const char *path, const char **description)
+static int SupprimerAncienFichier(const char *chemin, const char **description)
 {
-    if (DeleteFileOnly(path) != 0 && errno != ENOENT) {
-        *description = "cannot remove a previous OCR output or temporary file";
-        return OCR_OUTPUT_ERROR;
+    if (SupprimerFichierSeul(chemin) != 0 && errno != ENOENT) {
+        *description = "impossible de supprimer l'ancienne sortie OCR ou son fichier temporaire";
+        return OCR_ERREUR_ECRITURE;
     }
-    return OCR_OK;
+    return OCR_SUCCES;
 }
 
-static int WriteResult(const char *output, const char *temporary,
-                       const OcrResult *result, const char **description)
+static int EcrireResultat(const char *sortie, const char *temporaire,
+                       const ResultatOCR *resultat, const char **description)
 {
-    FILE *stream = fopen(temporary, "wb");
-    int status = OCR_OK;
-    if (stream == NULL) {
-        *description = "cannot create temporary output file";
-        return OCR_OUTPUT_ERROR;
+    FILE *flux = fopen(temporaire, "wb");
+    int etat = OCR_SUCCES;
+    if (flux == NULL) {
+        *description = "impossible de creer le fichier temporaire de sortie";
+        return OCR_ERREUR_ECRITURE;
     }
-    /* Binary mode guarantees one LF even on Windows. Locale is fixed to C
-     * by main, so the serialized percentage always uses a decimal point.
-     */
-    if (fprintf(stream, "d:'%c',%.4f%%\n", result->symbol,
-                result->percentage) < 0 || fflush(stream) != 0 || ferror(stream)) {
-        *description = "cannot write or flush temporary output file";
-        status = OCR_OUTPUT_ERROR;
+
+    /* Six decimales comme sur Moodle ; point decimal et fin de ligne LF. */
+    if (fprintf(flux, "d:'%d', %.6f%%\n", resultat->symbole,
+                resultat->pourcentage) < 0 || fflush(flux) != 0 || ferror(flux)) {
+        *description = "impossible d'ecrire ou de vider le tampon du fichier temporaire";
+        etat = OCR_ERREUR_ECRITURE;
     }
-    if (fclose(stream) != 0 && status == OCR_OK) {
-        *description = "cannot close temporary output file";
-        status = OCR_OUTPUT_ERROR;
+    if (fclose(flux) != 0 && etat == OCR_SUCCES) {
+        *description = "impossible de fermer le fichier temporaire";
+        etat = OCR_ERREUR_ECRITURE;
     }
-    if (status == OCR_OK && rename(temporary, output) != 0) {
-        *description = "cannot publish the completed output file";
-        status = OCR_OUTPUT_ERROR;
+    if (etat == OCR_SUCCES && rename(temporaire, sortie) != 0) {
+        *description = "impossible de mettre en place le fichier de resultat";
+        etat = OCR_ERREUR_ECRITURE;
     }
-    if (status != OCR_OK) {
-        /* Output is never published before every write and close succeeds.
-         * If cleanup itself fails, a .tmp file may remain, never a result.
-         */
-        (void)DeleteFileOnly(temporary);
+    if (etat != OCR_SUCCES) {
+
+        (void)SupprimerFichierSeul(temporaire);
     }
-    return status;
+    return etat;
 }
 
 int main(int argc, char *argv[])
 {
-    OcrCell cell = {0, 0, NULL};
-    OcrThresholds thresholds = {0.0, 0.0, 0.0};
-    OcrResult result = {' ', 0.0, {0, 0}};
-    char *output = NULL;
-    char *temporary = NULL;
-    const char *description = "unspecified OCR error";
-    int status = OCR_OK;
+    CelluleOCR cellule = {0, 0, NULL};
+    SeuilsOCR seuils = {0.0, 0.0, 0.0};
+    ResultatOCR resultat = {-2, 0.0, {0, 0}};
+    char *sortie = NULL;
+    char *temporaire = NULL;
+    const char *description = "erreur OCR non precisee";
+    int etat = OCR_SUCCES;
 
     (void)setlocale(LC_NUMERIC, "C");
     if (argc < 2) {
-        status = OCR_ARGUMENT_ERROR;
-        description = "usage: OCR <Cell.bin-path> <empty-percent> <zero-percent> <one-percent>";
-        goto cleanup;
+        etat = OCR_ERREUR_ARGUMENT;
+        description = "utilisation : OCR <chemin-Cell.bin> <seuil-vide> <seuil-zero> <seuil-un>";
+        goto nettoyage;
     }
-    status = OutputPaths(argv[1], &output, &temporary, &description);
-    if (status != OCR_OK) {
-        goto cleanup;
+    etat = ConstruireCheminsSortie(argv[1], &sortie, &temporaire, &description);
+    if (etat != OCR_SUCCES) {
+        goto nettoyage;
     }
-    /* A discoverable input path invalidates the old result even when a
-     * subsequent argument, input, recognition or write operation fails.
-     */
-    status = RemoveOldFile(output, &description);
-    if (status != OCR_OK) {
-        goto cleanup;
+
+    /* Invalider tout resultat ancien avant de traiter la nouvelle cellule. */
+    etat = SupprimerAncienFichier(sortie, &description);
+    if (etat != OCR_SUCCES) {
+        goto nettoyage;
     }
-    status = RemoveOldFile(temporary, &description);
-    if (status != OCR_OK) {
-        goto cleanup;
+    etat = SupprimerAncienFichier(temporaire, &description);
+    if (etat != OCR_SUCCES) {
+        goto nettoyage;
     }
     if (argc != 5) {
-        status = OCR_ARGUMENT_ERROR;
-        description = "expected exactly four arguments: input path and three thresholds";
-        goto cleanup;
+        etat = OCR_ERREUR_ARGUMENT;
+        description = "quatre arguments attendus : chemin d'entree et trois seuils";
+        goto nettoyage;
     }
-    if (OcrParseThreshold(argv[2], &thresholds.empty) != OCR_OK ||
-        OcrParseThreshold(argv[3], &thresholds.zero) != OCR_OK ||
-        OcrParseThreshold(argv[4], &thresholds.one) != OCR_OK) {
-        status = OCR_ARGUMENT_ERROR;
-        description = "thresholds must be ordinary dot-decimal numbers in [0,100]";
-        goto cleanup;
+    if (ConvertirSeuil(argv[2], &seuils.vide) != OCR_SUCCES ||
+        ConvertirSeuil(argv[3], &seuils.zero) != OCR_SUCCES ||
+        ConvertirSeuil(argv[4], &seuils.un) != OCR_SUCCES) {
+        etat = OCR_ERREUR_ARGUMENT;
+        description = "les seuils doivent etre des nombres decimaux avec un point, dans [0,100]";
+        goto nettoyage;
     }
-    status = OcrReadCell(argv[1], &cell, &description);
-    if (status != OCR_OK) {
-        goto cleanup;
+    etat = LireCellule(argv[1], &cellule, &description);
+    if (etat != OCR_SUCCES) {
+        goto nettoyage;
     }
-    status = OcrRecognize(&cell, &thresholds, &result, &description);
-    if (status != OCR_OK) {
-        goto cleanup;
+    etat = ReconnaitreCellule(&cellule, &seuils, &resultat, &description);
+    if (etat != OCR_SUCCES) {
+        goto nettoyage;
     }
-    status = WriteResult(output, temporary, &result, &description);
+    etat = EcrireResultat(sortie, temporaire, &resultat, &description);
 
-cleanup:
-    OcrFreeCell(&cell);
-    free(output);
-    free(temporary);
-    if (status != OCR_OK) {
-        (void)fprintf(stderr, "OCR E%d: %s\n", status, description);
+nettoyage:
+    LibererCellule(&cellule);
+    free(sortie);
+    free(temporaire);
+    if (etat != OCR_SUCCES) {
+        (void)fprintf(stderr, "OCR E%d: %s\n", etat, description);
     }
-    return status;
+    return etat;
 }

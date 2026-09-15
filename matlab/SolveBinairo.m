@@ -1,47 +1,38 @@
 function [grid, valid] = SolveBinairo(grid)
-% SOLVEBINAIRO Solve an even square double matrix of 0,1 and NaN.
-% [grid,valid] returns the first solution, or the unchanged input and false.
-% Source: SolveBinairoHeader.m (8.9.2026), MATLAB 2 p1, P00 2026.2 pp29,34.
-% The header's "n MUST be odd" is corrected to even, per current P00 p27.
-% AI-assisted team implementation, 2026. Human attribution: project report.
-% Required method: direct deductions, then genuine recursive backtracking.
-% MATLAB find selects the first empty cell in column-major order. There is
-% no claim of a unique solution and no explicit for/while loop.
-original = grid;
+% SOLVEBINAIRO Resoudre une grille par deductions puis essais recursifs 0, 1.
+% Interface et ordre de SolveBinairoHeader.m (8.9.2026) et MATLAB 2, p. 1.
+% La taille est paire selon P00, p. 27 : le mot "odd" de l'en-tete est une coquille.
+% En cas d'echec, renvoyer la derniere grille partielle et valid = false,
+% comme annonce dans l'en-tete fourni. Aucune unicite de solution n'est promise.
+% Implementation avec assistance de Codex, 2026.
 valid = false;
-if ~BinairoGridValid(grid)
+if ~GrilleBinairoValide(grid)
     return
 end
 n = size(grid, 1);
-[direct, ok] = DirectValues(grid, n);
+[grid, ok] = DirectValues(grid, n);
 if ~ok
     return
 end
-first = find(isnan(direct), 1, 'first');
-if isempty(first)
-    grid = direct;
-    valid = true; % DirectValues validates the complete grid before returning.
+premiere = find(isnan(grid), 1, 'first');
+if isempty(premiere)
+    valid = true;
     return
 end
-[r, c] = ind2sub([n n], first);
-if CheckValidMove(direct, r, c, 0, n)
-    trial = direct;
-    trial(r, c) = 0;
-    [candidate, valid] = SolveBinairo(trial);
+[r, c] = ind2sub([n n], premiere);
+baseEssais = grid;
+if CheckValidMove(baseEssais, r, c, 0, n)
+    essai = baseEssais;
+    essai(r, c) = 0;
+    [grid, valid] = SolveBinairo(essai);
     if valid
-        grid = candidate;
         return
     end
 end
-if CheckValidMove(direct, r, c, 1, n)
-    trial = direct; % Restore the branch base; discard every failed deduction.
-    trial(r, c) = 1;
-    [candidate, valid] = SolveBinairo(trial);
-    if valid
-        grid = candidate;
-        return
-    end
+if CheckValidMove(baseEssais, r, c, 1, n)
+    % Repartir de la meme grille avant l'essai : abandonner la branche zero.
+    essai = baseEssais;
+    essai(r, c) = 1;
+    [grid, valid] = SolveBinairo(essai);
 end
-grid = original;
-valid = false;
 end
