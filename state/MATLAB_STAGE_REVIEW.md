@@ -1,7 +1,0 @@
-# MATLAB source-based stage review
-
-Written: required functions with original signatures, direct fixed-point deduction, 0-before-1 recursive backtracking, immutable original on failure, vector validation, unique complete rows/columns, loop-free assessed MATLAB, styled PDF rendering, launcher entry/status/errors, example driver and24-case native runner (22 without viewer). Source expectations independently derived in the prior source-audit stage.
-
-Root reviewed all runtime functions and native runner without executing MATLAB/Octave. Repaired a stray patch '+' in the runner and added '.m' to its self-copy source (mfilename fullpath omits extension). Reviewed batch forced-value propagation: each exclusively legal value is necessary for every completion; simultaneous placement followed by full validation is sound. Repeated recursion fills cells or terminates, with backtracking restoring failed branches. Very large grids may hit MATLAB recursion/resource limits; exception propagates through RunBinairo and is reported, never labelled solved.
-
-The requested independent implementation audit was interrupted by a usage limit and did not produce a completed audit report. This stage's implementation review is therefore a root adversarial self-review, NOT independent validation. Native MATLAB syntax/execution, PDF appearance, viewer behavior, installed release and supplied MATLAB-launch VI remain pending human evidence. Code and planned expected results are not executed native evidence.

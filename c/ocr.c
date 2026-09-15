@@ -10,7 +10,7 @@
 #include <stdlib.h>
 
 /* This supplied header defines storage, so include it in this file only.
- * Restore the unchanged course original into course_materials/ before build.
+ * The unchanged supplied header is kept beside this C source.
  */
 #include "FontRasterized_0_1.h"
 

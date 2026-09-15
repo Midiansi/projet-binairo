@@ -1,2 +1,0 @@
-# Runtime assembly
-All executable/runtime files must share this directory, as required by LabVIEW exercise 1 p10. Run `python tools/prepare_runtime.py` from the project root after a target C build and again after VI edits. Files here are generated working copies, excluded from GitHub. Keep the source VIs in labview/ and edit only one authoritative copy per VI. Never run two pipelines concurrently in this folder. Generated Cell.bin, CellValue.txt, solve.m, PDF, status and diagnostic files stay here until copied to an evidence folder.

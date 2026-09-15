@@ -1,9 +1,0 @@
-# LabVIEW recipe stage review
-
-Complete main and geometry construction recipes, exact resource text, native checklist and evidence collection are authored. No project VI binary was fabricated or natively executed. The supplied launcher is preserved unchanged; its connector cannot be inspected without LabVIEW, with the requested narrow literal inspection procedure and complete synchronous direct route provided.
-
-Independent source-derived geometry work was reconciled with the contract. An independent agent reviewed root-authored guide chapters6–14 and command resources (not its own geometry guide). It found seven concrete issues: parser default Percent wire, MATLAB host selector, regex error chain, declared diagnostic/error-merge objects, per-cell stale-output deletion, threshold serialization precision and an empty-string loop tunnel. Root repaired all seven. Geometry's own source/wiring self-review is not independent.
-
-Further root repairs: Exists VI has no directory output, so File/Directory Info now guards deletion; Windows MATLAB requires -wait with -batch; per-cell cleanup precedes writing/launch; source filename is substituted last after apostrophe escaping; row-major U8 output and width-first U32LE header use one file refnum with no prepended sizes; outer/inner loops initialize all registers; all error cases provide outputs. Thresholds are constrained by explicit four-decimal format/parse equality, not silent UI rounding. Picture indicator white background and scrollbars are specified.
-
-Actual native LabVIEW buildability, default palette calibration, NI version differences, SystemExec quoting/wait/status, output PDF behavior and relocation remain pending. The recipe is construction guidance, not a VI or a native pass. Detailed pending tests appear in TEST_PACKAGE.md and TEST_EVIDENCE.md.
