@@ -14,12 +14,12 @@ n = size(grid, 1);
 if ~ok
     return
 end
-premiere = find(isnan(grid), 1, 'first');
-if isempty(premiere)
+indicesVides = find(isnan(grid));
+if isempty(indicesVides)
     valid = true;
     return
 end
-[r, c] = ind2sub([n n], premiere);
+[r, c] = ind2sub([n n], indicesVides(1));
 baseEssais = grid;
 if CheckValidMove(baseEssais, r, c, 0, n)
     essai = baseEssais;

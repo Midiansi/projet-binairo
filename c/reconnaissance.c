@@ -3,22 +3,17 @@
 #include "reconnaissance.h"
 #include "parametres_ocr.h"
 
-#include <errno.h>
-#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 
 /* Le fichier du professeur definit les tableaux : inclusion dans ce seul C. */
 #include "FontRasterized_0_1.h"
 
-_Static_assert(DigitBitmapWidth == 32, "Le modele du cours doit avoir 32 bits par ligne");
-_Static_assert(DigitBitmapHeight == 32, "Le modele du cours doit avoir 32 lignes");
-
 unsigned char GetDigitBitmapBit(short_t digit, int l, int c)
 {
     /* Convertir avant le decalage pour ne pas decaler un entier signe. */
     const uint32_t bits = (uint32_t)DigitBitmap[digit][l];
-    return (unsigned char)((bits >> (31u - (unsigned int)c)) & UINT32_C(1));
+    return (unsigned char)((bits >> (31u - (unsigned int)c)) & 1u);
 }
 
 unsigned char GetCellBit(unsigned char *cell, int Width, int line, int col)
@@ -33,39 +28,64 @@ static int EstChiffreDecimal(char caractere)
 
 int ConvertirSeuil(const char *texte, double *valeur)
 {
-    const char *curseur = texte;
-    size_t chiffres = 0;
-    char *fin = NULL;
-    double valeurLue;
+    const char *curseur;
+    const char *debutFraction;
+    unsigned int partieEntiere = 0;
+    double fraction = 0.0;
+    int negatif = 0;
+    int chiffrePresent = 0;
+    int chiffreNonNul = 0;
+    int fractionNonNulle = 0;
 
-    if (texte == NULL || valeur == NULL || *curseur == '\0') {
+    if (texte == NULL || valeur == NULL || *texte == '\0') {
         return OCR_ERREUR_ARGUMENT;
     }
+    curseur = texte;
     if (*curseur == '+' || *curseur == '-') {
+        negatif = *curseur == '-';
         ++curseur;
     }
     while (EstChiffreDecimal(*curseur)) {
-        ++chiffres;
+        chiffrePresent = 1;
+        if (*curseur != '0') {
+            chiffreNonNul = 1;
+        }
+        /* La valeur precedente vaut au plus 100 : ce calcul ne peut pas
+         * depasser 1009 avant le test, donc pas de debordement d'entier. */
+        partieEntiere = 10u * partieEntiere + (unsigned int)(*curseur - '0');
+        if (partieEntiere > 100u) {
+            return OCR_ERREUR_ARGUMENT;
+        }
         ++curseur;
     }
+    debutFraction = curseur;
     if (*curseur == '.') {
         ++curseur;
+        debutFraction = curseur;
         while (EstChiffreDecimal(*curseur)) {
-            ++chiffres;
+            chiffrePresent = 1;
+            if (*curseur != '0') {
+                chiffreNonNul = 1;
+                fractionNonNulle = 1;
+            }
             ++curseur;
         }
     }
 
-    if (chiffres == 0 || *curseur != '\0') {
+    if (!chiffrePresent || *curseur != '\0' ||
+        (negatif && chiffreNonNul) ||
+        (partieEntiere == 100u && fractionNonNulle)) {
         return OCR_ERREUR_ARGUMENT;
     }
-    errno = 0;
-    valeurLue = strtod(texte, &fin);
-    if (errno == ERANGE || fin == texte || *fin != '\0' ||
-        !isfinite(valeurLue) || valeurLue < 0.0 || valeurLue > 100.0) {
-        return OCR_ERREUR_ARGUMENT;
+    /* Reconstituer .abc par (a + (b + c/10)/10)/10. La fraction reste
+     * entre 0 et 1, meme si l'argument contient beaucoup de decimales.
+     * Aucun exposant, espace, virgule ou caractere supplementaire n'est
+     * accepte. Le calcul en double a la precision habituelle de ce type. */
+    while (curseur > debutFraction) {
+        --curseur;
+        fraction = ((double)(*curseur - '0') + fraction) / 10.0;
     }
-    *valeur = valeurLue;
+    *valeur = (double)partieEntiere + fraction;
     return OCR_SUCCES;
 }
 
@@ -117,11 +137,8 @@ int LireCellule(const char *chemin, CelluleOCR *cellule, const char **descriptio
         *description = "dimensions de cellule hors des bornes configurees";
         goto nettoyage;
     }
-    if ((size_t)cellule->largeur > SIZE_MAX / (size_t)cellule->hauteur) {
-        etat = OCR_ERREUR_FORMAT;
-        *description = "dimensions trop grandes pour le tableau de pixels";
-        goto nettoyage;
-    }
+    /* Les bornes precedentes limitent le produit a 100 * 100 = 10000.
+     * La multiplication et la taille de l'allocation sont donc bornees. */
     nombrePixels = (size_t)cellule->largeur * (size_t)cellule->hauteur;
     cellule->pixels = malloc(nombrePixels);
     if (cellule->pixels == NULL) {

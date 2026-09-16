@@ -1,18 +1,23 @@
 function ok = GrilleBinairoValide(grille)
-% GRILLEBINAIROVALIDE Verifier toutes les regles, y compris celles des grilles deja completes.
+% GRILLEBINAIROVALIDE Verifier toutes les lignes et toutes les colonnes.
+% Appels des fonctions du professeur ; parcours recursif sans boucle explicite.
 % Implementation avec assistance de Codex, 2026.
 ok = FormatGrilleValide(grille);
-if ~ok
-    return
+if ok
+    n = size(grille, 1);
+    ok = VerifierIntervalle(grille, n, 1, n);
 end
-n = size(grille, 1);
-ok = all(arrayfun(@(k) CheckVectorOk(grille(k, :), n) && ...
-    CheckVectorOk(grille(:, k), n), 1:n));
-if ~ok
-    return
 end
-lignesCompletes = grille(all(~isnan(grille), 2), :);
-colonnesCompletes = grille(:, all(~isnan(grille), 1)).';
-ok = size(unique(lignesCompletes, 'rows'), 1) == size(lignesCompletes, 1) && ...
-    size(unique(colonnesCompletes, 'rows'), 1) == size(colonnesCompletes, 1);
+
+function ok = VerifierIntervalle(grille, n, debut, fin)
+% Subdivision recursive : principe presente en C8 et dans la demo Simpson.
+if debut == fin
+    ok = CheckVectorOk(grille(debut, :), n) && ...
+        CheckVectorOk(grille(:, debut), n) && ...
+        CheckVectorUniqueOk(grille, debut, debut, n);
+else
+    milieu = floor((debut + fin) / 2);
+    ok = VerifierIntervalle(grille, n, debut, milieu) && ...
+        VerifierIntervalle(grille, n, milieu + 1, fin);
+end
 end

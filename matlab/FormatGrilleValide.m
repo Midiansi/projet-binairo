@@ -1,11 +1,15 @@
 function ok = FormatGrilleValide(grille)
-% FORMATGRILLEVALIDE Verifier la representation : matrice double carree, paire, avec 0, 1 ou NaN.
-% Les contradictions entre valeurs sont verifiees par GrilleBinairoValide.
+% FORMATGRILLEVALIDE Verifier une matrice double carree de taille paire.
+% M1 : size, imag et operations matricielles ; M2 : isa ; projet : NaN.
 % Implementation avec assistance de Codex, 2026.
-ok = isa(grille, 'double') && isreal(grille) && ismatrix(grille) && ...
-    size(grille, 1) >= 2 && size(grille, 1) == size(grille, 2) && ...
-    mod(size(grille, 1), 2) == 0;
-if ok
-    ok = all(isnan(grille(:)) | grille(:) == 0 | grille(:) == 1);
+ok = false;
+if ~isa(grille, 'double')
+    return
 end
+n = size(grille, 1);
+if n < 2 || mod(n, 2) ~= 0 || ~isequal(size(grille), [n n])
+    return
+end
+ok = ~any(imag(grille(:)) ~= 0) && ...
+    ~any(~isnan(grille(:)) & grille(:) ~= 0 & grille(:) ~= 1);
 end

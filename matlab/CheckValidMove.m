@@ -1,17 +1,22 @@
 function ok = CheckValidMove(grid, r, c, v, n)
-% CHECKVALIDMOVE Verifier une valeur dans sa ligne et sa colonne, sans changer un indice initial.
-% Interface conservee du fichier SolveBinairoHeader.m du professeur.
+% CHECKVALIDMOVE Essayer une valeur puis verifier sa ligne et sa colonne.
+% Interface de SolveBinairoHeader.m ; indices et comparaisons de M1/M2.
 % Implementation avec assistance de Codex, 2026.
-ok = FormatGrilleValide(grid) && isnumeric(n) && isreal(n) && isscalar(n) && ...
-    n == size(grid, 1) && isnumeric(v) && isreal(v) && isscalar(v) && ...
-    (v == 0 || v == 1) && ...
-    isnumeric(r) && isreal(r) && isscalar(r) && r >= 1 && r <= n && r == fix(r) && ...
-    isnumeric(c) && isreal(c) && isscalar(c) && c >= 1 && c <= n && c == fix(c);
-if ~ok
+ok = false;
+if ~FormatGrilleValide(grid) || ~isa(n, 'double') || numel(n) ~= 1 || ...
+        n ~= size(grid, 1) || ~isa(v, 'double') || numel(v) ~= 1 || ...
+        ~(v == 0 || v == 1)
+    return
+end
+if ~isa(r, 'double') || ~isa(c, 'double') || numel(r) ~= 1 || numel(c) ~= 1
+    return
+end
+if imag(r) ~= 0 || imag(c) ~= 0 || ...
+        ~(r >= 1 && r <= n && c >= 1 && c <= n) || ...
+        mod(r, 1) ~= 0 || mod(c, 1) ~= 0
     return
 end
 if ~isnan(grid(r, c)) && grid(r, c) ~= v
-    ok = false;
     return
 end
 grid(r, c) = v;

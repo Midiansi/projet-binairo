@@ -3,7 +3,7 @@ function [grid, ok] = DirectValues(grid, n)
 % Ordre de SolveBinairoHeader.m : visiter chaque case vide, affecter sa seule
 % valeur possible, passer a la suivante, puis recommencer si la grille change.
 % Implementation avec assistance de Codex, 2026.
-ok = isnumeric(n) && isreal(n) && isscalar(n) && ...
+ok = isa(n, 'double') && numel(n) == 1 && ...
     GrilleBinairoValide(grid) && n == size(grid, 1);
 if ~ok
     return
@@ -41,8 +41,8 @@ if ~zeroPossible && ~unPossible
     ok = false;
     return
 end
-if xor(zeroPossible, unPossible)
-    grille(r, c) = double(unPossible);
+if zeroPossible ~= unPossible
+    grille(r, c) = 1 * unPossible;
     modifiee = true;
 end
 end
