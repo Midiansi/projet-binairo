@@ -4,7 +4,6 @@ function DisplayBinairo(Original, Solution, file, feasible)
 % print et ses options : fonction indiquee page 2, qui renvoie a help/doc.
 % Une erreur MATLAB est transmise au lanceur LabVIEW ; aucun resultat ne doit
 % etre utilise par LabVIEW si le lancement ou le script signale une erreur.
-% Implementation avec assistance de Codex, 2026.
 [cheminPdf, ~] = CheminPdfBinairo(file);
 figureBinairo = CreerFigureBinairo(Original, Solution, file, feasible);
 print(figureBinairo, cheminPdf, '-dpdf', '-painters');

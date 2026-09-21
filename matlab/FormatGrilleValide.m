@@ -1,7 +1,6 @@
 function ok = FormatGrilleValide(grille)
 % FORMATGRILLEVALIDE Verifier une matrice double carree de taille paire.
 % M1 : size, imag et operations matricielles ; M2 : isa ; projet : NaN.
-% Implementation avec assistance de Codex, 2026.
 ok = false;
 if ~isa(grille, 'double')
     return

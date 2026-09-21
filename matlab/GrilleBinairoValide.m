@@ -1,7 +1,6 @@
 function ok = GrilleBinairoValide(grille)
 % GRILLEBINAIROVALIDE Verifier toutes les lignes et toutes les colonnes.
 % Appels des fonctions du professeur ; parcours recursif sans boucle explicite.
-% Implementation avec assistance de Codex, 2026.
 ok = FormatGrilleValide(grille);
 if ok
     n = size(grille, 1);

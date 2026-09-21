@@ -1,7 +1,6 @@
 function ok = CheckVectorOk(vector, n)
 % CHECKVECTOROK Verifier les comptes et les suites de trois chiffres.
 % Interface du professeur. Operations de M1/M2 et fonctions de MATLAB 2 Binairo.
-% Implementation avec assistance de Codex, 2026.
 ok = false;
 if ~isa(n, 'double') || numel(n) ~= 1 || imag(n) ~= 0 || ...
         ~(n >= 2) || mod(n, 2) ~= 0 || ~isa(vector, 'double')

@@ -2,7 +2,6 @@ function figureBinairo = CreerFigureBinairo(grilleInitiale, grilleResolue, fichi
 % CREERFIGUREBINAIRO Construire la figure utilisee par DisplayBinairo ; son appelant la ferme.
 % Presentation : exercice MATLAB 1, p. 1 ; P00, p. 32 ; PDF exemples du cours.
 % Le texte == Error == est conserve tel que demande par le professeur.
-% Implementation avec assistance de Codex, 2026.
 if ~FormatGrilleValide(grilleInitiale) || ~FormatGrilleValide(grilleResolue) || ...
         ~isequal(size(grilleInitiale), size(grilleResolue))
     error('Binairo:GrilleAffichage', 'Les grilles doivent etre carrees, de meme taille paire, de type double, avec 0, 1 ou NaN.');

@@ -3,7 +3,6 @@ function [cheminPdf, nomSource] = CheminPdfBinairo(fichier)
 % Le script solve.m est lance dans le dossier contenant les fonctions MATLAB.
 % Le PDF est ecrit dans ce dossier courant. Aucun chemin personnel n'est fixe.
 % Techniques : matrices de caracteres, find et indexation (M1/M2).
-% Implementation avec assistance de Codex, 2026.
 if ~isa(fichier, 'char') || size(fichier, 1) ~= 1 || isempty(fichier) || ...
         any(fichier == 0 | fichier == 10 | fichier == 13)
     error('Le fichier PNG doit etre une ligne de caracteres non vide.');

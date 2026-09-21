@@ -1,7 +1,6 @@
 function ok = CheckVectorUniqueOk(grid, r, c, n)
 % CHECKVECTORUNIQUEOK Comparer une ligne/colonne complete aux autres.
 % M1 : ones, produit matriciel et sum ; M3 : indexation logique.
-% Implementation avec assistance de Codex, 2026.
 ok = false;
 if ~FormatGrilleValide(grid) || ~isa(n, 'double') || numel(n) ~= 1 || ...
         n ~= size(grid, 1) || ~isa(r, 'double') || ~isa(c, 'double') || ...

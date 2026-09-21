@@ -4,7 +4,6 @@ function [grid, valid] = SolveBinairo(grid)
 % La taille est paire selon P00, p. 27 : le mot "odd" de l'en-tete est une coquille.
 % En cas d'echec, renvoyer la derniere grille partielle et valid = false,
 % comme annonce dans l'en-tete fourni. Aucune unicite de solution n'est promise.
-% Implementation avec assistance de Codex, 2026.
 valid = false;
 if ~GrilleBinairoValide(grid)
     return

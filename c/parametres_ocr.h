@@ -1,4 +1,4 @@
-/* EPFL ME-213 Binairo 2026. Implementation avec assistance de Codex.
+/* EPFL ME-213 Binairo 2026.
  * Noms des membres de l'equipe a renseigner avant remise. */
 #ifndef BINAIRO_PARAMETRES_OCR_H
 #define BINAIRO_PARAMETRES_OCR_H
