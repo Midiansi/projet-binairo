@@ -4,22 +4,23 @@
 #include "parametres_ocr.h"
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 /* CellValue.txt est le nom repete dans les documents techniques.
  * Le nom Cell1Value.txt de la page des exemples est une coquille. */
 static const char NomSortie[] = "CellValue.txt";
 
-static int ConstruireCheminSortie(const char *entree, char *sortie,
+static int ConstruireCheminSortie(const char *entree, char **sortie,
                                   const char **description)
 {
     size_t longueur = 0;
     size_t debutNom = 0;
     size_t finNom;
     size_t indice;
-    char nomMinuscules[OCR_TAILLE_CHEMIN];
+    char *nomMinuscules;
 
-    /* La borne est verifiee avant toute copie dans un tableau fixe. */
+    /* La borne est verifiee avant toute allocation ou copie. */
     while (longueur < OCR_TAILLE_CHEMIN && entree[longueur] != '\0') {
         ++longueur;
     }
@@ -57,6 +58,11 @@ static int ConstruireCheminSortie(const char *entree, char *sortie,
         *description = "le chemin d'entree doit designer un fichier";
         return OCR_ERREUR_ARGUMENT;
     }
+    nomMinuscules = malloc(finNom - debutNom + 1);
+    if (nomMinuscules == NULL) {
+        *description = "impossible d'allouer le nom du fichier";
+        return OCR_ERREUR_LECTURE;
+    }
     for (indice = debutNom; indice < finNom; ++indice) {
         char caractere = entree[indice];
         if (caractere >= 'A' && caractere <= 'Z') {
@@ -68,14 +74,21 @@ static int ConstruireCheminSortie(const char *entree, char *sortie,
     if (strcmp(nomMinuscules, "cellvalue.txt") == 0 ||
         strcmp(nomMinuscules, "cellvalue.txt.tmp") == 0) {
         *description = "le nom d'entree est reserve a une sortie OCR";
+        free(nomMinuscules);
         return OCR_ERREUR_ARGUMENT;
     }
+    free(nomMinuscules);
     if (debutNom + sizeof NomSortie > OCR_TAILLE_CHEMIN) {
         *description = "le chemin du resultat serait trop long";
         return OCR_ERREUR_ARGUMENT;
     }
-    memcpy(sortie, entree, debutNom);
-    memcpy(sortie + debutNom, NomSortie, sizeof NomSortie);
+    *sortie = malloc(debutNom + sizeof NomSortie);
+    if (*sortie == NULL) {
+        *description = "impossible d'allouer le chemin du resultat";
+        return OCR_ERREUR_LECTURE;
+    }
+    memcpy(*sortie, entree, debutNom);
+    memcpy(*sortie + debutNom, NomSortie, sizeof NomSortie);
     return OCR_SUCCES;
 }
 
@@ -123,7 +136,7 @@ int main(int argc, char *argv[])
     CelluleOCR cellule = {0, 0, NULL};
     SeuilsOCR seuils = {0.0, 0.0, 0.0};
     ResultatOCR resultat = {-2, 0.0, {0, 0}};
-    char cheminSortie[OCR_TAILLE_CHEMIN];
+    char *cheminSortie = NULL;
     FILE *sortie = NULL;
     const char *description = "erreur OCR non precisee";
     int etat = OCR_SUCCES;
@@ -133,7 +146,7 @@ int main(int argc, char *argv[])
         description = "utilisation : OCR <chemin-Cell.bin> <seuil-vide> <seuil-zero> <seuil-un>";
         goto nettoyage;
     }
-    etat = ConstruireCheminSortie(argv[1], cheminSortie, &description);
+    etat = ConstruireCheminSortie(argv[1], &cheminSortie, &description);
     if (etat != OCR_SUCCES) {
         goto nettoyage;
     }
@@ -179,6 +192,7 @@ nettoyage:
         description = "impossible de fermer le fichier de resultat";
     }
     LibererCellule(&cellule);
+    free(cheminSortie);
     if (etat != OCR_SUCCES) {
         /* Une panne d'ecriture peut laisser un resultat partiel ; le code
          * non nul et stderr interdisent de l'utiliser dans la suite. */

@@ -8,7 +8,7 @@
 #define OCR_DIMENSION_MIN 10u
 #define OCR_DIMENSION_MAX 100u
 
-/* Taille fixe du tableau des chemins, caractere final nul compris.
+/* Limite de taille des chemins, caractere final nul compris.
  * Tout chemin ou chemin de sortie plus long est refuse avant copie. */
 #define OCR_TAILLE_CHEMIN 1024
 
