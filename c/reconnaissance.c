@@ -1,5 +1,5 @@
 /* Projet Binairo - ME-213
- * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+ * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
  * Lecture des pixels et reconnaissance des chiffres 0 et 1.
  */
 #include "reconnaissance.h"

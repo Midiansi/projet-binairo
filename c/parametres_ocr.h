@@ -1,5 +1,5 @@
 /* Projet Binairo - ME-213
- * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+ * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
  * Bornes des dimensions et des chemins utilises par OCR.
  */
 #ifndef BINAIRO_PARAMETRES_OCR_H

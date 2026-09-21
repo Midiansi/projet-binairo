@@ -1,6 +1,6 @@
 function [grid, ok] = DirectValues(grid, n)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
 % Appliquer les deductions certaines jusqu'a stabilisation ou contradiction.
 % 1) Direct solution:
 %   Do until no grid change or error

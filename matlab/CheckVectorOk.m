@@ -1,6 +1,6 @@
 function ok = CheckVectorOk(vector, n)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
 % Verifier les comptes et les suites de trois dans une ligne ou une colonne.
   % Check if the current vector (row or col) is valid
   % Test if a row/col has 3 indentical following cells (different than NaN) -> not ok

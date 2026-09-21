@@ -1,5 +1,5 @@
 /* Projet Binairo - ME-213
- * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+ * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
  * Types, codes de retour et fonctions de reconnaissance.
  */
 #ifndef BINAIRO_RECONNAISSANCE_H

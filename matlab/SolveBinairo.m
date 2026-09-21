@@ -27,7 +27,7 @@
 %% ------------------------------------------------------------------------------------------------------
 function [grid, valid] = SolveBinairo(grid)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
 % Resoudre par deductions puis par essais recursifs de 0 et de 1.
   % this function can call itself recursively
   %
