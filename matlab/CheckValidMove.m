@@ -1,6 +1,4 @@
 function ok = CheckValidMove(grid, r, c, v, n)
-% CHECKVALIDMOVE Essayer une valeur puis verifier sa ligne et sa colonne.
-% Interface de SolveBinairoHeader.m ; indices et comparaisons de M1/M2.
 ok = false;
 if ~FormatGrilleValide(grid) || ~isa(n, 'double') || numel(n) ~= 1 || ...
         n ~= size(grid, 1) || ~isa(v, 'double') || numel(v) ~= 1 || ...

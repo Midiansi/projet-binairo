@@ -1,6 +1,4 @@
 function ok = CheckVectorUniqueOk(grid, r, c, n)
-% CHECKVECTORUNIQUEOK Comparer une ligne/colonne complete aux autres.
-% M1 : ones, produit matriciel et sum ; M3 : indexation logique.
 ok = false;
 if ~FormatGrilleValide(grid) || ~isa(n, 'double') || numel(n) ~= 1 || ...
         n ~= size(grid, 1) || ~isa(r, 'double') || ~isa(c, 'double') || ...
@@ -14,7 +12,6 @@ if imag(r) ~= 0 || imag(c) ~= 0 || ...
 end
 ok = true;
 if ~any(isnan(grid(r, :)))
-    % Repeter la ligne r par un produit matriciel, puis compter les egalites.
     identiques = sum(grid == ones(n, 1) * grid(r, :), 2) == n;
     identiques(r) = false;
     ok = ~any(identiques);

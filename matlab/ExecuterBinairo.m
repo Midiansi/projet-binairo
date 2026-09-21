@@ -1,9 +1,4 @@
 function ExecuterBinairo(B, fichierSource, resoudreAvecMatlab, afficherPdf)
-% EXECUTERBINAIRO Appel possible depuis solve.m, genere par LabVIEW.
-% Le dossier courant doit contenir les fonctions MATLAB et recevoir le PDF.
-% Les deux options sont celles de l'interface du projet Binairo (P00, p. 26).
-% uiopen pour le PDF : addendum du cours 2025, page PDF 15.
-% Les erreurs natives sont transmises au lanceur, sans journal supplementaire.
 if ~isa(resoudreAvecMatlab, 'logical') || numel(resoudreAvecMatlab) ~= 1 || ...
         ~isa(afficherPdf, 'logical') || numel(afficherPdf) ~= 1
     error('Les options de resolution et affichage doivent etre des scalaires logiques.');

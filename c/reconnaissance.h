@@ -1,5 +1,3 @@
-/* EPFL ME-213 Binairo 2026.
- * Noms des membres de l'equipe a renseigner avant remise. */
 #ifndef BINAIRO_RECONNAISSANCE_H
 #define BINAIRO_RECONNAISSANCE_H
 
@@ -28,22 +26,15 @@ typedef struct {
 } SeuilsOCR;
 
 typedef struct {
-    int symbole; /* 0, 1 ou -2 pour une case vide, comme sur Moodle. */
+    int symbole;
     double pourcentage;
     unsigned int maximum[2];
 } ResultatOCR;
 
-/* Noms et parametres des exemples du professeur (exercice OCR, p. 2).
- * Les indices commencent a zero ; les appelants verifient les bornes.
- * short_t est defini ici car ce nom du document ne fait pas partie du C. */
 typedef int16_t short_t;
 unsigned char GetDigitBitmapBit(short_t digit, int l, int c);
 unsigned char GetCellBit(unsigned char *cell, int Width, int line, int col);
 
-/* ConvertirSeuil accepte un signe facultatif, des chiffres et un point
- * facultatif, sans espaces ni exposant, uniquement entre 0 et 100.
- * LireCellule exige pixels == NULL. LibererCellule libere puis remet a zero.
- * Les erreurs renvoient un EtatOCR et une description statique. */
 int ConvertirSeuil(const char *texte, double *valeur);
 int LireCellule(const char *chemin, CelluleOCR *cellule, const char **description);
 void LibererCellule(CelluleOCR *cellule);

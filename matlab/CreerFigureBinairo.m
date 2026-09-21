@@ -1,7 +1,4 @@
 function figureBinairo = CreerFigureBinairo(grilleInitiale, grilleResolue, fichier, faisable)
-% CREERFIGUREBINAIRO Construire la figure utilisee par DisplayBinairo ; son appelant la ferme.
-% Presentation : exercice MATLAB 1, p. 1 ; P00, p. 32 ; PDF exemples du cours.
-% Le texte == Error == est conserve tel que demande par le professeur.
 if ~FormatGrilleValide(grilleInitiale) || ~FormatGrilleValide(grilleResolue) || ...
         ~isequal(size(grilleInitiale), size(grilleResolue))
     error('Binairo:GrilleAffichage', 'Les grilles doivent etre carrees, de meme taille paire, de type double, avec 0, 1 ou NaN.');
@@ -16,7 +13,7 @@ if faisable && (~GrilleBinairoValide(grilleResolue) || any(grilleResolue(indices
     error('Binairo:SolutionAffichage', 'Une solution affichee comme faisable doit respecter les regles et les indices initiaux.');
 end
 if ~faisable
-    grilleResolue = grilleInitiale; % En cas d'echec, afficher seulement les indices initiaux.
+    grilleResolue = grilleInitiale;
 end
 n = size(grilleInitiale, 1);
 lignesNom = DecouperNom(nomSource);
@@ -44,7 +41,6 @@ text(axesBinairo, 0, -hauteurEntete + 0.12 * n / 6, lignesNom, ...
     'Color', [0 0 1], 'FontWeight', 'bold', 'FontSize', 10, ...
     'HorizontalAlignment', 'left', 'VerticalAlignment', 'top', ...
     'Interpreter', 'none');
-% datetime fournit les composantes de la date ; num2str les met en texte.
 dateCreation = datetime('now');
 texteDate = num2str([dateCreation.Day dateCreation.Month dateCreation.Year ...
     dateCreation.Hour dateCreation.Minute floor(dateCreation.Second)], ...
@@ -62,7 +58,6 @@ drawnow;
 end
 
 function lignes = DecouperNom(nom)
-% Cellules de caracteres (M3), indexation (M1) et recursion (ICC 13/14).
 if numel(nom) <= 32
     lignes = {nom};
 else
@@ -71,7 +66,6 @@ end
 end
 
 function DessinerChiffre(axesBinairo, x, y, grille, masque, chiffre, couleur, taille)
-% text et num2str sont demandes dans l'exercice Binairo MATLAB 1.
 indices = masque & grille == chiffre;
 if any(indices(:))
     text(axesBinairo, x(indices), y(indices), num2str(chiffre), ...

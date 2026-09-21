@@ -1,5 +1,3 @@
-/* EPFL ME-213 Binairo 2026.
- * Noms des membres de l'equipe a renseigner avant remise. */
 #include "reconnaissance.h"
 #include "parametres_ocr.h"
 
@@ -7,8 +5,6 @@
 #include <stdlib.h>
 #include <string.h>
 
-/* CellValue.txt est le nom repete dans les documents techniques.
- * Le nom Cell1Value.txt de la page des exemples est une coquille. */
 static const char NomSortie[] = "CellValue.txt";
 
 static int ConstruireCheminSortie(const char *entree, char **sortie,
@@ -20,7 +16,6 @@ static int ConstruireCheminSortie(const char *entree, char **sortie,
     size_t indice;
     char *nomMinuscules;
 
-    /* La borne est verifiee avant toute allocation ou copie. */
     while (longueur < OCR_TAILLE_CHEMIN && entree[longueur] != '\0') {
         ++longueur;
     }
@@ -28,9 +23,7 @@ static int ConstruireCheminSortie(const char *entree, char **sortie,
         *description = "chemin d'entree vide ou trop long (1023 caracteres maximum)";
         return OCR_ERREUR_ARGUMENT;
     }
-    /* Accepter les chemins usuels Windows et Unix sans appel au systeme.
-     * Les deux barres sont des separateurs ; une barre inverse litterale
-     * dans un nom de fichier Unix n'est donc pas prise en charge. */
+
     if (longueur >= 2 && entree[1] == ':' &&
         ((entree[0] >= 'A' && entree[0] <= 'Z') ||
          (entree[0] >= 'a' && entree[0] <= 'z'))) {
@@ -48,8 +41,7 @@ static int ConstruireCheminSortie(const char *entree, char **sortie,
         }
     }
     finNom = longueur;
-    /* Windows ignore certains points/espaces terminaux. Les ignorer aussi
-     * dans le controle protege les variantes du nom de sortie reserve. */
+
     while (finNom > debutNom &&
            (entree[finNom - 1] == '.' || entree[finNom - 1] == ' ')) {
         --finNom;
@@ -100,8 +92,7 @@ static int VerifierAncienResultat(const char *chemin, const char **description)
     int etat = OCR_SUCCES;
 
     if (ancien == NULL) {
-        /* Le fichier peut ne pas encore exister. L'ouverture en ecriture
-         * verifiera ensuite que sa creation est possible. */
+
         return OCR_SUCCES;
     }
     lus = fread(debut, 1, sizeof debut, ancien);
@@ -121,8 +112,7 @@ static int VerifierAncienResultat(const char *chemin, const char **description)
 static int EcrireResultat(FILE *sortie, const ResultatOCR *resultat,
                           const char **description)
 {
-    /* Six decimales comme sur Moodle. L'ouverture en mode binaire conserve
-     * LF. Le C demarre avec un point decimal, sans configuration de locale. */
+
     if (fprintf(sortie, "d:'%d', %.6f%%\n", resultat->symbole,
                 resultat->pourcentage) < 0 || fflush(sortie) != 0 || ferror(sortie)) {
         *description = "impossible d'ecrire ou de vider le tampon du resultat";
@@ -157,23 +147,17 @@ int main(int argc, char *argv[])
         description = "les seuils doivent etre des nombres decimaux avec un point, dans [0,100]";
         goto nettoyage;
     }
-    /* Lire et fermer toute l'entree avant d'ouvrir un fichier en ecriture. */
+
     etat = LireCellule(argv[1], &cellule, &description);
     if (etat != OCR_SUCCES) {
         goto nettoyage;
     }
 
-    /* Un resultat non vide doit commencer par d:'. Une cellule binaire
-     * valide ne peut pas avoir ce prefixe : ce controle protege notamment
-     * l'entree si le nom de sortie designe accidentellement le meme fichier.
-     * Utiliser des fichiers ordinaires que personne ne modifie en parallele. */
     etat = VerifierAncienResultat(cheminSortie, &description);
     if (etat != OCR_SUCCES) {
         goto nettoyage;
     }
-    /* L'ouverture vide l'ancien resultat avant la reconnaissance. En cas
-     * d'erreur anterieure, un ancien resultat peut encore exister : l'appelant
-     * ne doit jamais le lire si le code de retour du programme est non nul. */
+
     sortie = fopen(cheminSortie, "wb");
     if (sortie == NULL) {
         etat = OCR_ERREUR_ECRITURE;
@@ -194,8 +178,7 @@ nettoyage:
     LibererCellule(&cellule);
     free(cheminSortie);
     if (etat != OCR_SUCCES) {
-        /* Une panne d'ecriture peut laisser un resultat partiel ; le code
-         * non nul et stderr interdisent de l'utiliser dans la suite. */
+
         fprintf(stderr, "OCR E%d: %s\n", etat, description);
     }
     return etat;

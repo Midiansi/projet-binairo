@@ -1,9 +1,4 @@
 function [grid, valid] = SolveBinairo(grid)
-% SOLVEBINAIRO Resoudre une grille par deductions puis essais recursifs 0, 1.
-% Interface et ordre de SolveBinairoHeader.m (8.9.2026) et MATLAB 2, p. 1.
-% La taille est paire selon P00, p. 27 : le mot "odd" de l'en-tete est une coquille.
-% En cas d'echec, renvoyer la derniere grille partielle et valid = false,
-% comme annonce dans l'en-tete fourni. Aucune unicite de solution n'est promise.
 valid = false;
 if ~GrilleBinairoValide(grid)
     return
@@ -29,7 +24,6 @@ if CheckValidMove(baseEssais, r, c, 0, n)
     end
 end
 if CheckValidMove(baseEssais, r, c, 1, n)
-    % Repartir de la meme grille avant l'essai : abandonner la branche zero.
     essai = baseEssais;
     essai(r, c) = 1;
     [grid, valid] = SolveBinairo(essai);

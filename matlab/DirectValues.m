@@ -1,7 +1,4 @@
 function [grid, ok] = DirectValues(grid, n)
-% DIRECTVALUES Appliquer les deductions certaines jusqu'a stabilisation.
-% Ordre de SolveBinairoHeader.m : visiter chaque case vide, affecter sa seule
-% valeur possible, passer a la suivante, puis recommencer si la grille change.
 ok = isa(n, 'double') && numel(n) == 1 && ...
     GrilleBinairoValide(grid) && n == size(grid, 1);
 if ~ok
@@ -15,8 +12,6 @@ end
 end
 
 function [grille, ok, modifiee] = ParcourirCases(grille, n, indicesVides, debut, fin)
-% Parcourir la moitie gauche avant la droite, en transmettant la grille modifiee.
-% L'ordre reste celui des indices ; la profondeur du parcours est logarithmique.
 ok = true;
 modifiee = false;
 if debut > fin

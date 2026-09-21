@@ -1,17 +1,14 @@
-/* EPFL ME-213 Binairo 2026.
- * Noms des membres de l'equipe a renseigner avant remise. */
 #include "reconnaissance.h"
 #include "parametres_ocr.h"
 
 #include <stdio.h>
 #include <stdlib.h>
 
-/* Le fichier du professeur definit les tableaux : inclusion dans ce seul C. */
 #include "FontRasterized_0_1.h"
 
 unsigned char GetDigitBitmapBit(short_t digit, int l, int c)
 {
-    /* Convertir avant le decalage pour ne pas decaler un entier signe. */
+
     const uint32_t bits = (uint32_t)DigitBitmap[digit][l];
     return (unsigned char)((bits >> (31u - (unsigned int)c)) & 1u);
 }
@@ -50,8 +47,7 @@ int ConvertirSeuil(const char *texte, double *valeur)
         if (*curseur != '0') {
             chiffreNonNul = 1;
         }
-        /* La valeur precedente vaut au plus 100 : ce calcul ne peut pas
-         * depasser 1009 avant le test, donc pas de debordement d'entier. */
+
         partieEntiere = 10u * partieEntiere + (unsigned int)(*curseur - '0');
         if (partieEntiere > 100u) {
             return OCR_ERREUR_ARGUMENT;
@@ -77,10 +73,7 @@ int ConvertirSeuil(const char *texte, double *valeur)
         (partieEntiere == 100u && fractionNonNulle)) {
         return OCR_ERREUR_ARGUMENT;
     }
-    /* Reconstituer .abc par (a + (b + c/10)/10)/10. La fraction reste
-     * entre 0 et 1, meme si l'argument contient beaucoup de decimales.
-     * Aucun exposant, espace, virgule ou caractere supplementaire n'est
-     * accepte. Le calcul en double a la precision habituelle de ce type. */
+
     while (curseur > debutFraction) {
         --curseur;
         fraction = ((double)(*curseur - '0') + fraction) / 10.0;
@@ -137,8 +130,7 @@ int LireCellule(const char *chemin, CelluleOCR *cellule, const char **descriptio
         *description = "dimensions de cellule hors des bornes configurees";
         goto nettoyage;
     }
-    /* Les bornes precedentes limitent le produit a 100 * 100 = 10000.
-     * La multiplication et la taille de l'allocation sont donc bornees. */
+
     nombrePixels = (size_t)cellule->largeur * (size_t)cellule->hauteur;
     cellule->pixels = malloc(nombrePixels);
     if (cellule->pixels == NULL) {
@@ -147,7 +139,6 @@ int LireCellule(const char *chemin, CelluleOCR *cellule, const char **descriptio
         goto nettoyage;
     }
 
-    /* Lecture du tableau entier en une fois : P00, p. 18. */
     if (fread(cellule->pixels, 1, nombrePixels, entree) != nombrePixels) {
         etat = ferror(entree) ? OCR_ERREUR_LECTURE : OCR_ERREUR_FORMAT;
         *description = ferror(entree) ? "echec de lecture des pixels" :
@@ -184,10 +175,6 @@ nettoyage:
     return etat;
 }
 
-/* Exercice OCR 2026, p. 3 : seuil strict, puis meilleur score brut.
- * P00, p. 10 confirme le score brut ; sa p. 18 propose pourtant >= et une
- * marge score-seuil. Ici, priorite au pseudo-code de l'exercice demande.
- * En cas d'egalite des scores admissibles, garder le premier chiffre : 0. */
 static int ChoisirChiffre(const double scores[2], const double seuils[2])
 {
     int choisi = -1;
@@ -219,7 +206,7 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
     for (indice = 0; indice < nombrePixels; ++indice) {
         blancs += cellule->pixels[indice] == 0u;
     }
-    /* La sortie vide conserve un score nul, conformement aux exemples Moodle. */
+
     if (100.0 * (double)blancs / (double)nombrePixels > seuils->vide) {
         return OCR_SUCCES;
     }
@@ -239,7 +226,6 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
                     size_t colonne;
                     for (colonne = 0; colonne < DigitBitmapWidth; ++colonne) {
 
-                        /* Compter aussi les correspondances de pixels blancs. */
                         identiques += GetCellBit(cellule->pixels, (int)cellule->largeur,
                                                 (int)(y + ligne), (int)(x + colonne)) ==
                                  GetDigitBitmapBit((short_t)chiffre, (int)ligne, (int)colonne);
