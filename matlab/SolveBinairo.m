@@ -1,6 +1,6 @@
-% SolveBinaro  solve a Binairo/Binoxxo/BinarySudoku/Takuzu/etc.
+% SolveBinairo  solve a Binairo/Binoxxo/BinarySudoku/Takuzu/etc.
 %
-%   [SOLUTION, SOLVED] = SolveBinaro(PUZZLE) solve a Binairo PUZZLE reccursively
+%   [SOLUTION, SOLVED] = SolveBinairo(PUZZLE) solve a Binairo PUZZLE reccursively
 %    by 1) checking all constrains and when not sufficient
 %       2) make guess [0,1] in the first empty cell and
 %           continue while valid until solution is found
@@ -13,15 +13,13 @@
 %     4. each row/col are unique
 
 %   Input
-%     PUZZLE  n x n Grid of floats (n MUST be odd), NaN defines empty case
+%     PUZZLE  n x n Grid of floats (n MUST be even), NaN defines empty case
 %
 %   Output
 %     SOLUTION  grid solved or last partialy solved grid
 %     SOLVED    true is a full and valid solution is found
 %
 %   v. 8.9.2026/ca
-%
-%   Renommer ce fichier!
 %
 
 %% ------------------------------------------------------------------------------------------------------
@@ -47,7 +45,6 @@ function [grid, valid] = SolveBinairo(grid)
   %
   % Uses
   %    DirectValues()
-% La taille est paire selon les regles ; "odd" dans le commentaire fourni est une coquille.
 valid = false;
 if ~GrilleBinairoValide(grid)
     return

@@ -15,6 +15,8 @@ printGrid(B);
 if resoudreAvecMatlab
     [solution, faisable] = SolveBinairo(B);
 else
+    % Sans resolution, afficher la grille initiale et verifier seulement les regles locales.
+    % Une grille partielle valide ne prouve pas qu'une solution existe.
     solution = B;
     faisable = GrilleBinairoValide(B);
 end
