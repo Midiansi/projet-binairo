@@ -1,4 +1,7 @@
 function ok = CheckValidMove(grid, r, c, v, n)
+% Projet Binairo - ME-213
+% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+% Tester une valeur sans modifier la grille de l'appelant.
   % Set the chosen cell to v;
   % Then check is the new grid is valid according to Binairo rules
   %      check row ok, col ok, unique ok

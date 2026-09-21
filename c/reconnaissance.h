@@ -1,9 +1,14 @@
+/* Projet Binairo - ME-213
+ * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+ * Types, codes de retour et fonctions de reconnaissance.
+ */
 #ifndef BINAIRO_RECONNAISSANCE_H
 #define BINAIRO_RECONNAISSANCE_H
 
 #include <stddef.h>
 #include <stdint.h>
 
+/* Tout code non nul signale un echec ; le message correspondant est ecrit sur stderr. */
 enum EtatOCR {
     OCR_SUCCES = 0,
     OCR_ERREUR_ARGUMENT = 2,
@@ -36,6 +41,7 @@ unsigned char GetDigitBitmapBit(short_t digit, int l, int c);
 unsigned char GetCellBit(unsigned char *cell, int Width, int line, int col);
 
 int ConvertirSeuil(const char *texte, double *valeur);
+/* pixels doit etre NULL avant la lecture. LibererCellule libere le tableau et le remet a NULL. */
 int LireCellule(const char *chemin, CelluleOCR *cellule, const char **description);
 void LibererCellule(CelluleOCR *cellule);
 int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,

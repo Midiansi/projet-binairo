@@ -1,3 +1,7 @@
+/* Projet Binairo - ME-213
+ * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+ * Lecture des pixels et reconnaissance des chiffres 0 et 1.
+ */
 #include "reconnaissance.h"
 #include "parametres_ocr.h"
 
@@ -6,13 +10,14 @@
 
 #include "FontRasterized_0_1.h"
 
+/* Le pixel de gauche correspond au bit 31 de chaque ligne du modele. */
 unsigned char GetDigitBitmapBit(short_t digit, int l, int c)
 {
-
     const uint32_t bits = (uint32_t)DigitBitmap[digit][l];
     return (unsigned char)((bits >> (31u - (unsigned int)c)) & 1u);
 }
 
+/* Les pixels de la cellule sont ranges ligne par ligne. */
 unsigned char GetCellBit(unsigned char *cell, int Width, int line, int col)
 {
     return cell[(size_t)line * (size_t)Width + (size_t)col];
@@ -23,6 +28,7 @@ static int EstChiffreDecimal(char caractere)
     return caractere >= '0' && caractere <= '9';
 }
 
+/* Accepter un nombre decimal entre 0 et 100, sans espace ni exposant. */
 int ConvertirSeuil(const char *texte, double *valeur)
 {
     const char *curseur;
@@ -74,6 +80,7 @@ int ConvertirSeuil(const char *texte, double *valeur)
         return OCR_ERREUR_ARGUMENT;
     }
 
+    /* Construire la fraction de droite a gauche sans faire croitre un entier. */
     while (curseur > debutFraction) {
         --curseur;
         fraction = ((double)(*curseur - '0') + fraction) / 10.0;
@@ -82,6 +89,7 @@ int ConvertirSeuil(const char *texte, double *valeur)
     return OCR_SUCCES;
 }
 
+/* Les quatre octets du fichier sont en ordre petit-boutiste. */
 static uint32_t LireEntier32PetitBoutiste(const unsigned char *octets)
 {
     return (uint32_t)octets[0] |
@@ -131,6 +139,7 @@ int LireCellule(const char *chemin, CelluleOCR *cellule, const char **descriptio
         goto nettoyage;
     }
 
+    /* Les dimensions validees bornent l'allocation ; lire tous les pixels en une fois. */
     nombrePixels = (size_t)cellule->largeur * (size_t)cellule->hauteur;
     cellule->pixels = malloc(nombrePixels);
     if (cellule->pixels == NULL) {
@@ -175,6 +184,7 @@ nettoyage:
     return etat;
 }
 
+/* Retenir le meilleur score qui depasse son seuil ; garder 0 en cas d'egalite. */
 static int ChoisirChiffre(const double scores[2], const double seuils[2])
 {
     int choisi = -1;
@@ -207,6 +217,7 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
         blancs += cellule->pixels[indice] == 0u;
     }
 
+    /* Tester la case vide avant les chiffres ; son resultat est -2 avec un score nul. */
     if (100.0 * (double)blancs / (double)nombrePixels > seuils->vide) {
         return OCR_SUCCES;
     }
@@ -225,7 +236,7 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
                 for (ligne = 0; ligne < DigitBitmapHeight; ++ligne) {
                     size_t colonne;
                     for (colonne = 0; colonne < DigitBitmapWidth; ++colonne) {
-
+                        /* Compter les egalites de pixels blancs aussi bien que noirs. */
                         identiques += GetCellBit(cellule->pixels, (int)cellule->largeur,
                                                 (int)(y + ligne), (int)(x + colonne)) ==
                                  GetDigitBitmapBit((short_t)chiffre, (int)ligne, (int)colonne);

@@ -26,6 +26,9 @@
 
 %% ------------------------------------------------------------------------------------------------------
 function [grid, valid] = SolveBinairo(grid)
+% Projet Binairo - ME-213
+% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+% Resoudre par deductions puis par essais recursifs de 0 et de 1.
   % this function can call itself recursively
   %
   % 1) Try all possible direct solutions (no guess) until it converges to a stable solution or error
@@ -44,6 +47,7 @@ function [grid, valid] = SolveBinairo(grid)
   %
   % Uses
   %    DirectValues()
+% La taille est paire selon les regles ; "odd" dans le commentaire fourni est une coquille.
 valid = false;
 if ~GrilleBinairoValide(grid)
     return
@@ -59,6 +63,7 @@ if isempty(indicesVides)
     return
 end
 [r, c] = ind2sub([n n], indicesVides(1));
+% Conserver la grille avant les essais pour abandonner completement une branche en echec.
 baseEssais = grid;
 if CheckValidMove(baseEssais, r, c, 0, n)
     essai = baseEssais;

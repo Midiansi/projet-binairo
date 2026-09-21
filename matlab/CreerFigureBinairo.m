@@ -1,4 +1,7 @@
 function figureBinairo = CreerFigureBinairo(grilleInitiale, grilleResolue, fichier, faisable)
+% Projet Binairo - ME-213
+% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+% Dessiner les indices en noir, les valeurs ajoutees en bleu et les informations du PDF.
 if ~FormatGrilleValide(grilleInitiale) || ~FormatGrilleValide(grilleResolue) || ...
         ~isequal(size(grilleInitiale), size(grilleResolue))
     error('Binairo:GrilleAffichage', 'Les grilles doivent etre carrees, de meme taille paire, de type double, avec 0, 1 ou NaN.');
@@ -58,6 +61,7 @@ drawnow;
 end
 
 function lignes = DecouperNom(nom)
+% Couper les noms longs sur plusieurs lignes sans interpreter les caracteres du nom.
 if numel(nom) <= 32
     lignes = {nom};
 else

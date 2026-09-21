@@ -1,3 +1,7 @@
+/* Projet Binairo - ME-213
+ * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+ * Lecture des arguments et ecriture du resultat OCR.
+ */
 #include "reconnaissance.h"
 #include "parametres_ocr.h"
 
@@ -7,6 +11,7 @@
 
 static const char NomSortie[] = "CellValue.txt";
 
+/* Alloue CellValue.txt dans le dossier de l'entree. L'appelant libere le chemin. */
 static int ConstruireCheminSortie(const char *entree, char **sortie,
                                   const char **description)
 {
@@ -40,6 +45,7 @@ static int ConstruireCheminSortie(const char *entree, char **sortie,
             return OCR_ERREUR_ARGUMENT;
         }
     }
+    /* Ignorer les points et espaces finaux pour controler les noms reserves sous Windows. */
     finNom = longueur;
 
     while (finNom > debutNom &&
@@ -84,6 +90,7 @@ static int ConstruireCheminSortie(const char *entree, char **sortie,
     return OCR_SUCCES;
 }
 
+/* Refuser d'ecraser un fichier non vide qui n'a pas le format d'un resultat OCR. */
 static int VerifierAncienResultat(const char *chemin, const char **description)
 {
     FILE *ancien = fopen(chemin, "rb");
@@ -92,7 +99,6 @@ static int VerifierAncienResultat(const char *chemin, const char **description)
     int etat = OCR_SUCCES;
 
     if (ancien == NULL) {
-
         return OCR_SUCCES;
     }
     lus = fread(debut, 1, sizeof debut, ancien);
@@ -109,10 +115,10 @@ static int VerifierAncienResultat(const char *chemin, const char **description)
     return etat;
 }
 
+/* Conserver le format attendu par LabVIEW : symbole, score et fin de ligne. */
 static int EcrireResultat(FILE *sortie, const ResultatOCR *resultat,
                           const char **description)
 {
-
     if (fprintf(sortie, "d:'%d', %.6f%%\n", resultat->symbole,
                 resultat->pourcentage) < 0 || fflush(sortie) != 0 || ferror(sortie)) {
         *description = "impossible d'ecrire ou de vider le tampon du resultat";
@@ -158,6 +164,7 @@ int main(int argc, char *argv[])
         goto nettoyage;
     }
 
+    /* Un code de retour non nul interdit a LabVIEW d'utiliser le fichier resultat. */
     sortie = fopen(cheminSortie, "wb");
     if (sortie == NULL) {
         etat = OCR_ERREUR_ECRITURE;
@@ -170,6 +177,7 @@ int main(int argc, char *argv[])
     }
     etat = EcrireResultat(sortie, &resultat, &description);
 
+/* Meme nettoyage pour une execution normale et pour tous les cas d'erreur. */
 nettoyage:
     if (sortie != NULL && fclose(sortie) != 0) {
         etat = OCR_ERREUR_ECRITURE;
@@ -178,7 +186,6 @@ nettoyage:
     LibererCellule(&cellule);
     free(cheminSortie);
     if (etat != OCR_SUCCES) {
-
         fprintf(stderr, "OCR E%d: %s\n", etat, description);
     }
     return etat;

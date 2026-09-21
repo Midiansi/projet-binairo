@@ -1,4 +1,8 @@
 function ExecuterBinairo(B, fichierSource, resoudreAvecMatlab, afficherPdf)
+% Projet Binairo - ME-213
+% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+% Enchainer les operations demandees par le script genere depuis LabVIEW.
+% Le dossier courant doit etre celui du script solve.m et des fonctions MATLAB.
 if ~isa(resoudreAvecMatlab, 'logical') || numel(resoudreAvecMatlab) ~= 1 || ...
         ~isa(afficherPdf, 'logical') || numel(afficherPdf) ~= 1
     error('Les options de resolution et affichage doivent etre des scalaires logiques.');

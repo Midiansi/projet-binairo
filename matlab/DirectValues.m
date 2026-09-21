@@ -1,4 +1,7 @@
 function [grid, ok] = DirectValues(grid, n)
+% Projet Binairo - ME-213
+% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphael Raphaël Pical
+% Appliquer les deductions certaines jusqu'a stabilisation ou contradiction.
 % 1) Direct solution:
 %   Do until no grid change or error
 %     find next empty cell
@@ -28,6 +31,7 @@ modifiee = false;
 if debut > fin
     return
 end
+% Parcourir les deux moities dans l'ordre, en transmettant les deductions deja faites.
 if debut < fin
     milieu = floor((debut + fin) / 2);
     [grille, ok, gaucheModifiee] = ParcourirCases(grille, n, indicesVides, debut, milieu);
