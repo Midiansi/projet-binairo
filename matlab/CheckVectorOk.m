@@ -1,4 +1,8 @@
 function ok = CheckVectorOk(vector, n)
+  % Check if the current vector (row or col) is valid
+  % Test if a row/col has 3 indentical following cells (different than NaN) -> not ok
+  % Test if the numbers of a given symbol > n/2 -> not ok
+  % ok = true if valid
 ok = false;
 if ~isa(n, 'double') || numel(n) ~= 1 || imag(n) ~= 0 || ...
         ~(n >= 2) || mod(n, 2) ~= 0 || ~isa(vector, 'double')

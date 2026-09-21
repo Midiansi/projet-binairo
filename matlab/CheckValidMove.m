@@ -1,4 +1,13 @@
 function ok = CheckValidMove(grid, r, c, v, n)
+  % Set the chosen cell to v;
+  % Then check is the new grid is valid according to Binairo rules
+  %      check row ok, col ok, unique ok
+  % ok = true if valid
+  %
+  % Uses
+  %     CheckVectorOk() for r
+  %     CheckVectorOk() for c
+  %     CheckVectorUniqueOk()
 ok = false;
 if ~FormatGrilleValide(grid) || ~isa(n, 'double') || numel(n) ~= 1 || ...
         n ~= size(grid, 1) || ~isa(v, 'double') || numel(v) ~= 1 || ...

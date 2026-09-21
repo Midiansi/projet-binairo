@@ -1,4 +1,15 @@
 function [grid, ok] = DirectValues(grid, n)
+% 1) Direct solution:
+%   Do until no grid change or error
+%     find next empty cell
+%     check if empty cells can get '0' and/or '1'
+%     if both possible -> ignore and next cell
+%     if none possible -> error -> exit and backtrack
+%     if '0' or '1' *exclusively* possible -> set and next cell
+%   repeat
+%
+% Uses
+%    CheckValidMove()
 ok = isa(n, 'double') && numel(n) == 1 && ...
     GrilleBinairoValide(grid) && n == size(grid, 1);
 if ~ok

@@ -1,4 +1,6 @@
 function ok = CheckVectorUniqueOk(grid, r, c, n)
+  % Check that all full rows are unique, check current row against all the other rows
+  % Check that all full cols are unique, idem.
 ok = false;
 if ~FormatGrilleValide(grid) || ~isa(n, 'double') || numel(n) ~= 1 || ...
         n ~= size(grid, 1) || ~isa(r, 'double') || ~isa(c, 'double') || ...
