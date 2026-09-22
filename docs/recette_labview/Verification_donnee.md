@@ -15,7 +15,7 @@ Les exercices ne remplacent pas cette donnée. Ils restent utilisables pour les 
 | Comptage des cases | nombre de débuts de traits moins1, mathématiquement équivalent | formulation littérale : total des transitions/2−1 pour chaque axe | donnée p27 |
 | Statut des exercices | certaines conventions présentées comme exigences du projet | donnée explicitement prioritaire ; noms de sous-VIs et lanceur de l’exercice identifiés comme aides compatibles | donnée p3 et27 ; instruction du groupe |
 
-Le changement C est limité à `ChoisirChiffre` et au message d’absence de candidat dans `reconnaissance.c`. Les codes de retour, allocations, fichiers, formats et limites restent identiques. Aucun changement MATLAB n’est nécessaire d’après la relecture des exigences de la donnée.
+Le C applique la sélection par marge de la donnée. Les codes de retour, allocations, fichiers, formats et limites restent identiques. La simplification décrite ci-dessous modifie également la conversion des seuils et le remplacement du résultat réservé. Les algorithmes MATLAB continuent de suivre la donnée ; leur validation globale a été simplifiée.
 
 ## Couverture de la donnée
 
@@ -30,7 +30,7 @@ Le changement C est limité à `ChoisirChiffre` et au message d’absence de can
 | 23 | chemin complet de cellule et trois seuils ; argc=5 | main.c ; CommandeOCR.vi corrigé | appel C testé avec chemin complet contenant des espaces ; appel natif LabVIEW à vérifier |
 | 24–27 | interface source/image/options/erreurs ; PNG lu et converti nativement ; comptage pair/carré ; découpage ; OCR ; matrice texte ; script généré et exécuté | chapitres7–17 et annexeG | chaque opération possède une construction ; pas d’exécution LabVIEW revendiquée |
 | 27 | transitions, axes environ10px après le bord ; nombre pair et égal de cases | IntervallesNoirs et ComputeRowsCols | formule rendue littérale ; coordonnées contrôlées séparément sur les images fournies |
-| 28–31,33–34 | règles du Binairo ; déductions répétées jusqu’à stabilisation ; puis essai0 et1 avec récursion ; NaN pour vide | SolveBinairo, DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk | conforme par relecture ; aucune modification MATLAB |
+| 28–31,33–34 | règles du Binairo ; déductions répétées jusqu’à stabilisation ; puis essai0 et1 avec récursion ; NaN pour vide | SolveBinairo, DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk | règles conservées par relecture ; validation globale simplifiée |
 | 32 | DisplayBinairo(Original,Solution,file,...) ; indices noirs gras, ajouts bleus gras ; traits ; nom haut gauche, date/heure haut droite ; == Error == centré | DisplayBinairo et CreerFigureBinairo | propriétés présentes dans le code ; rendu natif à vérifier |
 | 33–35 | fonctions auxiliaires et printGrid ; appels depuis un script généré | fonctions présentes ; GenererScript→ExecuterBinairo→SolveBinairo/DisplayBinairo | le passage par l’auxiliaire ExecuterBinairo conserve les fonctions prescrites ; aucun script fixe ne remplace la matrice reconnue |
 | 36 | OCR absent/en erreur, PNG absent, script impossible à créer, MATLAB absent, script MATLAB en erreur | gestion d’erreurs C ; recette5,6,12,15–19 | chaque cas possède un essai natif identifié ; résultats natifs encore attendus |
@@ -63,3 +63,21 @@ Le changement C est limité à `ChoisirChiffre` et au message d’absence de can
 5. Refaire les essais du chapitre19 dans l’environnement réel. Ne pas marquer un essai réussi sur la seule base de ce rapport.
 
 Les sources restent dans la livraison réservée aux `.c/.h/.m`. Ce rapport et la recette restent à part. Aucun document original du cours n’a été modifié.
+
+## Simplification des sources
+
+Les modifications conservent les interfaces publiques et n’imposent aucun nouveau câblage LabVIEW. Recompiler OCR.exe et remplacer les fichiers .m par les versions actualisées avant de refaire les essais natifs.
+
+| Élément examiné | Décision |
+|---|---|
+| ParcourirCases dans DirectValues | Conservé après vérification des contraintes : il maintient l’ordre des déductions avec une profondeur logarithmique pour parcourir les cases. Un parcours récursif linéaire augmenterait cette profondeur et pourrait échouer sur des grilles jusque-là traitables. Remplacer ce mécanisme par une boucle demande une dérogation au critère « Pas de boucles ». |
+| VerifierIntervalle dans GrilleBinairoValide | Supprimé. Les comptes et suites de trois sont vérifiés sur les matrices. Les produits des masques0/1 comptent les positions identiques entre lignes/colonnes ; une correspondance sur n positions n’est possible que pour deux lignes/colonnes complètes. |
+| ConvertirSeuil | La reconstruction manuelle de la fraction est remplacée par atof. Les vérifications préalables conservent les décimales avec point, les bornes0..100 et le refus des entrées mal formées. |
+| VerifierAncienResultat | Supprimé. CellValue.txt, fichier de sortie réservé au programme, est remplacé sans examiner ses trois premiers octets. Un dossier ou un fichier impossible à ouvrir reste une erreur. |
+| ConstruireCheminSortie | Conservé : séparateurs Windows/Unix, limite1023 caractères, allocation exacte et refus de confondre l’entrée avec la sortie sont des comportements utiles. |
+| DecouperNom | Conservé : il permet d’afficher les noms longs sur plusieurs lignes dans le PDF, sans introduire de boucle interdite. |
+| Validation des arguments MATLAB | Conservée : les fonctions publiques doivent rejeter les grilles invalides et éviter d’afficher une fausse solution. |
+
+Fondements pédagogiques : la page physique43 de P0.PPI_Projet.25.r6.pdf dit explicitement « Code Matlab : Pas de boucles » ; les critères généraux restent applicables selon la confirmation reçue. Les opérations matricielles, comparaisons, indexations et transpositions sont traitées dans M1.PPI_Matlab_I.26.r1.pdf ; fonctions/conditions dans M2.PPI_Matlab_II.26.r1.pdf ; la récursion est demandée par la donnée et travaillée dans l’exercice dédié. La fonction atof figure dans standard_atof.c fourni avec ICC. Aucun recours à arrayfun, cellfun ou une bibliothèque supplémentaire n’a été ajouté. Les commentaires du professeur et la récursion du backtracking sont conservés.
+
+Vérifications de cette simplification : compilation stricte et ASan/UBSan ;125 appels OCR de non-régression ;26 cas de validation/conversion des seuils ; remplacement d’un ancien résultat incomplet et refus de remplacer un dossier. Pour MATLAB :69 617 comparaisons de validation de grilles à l’aide de modèles indépendants Python, plus relecture des sources et absence de for/while. DirectValues et SolveBinairo sont inchangés dans la version finale. Ces comparaisons ne sont pas une exécution du MATLAB livré ; les essais natifs du chapitre1.2 restent obligatoires. Le parcours équilibré de DirectValues est conservé pour éviter d’augmenter sa profondeur de récursion ; aucune garantie sur des grilles arbitrairement grandes n’est avancée.

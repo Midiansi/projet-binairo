@@ -36,7 +36,7 @@
 <a class="level-2" href="#etape-77">G4. <code>ComputeCellRect.vi</code> — rectangle intérieur d&#39;une case</a>
 <a class="level-2" href="#etape-82">G5. <code>ComputeRowsCols.vi</code> — nombre de cases et traits mesurés</a>
 <a class="level-2" href="#etape-89">G6. Essais géométriques sans image et extraction effective</a></nav><main><article><h1 id="etape-1">Construire la partie LabVIEW du projet Binairo</h1>
-<p>Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 22 septembre 2026, compatible avec les sources C et MATLAB du commit <code>6f6d507</code>.</p>
+<p>Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 22 septembre 2026, compatible avec les sources C et MATLAB du commit <code>04b4da5</code>.</p>
 <p>Ce document explique comment construire les VIs, les raccorder au C et à MATLAB, puis vérifier le résultat. Il s&#39;adresse à une personne qui débute dans LabVIEW. Les consignes sont prévues pour <strong>LabVIEW 2025 Q3, menus anglais, sous Windows</strong>, notamment dans la VM EPFL. Les noms anglais ci-dessous sont ceux à rechercher dans LabVIEW ; les noms de vos propres objets sont en français. Ne construisez pas un projet Real-Time, FPGA ou NXG.</p>
 <p><strong>Référence prioritaire : Donnée projet Binairo 2026.2</strong>, fichier <code>P00.PPI_Projet.2026.2.pdf</code>, identifié sous ce titre dans l’export Moodle. Les exercices servent seulement d’aide compatible ; ils ne remplacent aucune consigne de la donnée. Les critères généraux de notation2025 ne sont repris que selon la confirmation déjà reçue du professeur.</p>
 <p><strong>Ce qui est établi :</strong> exigences de cette donnée, contrats des sources actuelles, principes et terminaux des fonctions NI référencées. <strong>Ce qui reste à mesurer :</strong> exécution des VIs que vous allez construire, interface du lanceur fourni seulement si vous choisissez cette option, et rendu MATLAB dans votre installation. Une recette ne remplace pas ces essais et ne garantit pas une note. Les dernières consignes Moodle restent à vérifier avant remise : le document 2026 annonce encore une liste d&#39;erreurs à venir.</p>
@@ -101,6 +101,12 @@ type CellValue.txt
 </code></pre>
 <p>Résultats attendus : code <code>0</code> à chaque fois ; respectivement <code>d:&#39;0&#39;, 97.167969%</code>, <code>d:&#39;1&#39;, 97.753906%</code>, <code>d:&#39;-2&#39;, 0.000000%</code>, chacun suivi d&#39;une fin de ligne. Le programme normal n&#39;écrit rien sur stdout/stderr. Conservez une capture. Les fichiers du cours sont lus, jamais réécrits. Le résultat <code>CellValue.txt</code> est remplacé à chaque appel.</p>
 <h3 id="etape-5">1.2 Tester MATLAB avant de construire le lanceur</h3>
+<p>Après avoir copié les dernières fonctions .m, effectuez aussi les trois contrôles simples ci-dessous dans MATLAB, avec Current Folder réglé sur Execution :</p>
+<pre><code class="language-matlab">GrilleBinairoValide([0 1; 1 0])
+GrilleBinairoValide([0 1; 0 1])
+[G, ok] = DirectValues([0 NaN; NaN 0], 2)
+</code></pre>
+<p>Attendez successivement TRUE, FALSE, puis <code>G = [0 1; 1 0]</code> avec <code>ok = TRUE</code>. La validation globale ne contient plus de parcours récursif ; les déductions conservent leur parcours équilibré pour respecter le critère « Pas de boucles » sans augmenter la profondeur de récursion. Les commentaires et interfaces du professeur restent inchangés. Ces contrôles sont à exécuter par vous, pas des résultats natifs déjà constatés.</p>
 <p>Ouvrez MATLAB vous-même. Placez son <strong>Current Folder</strong> dans <code>Execution</code>, puis copiez ces lignes dans la Command Window :</p>
 <pre><code class="language-matlab">B = [NaN 0 NaN NaN NaN NaN; NaN NaN 0 NaN 0 NaN; NaN NaN NaN NaN 1 0; 1 1 NaN NaN NaN NaN; NaN 0 NaN 0 NaN NaN; NaN NaN NaN NaN 0 NaN];
 [S, ok] = SolveBinairo(B)
@@ -2023,7 +2029,7 @@ Merci beaucoup.
 <p>Le calcul suppose une grille alignée sur les axes et des lignes d&#39;analyse à bord+10 qui ne traversent pas les chiffres, comme dans l&#39;énoncé. Les données fournies et les cas limites ci-dessus doivent tous être essayés sur la VM. Une flèche exécutable et des résultats attendus dans un document ne remplacent pas ces essais.</p>
 </article></main><script>
 document.querySelectorAll('pre').forEach(pre=>{const b=document.createElement('button');b.textContent='Copier';b.addEventListener('click',async()=>{const text=pre.querySelector('code').textContent;try{await navigator.clipboard.writeText(text);b.textContent='Copié';}catch(e){const range=document.createRange();range.selectNodeContents(pre.querySelector('code'));const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);b.textContent='Sélectionné : Ctrl+C';}setTimeout(()=>b.textContent='Copier',2500);});pre.prepend(b);});
-const key='binairo-recette-20260922-donnee-v2';let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
+const key='binairo-recette-20260922-simplification-v3';let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
 const heads=[...document.querySelectorAll('h2')].filter(h=>!/^22 |^23 |^Mode/.test(h.textContent));
 function progress(){document.getElementById('progress').textContent=heads.filter(h=>saved[h.id]).length+' / '+heads.length+' étapes cochées';}
 heads.forEach(h=>{const label=document.createElement('label');label.className='check';const input=document.createElement('input');input.type='checkbox';input.checked=!!saved[h.id];label.append(input,document.createTextNode('Étape terminée et contrôlée'));h.after(label);input.addEventListener('change',()=>{saved[h.id]=input.checked;try{localStorage.setItem(key,JSON.stringify(saved));}catch(e){}progress();});});progress();
