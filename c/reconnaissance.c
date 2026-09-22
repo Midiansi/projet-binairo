@@ -184,14 +184,15 @@ nettoyage:
     return etat;
 }
 
-/* Retenir le meilleur score qui depasse son seuil ; garder 0 en cas d'egalite. */
+/* Retenir la plus grande marge au-dessus du seuil ; garder 0 a marges egales. */
 static int ChoisirChiffre(const double scores[2], const double seuils[2])
 {
     int choisi = -1;
     unsigned int chiffre;
     for (chiffre = 0; chiffre < 2u; ++chiffre) {
-        if (scores[chiffre] > seuils[chiffre] &&
-            (choisi < 0 || scores[chiffre] > scores[choisi])) {
+        if (scores[chiffre] >= seuils[chiffre] &&
+            (choisi < 0 || scores[chiffre] - seuils[chiffre] >
+                           scores[choisi] - seuils[choisi])) {
             choisi = (int)chiffre;
         }
     }
@@ -251,7 +252,7 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
     }
     choisi = ChoisirChiffre(scores, seuilsChiffres);
     if (choisi < 0) {
-        *description = "aucun chiffre ne depasse son seuil de reconnaissance";
+        *description = "aucun chiffre n'atteint son seuil de reconnaissance";
         return OCR_AUCUN_CHIFFRE;
     }
     resultat->symbole = choisi;
