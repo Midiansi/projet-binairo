@@ -32,9 +32,7 @@ static int EstChiffreDecimal(char caractere)
 int ConvertirSeuil(const char *texte, double *valeur)
 {
     const char *curseur;
-    const char *debutFraction;
     unsigned int partieEntiere = 0;
-    double fraction = 0.0;
     int negatif = 0;
     int chiffrePresent = 0;
     int chiffreNonNul = 0;
@@ -60,10 +58,8 @@ int ConvertirSeuil(const char *texte, double *valeur)
         }
         ++curseur;
     }
-    debutFraction = curseur;
     if (*curseur == '.') {
         ++curseur;
-        debutFraction = curseur;
         while (EstChiffreDecimal(*curseur)) {
             chiffrePresent = 1;
             if (*curseur != '0') {
@@ -80,12 +76,7 @@ int ConvertirSeuil(const char *texte, double *valeur)
         return OCR_ERREUR_ARGUMENT;
     }
 
-    /* Construire la fraction de droite a gauche sans faire croitre un entier. */
-    while (curseur > debutFraction) {
-        --curseur;
-        fraction = ((double)(*curseur - '0') + fraction) / 10.0;
-    }
-    *valeur = (double)partieEntiere + fraction;
+    *valeur = atof(texte);
     return OCR_SUCCES;
 }
 

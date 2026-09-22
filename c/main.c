@@ -90,31 +90,6 @@ static int ConstruireCheminSortie(const char *entree, char **sortie,
     return OCR_SUCCES;
 }
 
-/* Refuser d'ecraser un fichier non vide qui n'a pas le format d'un resultat OCR. */
-static int VerifierAncienResultat(const char *chemin, const char **description)
-{
-    FILE *ancien = fopen(chemin, "rb");
-    char debut[3];
-    size_t lus;
-    int etat = OCR_SUCCES;
-
-    if (ancien == NULL) {
-        return OCR_SUCCES;
-    }
-    lus = fread(debut, 1, sizeof debut, ancien);
-    if (ferror(ancien) ||
-        (lus != 0 && (lus != sizeof debut || debut[0] != 'd' ||
-                      debut[1] != ':' || debut[2] != '\''))) {
-        etat = OCR_ERREUR_ECRITURE;
-        *description = "le fichier de sortie existant n'est pas un resultat OCR";
-    }
-    if (fclose(ancien) != 0) {
-        etat = OCR_ERREUR_ECRITURE;
-        *description = "impossible de fermer l'ancien resultat";
-    }
-    return etat;
-}
-
 /* Conserver le format attendu par LabVIEW : symbole, score et fin de ligne. */
 static int EcrireResultat(FILE *sortie, const ResultatOCR *resultat,
                           const char **description)
@@ -155,11 +130,6 @@ int main(int argc, char *argv[])
     }
 
     etat = LireCellule(argv[1], &cellule, &description);
-    if (etat != OCR_SUCCES) {
-        goto nettoyage;
-    }
-
-    etat = VerifierAncienResultat(cheminSortie, &description);
     if (etat != OCR_SUCCES) {
         goto nettoyage;
     }
