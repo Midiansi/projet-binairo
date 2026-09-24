@@ -1,8 +1,8 @@
 # Vérification du projet contre la donnée Binairo 2026.2
 
-22 septembre 2026. Référence prioritaire : **Donnée projet Binairo 2026.2**, fichier `P00.PPI_Projet.2026.2.pdf`, version du 7 septembre 2026. Le titre et le lien ont été vérifiés dans l’index de l’export Moodle. Les pages ci-dessous sont les pages physiques du PDF ; la page physique18 porte le numéro imprimé17.
+24 septembre 2026. Référence prioritaire : **Donnée projet Binairo 2026.2**, fichier `P00.PPI_Projet.2026.2.pdf`, version du 7 septembre 2026. Le titre et le lien ont été vérifiés dans l’index de l’export Moodle. Les pages ci-dessous sont les pages physiques du PDF ; la page physique18 porte le numéro imprimé17.
 
-Les exercices ne remplacent pas cette donnée. Ils restent utilisables pour les exemples, les fichiers fournis et les détails qui ne la contredisent pas. Les critères généraux de notation2025 restent applicables selon la confirmation du professeur rapportée par le groupe ; aucune exigence technique propre au Billard n’est importée.
+Les exercices ne remplacent pas cette donnée. Ils restent utilisables pour les exemples, les fichiers fournis et les détails qui ne la contredisent pas. La contrainte « Code Matlab : Pas de boucles » des critères généraux de notation2025 est conservée ; les exigences techniques du Billard ne sont pas reprises.
 
 ## Écarts corrigés
 
@@ -50,7 +50,6 @@ Le C applique la sélection par marge de la donnée. Les codes de retour, alloca
 - Huit tests ciblés de sélection : égalité au seuil pour chacun des deux chiffres, marge donnant un gagnant différent du score brut, égalité de marges, seuil100 et absence de candidat.
 - Cent seize appels OCR sur les cellules découpées des PNG6×6,8×8 et4×4 ; matrices reconnues comparées aux indices attendus.
 - Neuf appels C supplémentaires : les trois exemples binaires Moodle, les deux modèles exacts à score100/seuil100, deux cas de vide au seuil strict, une égalité au seuil sur Cell0 et une sélection par marge sur Cell0 avec vérification du pourcentage écrit.
-- Ces essais C ont utilisé AddressSanitizer et UndefinedBehaviorSanitizer : aucun diagnostic.
 - Relecture des allocations et tableaux : pas de VLA ni de tableau déclaré par le projet dépassant100 éléments ; police originale2×32=64 éléments. Les chemins restent alloués par malloc, avec limite1023 caractères.
 - Relecture des fonctions MATLAB, sans les exécuter ; vérification des chaînes et branchements modifiés de la recette. Ni MATLAB, ni LabVIEW, ni une VM n’ont été opérés.
 
@@ -78,6 +77,15 @@ Les modifications conservent les interfaces publiques et n’imposent aucun nouv
 | DecouperNom | Conservé : il permet d’afficher les noms longs sur plusieurs lignes dans le PDF, sans introduire de boucle interdite. |
 | Validation des arguments MATLAB | Conservée : les fonctions publiques doivent rejeter les grilles invalides et éviter d’afficher une fausse solution. |
 
-Fondements pédagogiques : la page physique43 de P0.PPI_Projet.25.r6.pdf dit explicitement « Code Matlab : Pas de boucles » ; les critères généraux restent applicables selon la confirmation reçue. Les opérations matricielles, comparaisons, indexations et transpositions sont traitées dans M1.PPI_Matlab_I.26.r1.pdf ; fonctions/conditions dans M2.PPI_Matlab_II.26.r1.pdf ; la récursion est demandée par la donnée et travaillée dans l’exercice dédié. La fonction atof figure dans standard_atof.c fourni avec ICC. Aucun recours à arrayfun, cellfun ou une bibliothèque supplémentaire n’a été ajouté. Les commentaires du professeur et la récursion du backtracking sont conservés.
+Fondements pédagogiques : la page physique43 de P0.PPI_Projet.25.r6.pdf dit explicitement « Code Matlab : Pas de boucles ». Les opérations matricielles, comparaisons, indexations et transpositions sont traitées dans M1.PPI_Matlab_I.26.r1.pdf ; fonctions/conditions dans M2.PPI_Matlab_II.26.r1.pdf ; la récursion est demandée par la donnée et travaillée dans l’exercice dédié. La fonction atof figure dans standard_atof.c fourni avec ICC. Aucun recours à arrayfun, cellfun ou une bibliothèque supplémentaire n’a été ajouté. Les commentaires du professeur et la récursion du backtracking sont conservés.
 
-Vérifications de cette simplification : compilation stricte et ASan/UBSan ;125 appels OCR de non-régression ;26 cas de validation/conversion des seuils ; remplacement d’un ancien résultat incomplet et refus de remplacer un dossier. Pour MATLAB :69 617 comparaisons de validation de grilles à l’aide de modèles indépendants Python, plus relecture des sources et absence de for/while. DirectValues et SolveBinairo sont inchangés dans la version finale. Ces comparaisons ne sont pas une exécution du MATLAB livré ; les essais natifs du chapitre1.2 restent obligatoires. Le parcours équilibré de DirectValues est conservé pour éviter d’augmenter sa profondeur de récursion ; aucune garantie sur des grilles arbitrairement grandes n’est avancée.
+## Dernières simplifications
+
+- Retrait de `static` sur les fonctions C et du nom de sortie obsolète `cellvalue.txt.tmp`.
+- Les indices MATLAB sont vérifiés par leur appartenance à `1:n`, sans `imag()`.
+- Suppression des autres contrôles `imag()` : les grilles attendues contiennent 0, 1 ou NaN.
+- Suppression du masquage de la fenêtre de figure et des options Interpreter sur les chiffres, la date et le message d’erreur.
+- Conservation de Interpreter=none pour le nom du fichier : ses caractères doivent être affichés tels quels. Conservation des axes invisibles pour ne pas ajouter de graduations à la grille.
+- Conservation des protections Windows contre la confusion entre le fichier d’entrée et CellValue.txt. Elles ne constituent pas une gestion des noms de périphériques Windows.
+
+Recompiler le C et refaire les essais MATLAB du chapitre1.2, puis vérifier un PDF avec un nom contenant un caractère souligné. La figure peut désormais apparaître pendant sa création ; les fonctions d’export la ferment ensuite. Les essais MATLAB et LabVIEW restent à effectuer dans l’environnement du projet.

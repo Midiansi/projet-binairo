@@ -1,10 +1,10 @@
 # Construire la partie LabVIEW du projet Binairo
 
-Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 22 septembre 2026, compatible avec les sources C et MATLAB du commit `04b4da5`.
+Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 24 septembre 2026.
 
 Ce document explique comment construire les VIs, les raccorder au C et à MATLAB, puis vérifier le résultat. Il s'adresse à une personne qui débute dans LabVIEW. Les consignes sont prévues pour **LabVIEW 2025 Q3, menus anglais, sous Windows**, notamment dans la VM EPFL. Les noms anglais ci-dessous sont ceux à rechercher dans LabVIEW ; les noms de vos propres objets sont en français. Ne construisez pas un projet Real-Time, FPGA ou NXG.
 
-**Référence prioritaire : Donnée projet Binairo 2026.2**, fichier `P00.PPI_Projet.2026.2.pdf`, identifié sous ce titre dans l’export Moodle. Les exercices servent seulement d’aide compatible ; ils ne remplacent aucune consigne de la donnée. Les critères généraux de notation2025 ne sont repris que selon la confirmation déjà reçue du professeur.
+**Référence prioritaire : Donnée projet Binairo 2026.2**, fichier `P00.PPI_Projet.2026.2.pdf`, identifié sous ce titre dans l’export Moodle. Les exercices servent seulement d’aide compatible ; ils ne remplacent aucune consigne de la donnée. La recette conserve la contrainte « Code Matlab : Pas de boucles » des critères généraux de notation2025.
 
 **Ce qui est établi :** exigences de cette donnée, contrats des sources actuelles, principes et terminaux des fonctions NI référencées. **Ce qui reste à mesurer :** exécution des VIs que vous allez construire, interface du lanceur fourni seulement si vous choisissez cette option, et rendu MATLAB dans votre installation. Une recette ne remplace pas ces essais et ne garantit pas une note. Les dernières consignes Moodle restent à vérifier avant remise : le document 2026 annonce encore une liste d'erreurs à venir.
 
