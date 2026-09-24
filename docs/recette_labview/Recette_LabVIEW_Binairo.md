@@ -41,7 +41,7 @@ PNG → LireImage → ComputeRowsCols
 1. Démarrez la VM Windows. Ouvrez une session. Repérez un dossier personnel **persistant et inscriptible** : un fichier posé sur le bureau d'une VM peut être perdu lors d'une réinitialisation. Demandez au support EPFL si cette persistance n'est pas documentée. Ne changez pas l'installation logicielle du cours.
 2. Dans l'Explorateur Windows, activez l'affichage des extensions de fichiers. Créez un dossier `Binairo`, puis un sous-dossier `Execution`. Les chemins donnés dans les exemples de commandes ne sont pas à graver dans les VIs.
 3. Copiez dans `Execution` **les cinq fichiers** du dossier `c` de la livraison : `main.c`, `reconnaissance.c`, `reconnaissance.h`, `parametres_ocr.h`, `FontRasterized_0_1.h`. Le dernier est la police originale du professeur, incluse dans le dépôt privé et dans son archive GitHub `Code > Download ZIP`. Ne créez pas une police de remplacement.
-4. Copiez aussi les **douze fichiers `.m`** de la livraison dans `Execution` : `CheckValidMove`, `CheckVectorOk`, `CheckVectorUniqueOk`, `CheminPdfBinairo`, `CreerFigureBinairo`, `DirectValues`, `DispBinairo`, `DisplayBinairo`, `FormatGrilleValide`, `GrilleBinairoValide`, `SolveBinairo`, `printGrid`. Gardez l'extension `.m` et la casse exacte. Le script généré ci-dessous appelle directement SolveBinairo et DisplayBinairo.
+4. Copiez aussi les **sept fichiers `.m`** de la livraison dans `Execution` : `CheminPdfBinairo`, `CreerFigureBinairo`, `DispBinairo`, `DisplayBinairo`, `FormatGrilleValide`, `GrilleBinairoValide`, `SolveBinairo`. Gardez l'extension `.m` et la casse exacte. Le script généré ci-dessous appelle directement SolveBinairo et DisplayBinairo.
 5. Le mode normal de cette recette lance MATLAB directement par System Exec. **Facultatif :** copiez `MP_LaunchMatlabScript4.vi` depuis Moodle uniquement si vous souhaitez utiliser ce lanceur alternatif ; conservez alors ailleurs son original.
 6. Dans `Binairo`, créez `Images` et `Preuves`. Copiez les PNG du cours dans `Images`, **jamais à la place d'un résultat**. En particulier : `Binairo_6x6.png`, `Binairo_8x8.png`, `Binairo_4x4_Bad.png` et `Binaro_5x6_Bad.png` si ce dernier est fourni. Le nom `Binaro` de cette dernière image n'est pas à corriger.
 7. Ouvrez LabVIEW. `Help > About LabVIEW` : notez version et architecture dans `Preuves/version.txt`. Faites de même avec MATLAB (`version` dans sa fenêtre de commande). Ces notes décrivent votre installation, pas le programme à remettre.
@@ -91,7 +91,7 @@ Après avoir copié les dernières fonctions .m, effectuez aussi les trois contr
 ```matlab
 GrilleBinairoValide([0 1; 1 0])
 GrilleBinairoValide([0 1; 0 1])
-[G, ok] = DirectValues([0 NaN; NaN 0], 2)
+[G, ok] = SolveBinairo([0 NaN; NaN 0])
 ```
 
 Attendez successivement TRUE, FALSE, puis `G = [0 1; 1 0]` avec `ok = TRUE`. La validation globale ne contient plus de parcours récursif ; les déductions conservent leur parcours équilibré pour respecter le critère « Pas de boucles » sans augmenter la profondeur de récursion. Les commentaires et interfaces du professeur restent inchangés. Ces contrôles sont à exécuter par vous, pas des résultats natifs déjà constatés.
@@ -504,7 +504,7 @@ Le format N6 se saisit en **Normal Display**, avec de vrais retours à la ligne.
 B = [
 %s];
 fichierSource = '%s';
-printGrid(B);
+disp(B);
 if %s
     [S, ok] = SolveBinairo(B);
 else
@@ -532,7 +532,7 @@ B = [
 1 0;
 ];
 fichierSource = 'Grille.png';
-printGrid(B);
+disp(B);
 if true
     [S, ok] = SolveBinairo(B);
 else
@@ -734,7 +734,7 @@ NaN 0 NaN 0 NaN NaN;
 NaN NaN NaN NaN 0 NaN;
 ];
 fichierSource = 'Binairo_6x6.png';
-printGrid(B);
+disp(B);
 if true
     [S, ok] = SolveBinairo(B);
 else
@@ -833,7 +833,7 @@ Ne modifiez pas dix fils à la fois. Arrêtez-vous au **premier checkpoint faux*
 | Fichier OCR jamais trouvé | working directory de System Exec ; OCR.exe réellement Windows ; nom exact Cell.bin ; file close avant appel |
 | Matrice transposée | F1.i=ligne, F2.i=colonne ; Array Subset row puis col ; ne pas transposer le bitmap de production |
 | MATLAB rejette les options | le script doit contenir `true` et `false`, pas0/1 ni"TRUE" |
-| MATLAB fonction introuvable | douze fichiers `.m` dans Execution ; working directory du lanceur ; nom/casse du fichier |
+| MATLAB fonction introuvable | sept fichiers `.m` dans Execution ; working directory du lanceur ; nom/casse du fichier |
 | PDF ancien malgré panne | supprimer l'ancien avant lancement ; attendre la fin ; vérifier error out, return code et fichier nouveau |
 | PDF verrouillé | fermer le lecteur de PDF avant de réessayer ; ne pas ignorer l'erreur de suppression |
 | Le lanceur fourni a d'autres bornes | capture Front Panel, connector pane, Context Help et diagramme ; ne pas adopter les bornes du Billard |
@@ -1257,3 +1257,11 @@ Sur le6×6, ComputeCellRect(ligne0,colonne0) doit fournir gauche6,haut6,droite78
 7. Le sous-VI d'écriture du chapitre suivant le convertira en U8 et écrira largeur puis hauteur. **Ne pas transposer pour corriger l'ordre de l'en-tête.**
 
 Le calcul suppose une grille alignée sur les axes et des lignes d'analyse à bord+10 qui ne traversent pas les chiffres, comme dans l'énoncé. Les données fournies et les cas limites ci-dessus doivent tous être essayés sur la VM. Une flèche exécutable et des résultats attendus dans un document ne remplacent pas ces essais.
+
+## Mise a jour des sources et du PDF
+
+Les fonctions DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk et printGrid sont locales a SolveBinairo.m, comme dans le modele fourni. Supprimez leurs anciens fichiers .m du dossier Execution. Elles ne s'appellent plus directement depuis la fenetre de commande. Le script genere utilise disp(B) pour afficher la matrice ; remplacez aussi printGrid(B) par disp(B) dans une ancienne constante N6.
+
+Le dessin utilise axis ij, axis equal et axis off. Le PDF utilise les reglages papier par defaut de MATLAB ; la date provient de char(datetime('now')) et depend de la langue et des preferences de l'installation. Verifiez le PDF natif : grille entiere, cases carrees, nom et date lisibles, couleurs et message d'erreur. Ce nouveau rendu n'a pas ete execute ici.
+
+Le C ne cree ni ne vide CellValue.txt lorsque la reconnaissance echoue. Un ancien resultat peut donc rester present : le code de retour reste obligatoire pour decider si le resultat est utilisable. Une erreur d'ecriture apres ouverture peut encore laisser un resultat incomplet.

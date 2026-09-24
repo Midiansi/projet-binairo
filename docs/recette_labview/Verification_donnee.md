@@ -95,3 +95,9 @@ Recompiler le C et refaire les essais MATLAB du chapitre1.2, puis vérifier un P
 Les sources C acceptent une paire de guillemets simples ou doubles encore presente autour du chemin dans argv[1]. Les espaces doivent deja etre groupes dans un seul argument par l'appelant. Les fonctions ont leurs en-tetes et prototypes ; _CRT_SECURE_NO_WARNINGS est defini avant les inclusions. La note de compilation du ZIP explique les deux compilateurs. Le ZIP contient la police originale.
 
 Au chapitre13, remplacer seulement la constante de format N6 par le nouveau bloc en Normal Display. Les quatre arguments et les connecteurs restent identiques. solve.m appelle directement SolveBinairo et DisplayBinairo. Refaire le checkpoint et V05 avec les quatre combinaisons d'options. L'ouverture PDF par uiopen en mode -batch reste a valider dans la VM suivant18.3.
+
+## Ajustements des sorties et du solveur
+
+ConvertirSeuil initialise la valeur a 0 si son pointeur est valide ; ConstruireCheminSortie initialise le chemin de sortie a NULL. La reconnaissance precede l'ouverture de CellValue.txt en mode texte w. Un echec de reconnaissance conserve donc l'ancien fichier, dont le contenu ne doit jamais etre exploite apres un code non nul.
+
+Les cinq auxiliaires du modele sont reunis dans SolveBinairo.m ; les validations communes a l'affichage restent separees. Le dessin utilise axis ij/equal/off et les reglages papier par defaut. La date est convertie par char(datetime('now')) : sa presentation depend des preferences et de la langue MATLAB. Le rendu natif reste a verifier.

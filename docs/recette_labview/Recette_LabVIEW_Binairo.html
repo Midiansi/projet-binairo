@@ -35,7 +35,8 @@
 <a class="level-2" href="#etape-74">G3. <code>IntervallesNoirs.vi</code> — relever tous les traits, même aux bords</a>
 <a class="level-2" href="#etape-78">G4. <code>ComputeCellRect.vi</code> — rectangle intérieur d&#39;une case</a>
 <a class="level-2" href="#etape-83">G5. <code>ComputeRowsCols.vi</code> — nombre de cases et traits mesurés</a>
-<a class="level-2" href="#etape-90">G6. Essais géométriques sans image et extraction effective</a></nav><main><article><h1 id="etape-1">Construire la partie LabVIEW du projet Binairo</h1>
+<a class="level-2" href="#etape-90">G6. Essais géométriques sans image et extraction effective</a>
+<a class="level-2" href="#etape-93">Mise a jour des sources et du PDF</a></nav><main><article><h1 id="etape-1">Construire la partie LabVIEW du projet Binairo</h1>
 <p>Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 24 septembre 2026.</p>
 <p>Ce document explique comment construire les VIs, les raccorder au C et à MATLAB, puis vérifier le résultat. Il s&#39;adresse à une personne qui débute dans LabVIEW. Les consignes sont prévues pour <strong>LabVIEW 2025 Q3, menus anglais, sous Windows</strong>, notamment dans la VM EPFL. Les noms anglais ci-dessous sont ceux à rechercher dans LabVIEW ; les noms de vos propres objets sont en français. Ne construisez pas un projet Real-Time, FPGA ou NXG.</p>
 <p><strong>Référence prioritaire : Donnée projet Binairo 2026.2</strong>, fichier <code>P00.PPI_Projet.2026.2.pdf</code>, identifié sous ce titre dans l’export Moodle. Les exercices servent seulement d’aide compatible ; ils ne remplacent aucune consigne de la donnée. La recette conserve la contrainte « Code Matlab : Pas de boucles » des critères généraux de notation2025.</p>
@@ -67,7 +68,7 @@
 <li>Démarrez la VM Windows. Ouvrez une session. Repérez un dossier personnel <strong>persistant et inscriptible</strong> : un fichier posé sur le bureau d&#39;une VM peut être perdu lors d&#39;une réinitialisation. Demandez au support EPFL si cette persistance n&#39;est pas documentée. Ne changez pas l&#39;installation logicielle du cours.</li>
 <li>Dans l&#39;Explorateur Windows, activez l&#39;affichage des extensions de fichiers. Créez un dossier <code>Binairo</code>, puis un sous-dossier <code>Execution</code>. Les chemins donnés dans les exemples de commandes ne sont pas à graver dans les VIs.</li>
 <li>Copiez dans <code>Execution</code> <strong>les cinq fichiers</strong> du dossier <code>c</code> de la livraison : <code>main.c</code>, <code>reconnaissance.c</code>, <code>reconnaissance.h</code>, <code>parametres_ocr.h</code>, <code>FontRasterized_0_1.h</code>. Le dernier est la police originale du professeur, incluse dans le dépôt privé et dans son archive GitHub <code>Code &gt; Download ZIP</code>. Ne créez pas une police de remplacement.</li>
-<li>Copiez aussi les <strong>douze fichiers <code>.m</code></strong> de la livraison dans <code>Execution</code> : <code>CheckValidMove</code>, <code>CheckVectorOk</code>, <code>CheckVectorUniqueOk</code>, <code>CheminPdfBinairo</code>, <code>CreerFigureBinairo</code>, <code>DirectValues</code>, <code>DispBinairo</code>, <code>DisplayBinairo</code>, <code>FormatGrilleValide</code>, <code>GrilleBinairoValide</code>, <code>SolveBinairo</code>, <code>printGrid</code>. Gardez l&#39;extension <code>.m</code> et la casse exacte. Le script généré ci-dessous appelle directement SolveBinairo et DisplayBinairo.</li>
+<li>Copiez aussi les <strong>sept fichiers <code>.m</code></strong> de la livraison dans <code>Execution</code> : <code>CheminPdfBinairo</code>, <code>CreerFigureBinairo</code>, <code>DispBinairo</code>, <code>DisplayBinairo</code>, <code>FormatGrilleValide</code>, <code>GrilleBinairoValide</code>, <code>SolveBinairo</code>. Gardez l&#39;extension <code>.m</code> et la casse exacte. Le script généré ci-dessous appelle directement SolveBinairo et DisplayBinairo.</li>
 <li>Le mode normal de cette recette lance MATLAB directement par System Exec. <strong>Facultatif :</strong> copiez <code>MP_LaunchMatlabScript4.vi</code> depuis Moodle uniquement si vous souhaitez utiliser ce lanceur alternatif ; conservez alors ailleurs son original.</li>
 <li>Dans <code>Binairo</code>, créez <code>Images</code> et <code>Preuves</code>. Copiez les PNG du cours dans <code>Images</code>, <strong>jamais à la place d&#39;un résultat</strong>. En particulier : <code>Binairo_6x6.png</code>, <code>Binairo_8x8.png</code>, <code>Binairo_4x4_Bad.png</code> et <code>Binaro_5x6_Bad.png</code> si ce dernier est fourni. Le nom <code>Binaro</code> de cette dernière image n&#39;est pas à corriger.</li>
 <li>Ouvrez LabVIEW. <code>Help &gt; About LabVIEW</code> : notez version et architecture dans <code>Preuves/version.txt</code>. Faites de même avec MATLAB (<code>version</code> dans sa fenêtre de commande). Ces notes décrivent votre installation, pas le programme à remettre.</li>
@@ -104,7 +105,7 @@ type CellValue.txt
 <p>Après avoir copié les dernières fonctions .m, effectuez aussi les trois contrôles simples ci-dessous dans MATLAB, avec Current Folder réglé sur Execution :</p>
 <pre><code class="language-matlab">GrilleBinairoValide([0 1; 1 0])
 GrilleBinairoValide([0 1; 0 1])
-[G, ok] = DirectValues([0 NaN; NaN 0], 2)
+[G, ok] = SolveBinairo([0 NaN; NaN 0])
 </code></pre>
 <p>Attendez successivement TRUE, FALSE, puis <code>G = [0 1; 1 0]</code> avec <code>ok = TRUE</code>. La validation globale ne contient plus de parcours récursif ; les déductions conservent leur parcours équilibré pour respecter le critère « Pas de boucles » sans augmenter la profondeur de récursion. Les commentaires et interfaces du professeur restent inchangés. Ces contrôles sont à exécuter par vous, pas des résultats natifs déjà constatés.</p>
 <p>Ouvrez MATLAB vous-même. Placez son <strong>Current Folder</strong> dans <code>Execution</code>, puis copiez ces lignes dans la Command Window :</p>
@@ -656,7 +657,7 @@ DisplayBinairo(B, S, &#39;Contradiction.png&#39;, ok)
 <pre><code class="language-text">B = [
 %s];
 fichierSource = &#39;%s&#39;;
-printGrid(B);
+disp(B);
 if %s
     [S, ok] = SolveBinairo(B);
 else
@@ -680,7 +681,7 @@ end
 1 0;
 ];
 fichierSource = &#39;Grille.png&#39;;
-printGrid(B);
+disp(B);
 if true
     [S, ok] = SolveBinairo(B);
 else
@@ -971,7 +972,7 @@ NaN 0 NaN 0 NaN NaN;
 NaN NaN NaN NaN 0 NaN;
 ];
 fichierSource = &#39;Binairo_6x6.png&#39;;
-printGrid(B);
+disp(B);
 if true
     [S, ok] = SolveBinairo(B);
 else
@@ -1203,7 +1204,7 @@ end
 </tr>
 <tr>
 <td>MATLAB fonction introuvable</td>
-<td>douze fichiers <code>.m</code> dans Execution ; working directory du lanceur ; nom/casse du fichier</td>
+<td>sept fichiers <code>.m</code> dans Execution ; working directory du lanceur ; nom/casse du fichier</td>
 </tr>
 <tr>
 <td>PDF ancien malgré panne</td>
@@ -2086,6 +2087,10 @@ Merci beaucoup.
 <li>Le sous-VI d&#39;écriture du chapitre suivant le convertira en U8 et écrira largeur puis hauteur. <strong>Ne pas transposer pour corriger l&#39;ordre de l&#39;en-tête.</strong></li>
 </ol>
 <p>Le calcul suppose une grille alignée sur les axes et des lignes d&#39;analyse à bord+10 qui ne traversent pas les chiffres, comme dans l&#39;énoncé. Les données fournies et les cas limites ci-dessus doivent tous être essayés sur la VM. Une flèche exécutable et des résultats attendus dans un document ne remplacent pas ces essais.</p>
+<h2 id="etape-93">Mise a jour des sources et du PDF</h2>
+<p>Les fonctions DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk et printGrid sont locales a SolveBinairo.m, comme dans le modele fourni. Supprimez leurs anciens fichiers .m du dossier Execution. Elles ne s&#39;appellent plus directement depuis la fenetre de commande. Le script genere utilise disp(B) pour afficher la matrice ; remplacez aussi printGrid(B) par disp(B) dans une ancienne constante N6.</p>
+<p>Le dessin utilise axis ij, axis equal et axis off. Le PDF utilise les reglages papier par defaut de MATLAB ; la date provient de char(datetime(&#39;now&#39;)) et depend de la langue et des preferences de l&#39;installation. Verifiez le PDF natif : grille entiere, cases carrees, nom et date lisibles, couleurs et message d&#39;erreur. Ce nouveau rendu n&#39;a pas ete execute ici.</p>
+<p>Le C ne cree ni ne vide CellValue.txt lorsque la reconnaissance echoue. Un ancien resultat peut donc rester present : le code de retour reste obligatoire pour decider si le resultat est utilisable. Une erreur d&#39;ecriture apres ouverture peut encore laisser un resultat incomplet.</p>
 </article></main><script>
 document.querySelectorAll('pre').forEach(pre=>{const b=document.createElement('button');b.textContent='Copier';b.addEventListener('click',async()=>{const text=pre.querySelector('code').textContent;try{await navigator.clipboard.writeText(text);b.textContent='Copié';}catch(e){const range=document.createRange();range.selectNodeContents(pre.querySelector('code'));const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);b.textContent='Sélectionné : Ctrl+C';}setTimeout(()=>b.textContent='Copier',2500);});pre.prepend(b);});
 const key='binairo-recette-20260924-simplification-v4';let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
