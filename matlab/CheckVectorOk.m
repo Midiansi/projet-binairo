@@ -1,6 +1,6 @@
 function ok = CheckVectorOk(vector, n)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 % Verifier les comptes et les suites de trois dans une ligne ou une colonne.
   % Check if the current vector (row or col) is valid
   % Test if a row/col has 3 indentical following cells (different than NaN) -> not ok
@@ -11,8 +11,7 @@ if ~isa(n, 'double') || numel(n) ~= 1 || n ~= numel(vector) || ...
         ~(n >= 2) || mod(n, 2) ~= 0 || ~isa(vector, 'double')
     return
 end
-if numel(vector) ~= n || ...
-        ~(isequal(size(vector), [1 n]) || isequal(size(vector), [n 1]))
+if ~(isequal(size(vector), [1 n]) || isequal(size(vector), [n 1]))
     return
 end
 % Avec NaN, les comparaisons restent fausses : les cases vides ne forment pas de suite.

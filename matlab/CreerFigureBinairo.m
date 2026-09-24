@@ -1,6 +1,6 @@
 function figureBinairo = CreerFigureBinairo(grilleInitiale, grilleResolue, fichier, faisable)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 % Dessiner les indices en noir, les valeurs ajoutees en bleu et les informations du PDF.
 if ~FormatGrilleValide(grilleInitiale) || ~FormatGrilleValide(grilleResolue) || ...
         ~isequal(size(grilleInitiale), size(grilleResolue))

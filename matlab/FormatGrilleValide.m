@@ -1,6 +1,6 @@
 function ok = FormatGrilleValide(grille)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 % Verifier une matrice double carree, de taille paire, contenant 0, 1 ou NaN.
 ok = false;
 if ~isa(grille, 'double')

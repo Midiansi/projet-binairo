@@ -1,6 +1,6 @@
 function [cheminPdf, nomSource] = CheminPdfBinairo(fichier)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 % Former le nom du PDF dans le dossier courant a partir du nom du PNG.
 if ~isa(fichier, 'char') || size(fichier, 1) ~= 1 || isempty(fichier) || ...
         any(fichier == 0 | fichier == 10 | fichier == 13)

@@ -1,6 +1,6 @@
 function ok = GrilleBinairoValide(grille)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 % Verifier les regles sur toutes les lignes et toutes les colonnes.
 ok = FormatGrilleValide(grille);
 if ~ok

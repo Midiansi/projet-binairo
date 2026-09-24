@@ -1,6 +1,6 @@
 function ok = CheckVectorUniqueOk(grid, r, c, n)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 % Comparer les lignes et colonnes completes, sans comparer une ligne a elle-meme.
   % Check that all full rows are unique, check current row against all the other rows
   % Check that all full cols are unique, idem.

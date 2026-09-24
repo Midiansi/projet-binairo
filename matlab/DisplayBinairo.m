@@ -1,6 +1,6 @@
 function DisplayBinairo(Original, Solution, file, feasible)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 % Enregistrer la figure en PDF dans le dossier courant, puis la fermer.
 [cheminPdf, ~] = CheminPdfBinairo(file);
 figureBinairo = CreerFigureBinairo(Original, Solution, file, feasible);

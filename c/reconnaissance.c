@@ -1,7 +1,11 @@
 /* Projet Binairo - ME-213
- * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+ * Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
  * Lecture des pixels et reconnaissance des chiffres 0 et 1.
  */
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "reconnaissance.h"
 #include "parametres_ocr.h"
 
@@ -10,25 +14,50 @@
 
 #include "FontRasterized_0_1.h"
 
-/* Le pixel de gauche correspond au bit 31 de chaque ligne du modele. */
+int EstChiffreDecimal(char caractere);
+uint32_t LireEntier32PetitBoutiste(const unsigned char *octets);
+int ChoisirChiffre(const double scores[2], const double seuils[2]);
+
+/**
+ * GetDigitBitmapBit - Lire un pixel du modele ; le pixel gauche est le bit 31.
+ * Entrees : digit : 0 ou 1 ; l, c : indices valides du modele.
+ * Sorties : Aucune.
+ * Retour : Pixel : 0 blanc, 1 noir.
+ */
 unsigned char GetDigitBitmapBit(short_t digit, int l, int c)
 {
     const uint32_t bits = (uint32_t)DigitBitmap[digit][l];
     return (unsigned char)((bits >> (31u - (unsigned int)c)) & 1u);
 }
 
-/* Les pixels de la cellule sont ranges ligne par ligne. */
+/**
+ * GetCellBit - Lire un pixel dans le tableau range ligne par ligne.
+ * Entrees : cell : pixels ; Width : largeur ; line, col : indices valides.
+ * Sorties : Aucune.
+ * Retour : Pixel : 0 blanc, 1 noir.
+ */
 unsigned char GetCellBit(unsigned char *cell, int Width, int line, int col)
 {
     return cell[(size_t)line * (size_t)Width + (size_t)col];
 }
 
+/**
+ * EstChiffreDecimal - Tester si un caractere est un chiffre decimal.
+ * Entrees : caractere : caractere a tester.
+ * Sorties : Aucune.
+ * Retour : 1 pour un chiffre de 0 a 9, sinon 0.
+ */
 int EstChiffreDecimal(char caractere)
 {
     return caractere >= '0' && caractere <= '9';
 }
 
-/* Accepter un nombre decimal entre 0 et 100, sans espace ni exposant. */
+/**
+ * ConvertirSeuil - Convertir un seuil decimal de 0 a 100, sans espace ni exposant.
+ * Entrees : texte : nombre avec point decimal eventuel ; valeur : adresse du resultat.
+ * Sorties : valeur : seuil converti en cas de succes.
+ * Retour : OCR_SUCCES ou OCR_ERREUR_ARGUMENT.
+ */
 int ConvertirSeuil(const char *texte, double *valeur)
 {
     const char *curseur;
@@ -80,7 +109,12 @@ int ConvertirSeuil(const char *texte, double *valeur)
     return OCR_SUCCES;
 }
 
-/* Les quatre octets du fichier sont en ordre petit-boutiste. */
+/**
+ * LireEntier32PetitBoutiste - Decoder quatre octets en ordre petit-boutiste.
+ * Entrees : octets : adresse de quatre octets accessibles.
+ * Sorties : Aucune.
+ * Retour : Entier non signe sur 32 bits.
+ */
 uint32_t LireEntier32PetitBoutiste(const unsigned char *octets)
 {
     return (uint32_t)octets[0] |
@@ -89,6 +123,12 @@ uint32_t LireEntier32PetitBoutiste(const unsigned char *octets)
            ((uint32_t)octets[3] << 24u);
 }
 
+/**
+ * LibererCellule - Liberer les pixels et remettre la cellule a zero.
+ * Entrees : cellule : adresse de la cellule, ou NULL.
+ * Sorties : pixels remis a NULL ; largeur et hauteur remises a zero.
+ * Retour : Aucun.
+ */
 void LibererCellule(CelluleOCR *cellule)
 {
     if (cellule != NULL) {
@@ -99,6 +139,12 @@ void LibererCellule(CelluleOCR *cellule)
     }
 }
 
+/**
+ * LireCellule - Lire et verifier les dimensions et les pixels du fichier binaire.
+ * Entrees : chemin : fichier ; cellule : structure dont pixels vaut NULL.
+ * Sorties : cellule : dimensions et pixels alloues ; description : message d'erreur.
+ * Retour : OCR_SUCCES ou code d'erreur de lecture ou de format.
+ */
 int LireCellule(const char *chemin, CelluleOCR *cellule, const char **description)
 {
     FILE *entree = NULL;
@@ -175,7 +221,12 @@ nettoyage:
     return etat;
 }
 
-/* Retenir la plus grande marge au-dessus du seuil ; garder 0 a marges egales. */
+/**
+ * ChoisirChiffre - Choisir la plus grande marge score-seuil ; garder 0 a egalite.
+ * Entrees : scores, seuils : tableaux de deux valeurs, pour 0 puis 1.
+ * Sorties : Aucune.
+ * Retour : Chiffre choisi, ou -1 si aucun seuil n'est atteint.
+ */
 int ChoisirChiffre(const double scores[2], const double seuils[2])
 {
     int choisi = -1;
@@ -190,6 +241,12 @@ int ChoisirChiffre(const double scores[2], const double seuils[2])
     return choisi;
 }
 
+/**
+ * ReconnaitreCellule - Tester le vide puis comparer la cellule aux deux modeles de chiffres.
+ * Entrees : cellule : pixels valides ; seuils : valeurs de 0 a 100.
+ * Sorties : resultat : symbole et score ; description : message en cas d'echec.
+ * Retour : OCR_SUCCES ou OCR_AUCUN_CHIFFRE.
+ */
 int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
                  ResultatOCR *resultat, const char **description)
 {
@@ -239,7 +296,7 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
                 }
             }
         }
-        scores[chiffre] = 100.0 * (double)resultat->maximum[chiffre] / 1024.0;
+        scores[chiffre] = 100.0 * (double)resultat->maximum[chiffre] / (DigitBitmapWidth * DigitBitmapHeight);
     }
     choisi = ChoisirChiffre(scores, seuilsChiffres);
     if (choisi < 0) {

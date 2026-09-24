@@ -1,6 +1,6 @@
 function [grid, ok] = DirectValues(grid, n)
 % Projet Binairo - ME-213
-% Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 % Appliquer les deductions certaines jusqu'a stabilisation ou contradiction.
 % 1) Direct solution:
 %   Do until no grid change or error
@@ -26,6 +26,7 @@ end
 end
 
 function [grille, ok, modifiee] = ParcourirCases(grille, n, indicesVides, debut, fin)
+% Sans boucle : diviser en deux limite la profondeur de ce parcours recursif.
 ok = true;
 modifiee = false;
 if debut > fin

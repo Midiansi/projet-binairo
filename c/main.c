@@ -1,7 +1,11 @@
 /* Projet Binairo - ME-213
- * Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical
+ * Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
  * Lecture des arguments et ecriture du resultat OCR.
  */
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include "reconnaissance.h"
 #include "parametres_ocr.h"
 
@@ -9,9 +13,17 @@
 #include <stdlib.h>
 #include <string.h>
 
+int ConstruireCheminSortie(const char *entree, char **sortie, const char **description);
+int EcrireResultat(FILE *sortie, const ResultatOCR *resultat, const char **description);
+
 static const char NomSortie[] = "CellValue.txt";
 
-/* Alloue CellValue.txt dans le dossier de l'entree. L'appelant libere le chemin. */
+/**
+ * ConstruireCheminSortie - Former le chemin de CellValue.txt sans confondre entree et sortie.
+ * Entrees : entree : chemin non vide, au plus 1023 caracteres.
+ * Sorties : sortie : chemin alloue a liberer ; description : message en cas d'erreur.
+ * Retour : OCR_SUCCES, OCR_ERREUR_ARGUMENT ou OCR_ERREUR_LECTURE.
+ */
 int ConstruireCheminSortie(const char *entree, char **sortie,
                                   const char **description)
 {
@@ -89,7 +101,12 @@ int ConstruireCheminSortie(const char *entree, char **sortie,
     return OCR_SUCCES;
 }
 
-/* Conserver le format attendu par LabVIEW : symbole, score et fin de ligne. */
+/**
+ * EcrireResultat - Ecrire le symbole, le pourcentage et la fin de ligne attendus par LabVIEW.
+ * Entrees : sortie : fichier ouvert ; resultat : reconnaissance obtenue.
+ * Sorties : Fichier ecrit ; description : message en cas d'erreur.
+ * Retour : OCR_SUCCES ou OCR_ERREUR_ECRITURE.
+ */
 int EcrireResultat(FILE *sortie, const ResultatOCR *resultat,
                           const char **description)
 {
@@ -101,12 +118,20 @@ int EcrireResultat(FILE *sortie, const ResultatOCR *resultat,
     return OCR_SUCCES;
 }
 
+/**
+ * main - Lire une cellule, reconnaitre son contenu et ecrire CellValue.txt.
+ * Entrees : argc, argv : programme, chemin de cellule et trois seuils.
+ * Sorties : CellValue.txt ; message sur stderr en cas d'erreur.
+ * Retour : Code EtatOCR ; zero indique une execution reussie.
+ */
 int main(int argc, char *argv[])
 {
     CelluleOCR cellule = {0, 0, NULL};
     SeuilsOCR seuils = {0.0, 0.0, 0.0};
     ResultatOCR resultat = {-2, 0.0, {0, 0}};
     char *cheminSortie = NULL;
+    char *cheminEntree = NULL;
+    size_t longueurChemin;
     FILE *sortie = NULL;
     const char *description = "erreur OCR non precisee";
     int etat = OCR_SUCCES;
@@ -116,7 +141,15 @@ int main(int argc, char *argv[])
         description = "utilisation : OCR <chemin-Cell.bin> <seuil-vide> <seuil-zero> <seuil-un>";
         goto nettoyage;
     }
-    etat = ConstruireCheminSortie(argv[1], &cheminSortie, &description);
+    cheminEntree = argv[1];
+    longueurChemin = strlen(cheminEntree);
+    if (longueurChemin >= 2 &&
+        ((cheminEntree[0] == '\'' && cheminEntree[longueurChemin - 1] == '\'') ||
+         (cheminEntree[0] == '"' && cheminEntree[longueurChemin - 1] == '"'))) {
+        cheminEntree[longueurChemin - 1] = '\0';
+        ++cheminEntree;
+    }
+    etat = ConstruireCheminSortie(cheminEntree, &cheminSortie, &description);
     if (etat != OCR_SUCCES) {
         goto nettoyage;
     }
@@ -128,7 +161,7 @@ int main(int argc, char *argv[])
         goto nettoyage;
     }
 
-    etat = LireCellule(argv[1], &cellule, &description);
+    etat = LireCellule(cheminEntree, &cellule, &description);
     if (etat != OCR_SUCCES) {
         goto nettoyage;
     }
