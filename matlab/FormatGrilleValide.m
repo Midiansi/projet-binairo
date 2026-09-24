@@ -10,6 +10,5 @@ n = size(grille, 1);
 if n < 2 || mod(n, 2) ~= 0 || ~isequal(size(grille), [n n])
     return
 end
-ok = ~any(imag(grille(:)) ~= 0) && ...
-    ~any(~isnan(grille(:)) & grille(:) ~= 0 & grille(:) ~= 1);
+ok = ~any(~isnan(grille(:)) & grille(:) ~= 0 & grille(:) ~= 1);
 end

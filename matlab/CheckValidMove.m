@@ -20,9 +20,7 @@ end
 if ~isa(r, 'double') || ~isa(c, 'double') || numel(r) ~= 1 || numel(c) ~= 1
     return
 end
-if imag(r) ~= 0 || imag(c) ~= 0 || ...
-        ~(r >= 1 && r <= n && c >= 1 && c <= n) || ...
-        mod(r, 1) ~= 0 || mod(c, 1) ~= 0
+if ~any(r == 1:n) || ~any(c == 1:n)
     return
 end
 if ~isnan(grid(r, c)) && grid(r, c) ~= v

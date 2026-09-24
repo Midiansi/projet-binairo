@@ -12,7 +12,7 @@
 static const char NomSortie[] = "CellValue.txt";
 
 /* Alloue CellValue.txt dans le dossier de l'entree. L'appelant libere le chemin. */
-static int ConstruireCheminSortie(const char *entree, char **sortie,
+int ConstruireCheminSortie(const char *entree, char **sortie,
                                   const char **description)
 {
     size_t longueur = 0;
@@ -45,7 +45,7 @@ static int ConstruireCheminSortie(const char *entree, char **sortie,
             return OCR_ERREUR_ARGUMENT;
         }
     }
-    /* Ignorer les points et espaces finaux pour controler les noms reserves sous Windows. */
+    /* Eviter que le fichier d'entree designe aussi CellValue.txt sous Windows. */
     finNom = longueur;
 
     while (finNom > debutNom &&
@@ -69,8 +69,7 @@ static int ConstruireCheminSortie(const char *entree, char **sortie,
         nomMinuscules[indice - debutNom] = caractere;
     }
     nomMinuscules[finNom - debutNom] = '\0';
-    if (strcmp(nomMinuscules, "cellvalue.txt") == 0 ||
-        strcmp(nomMinuscules, "cellvalue.txt.tmp") == 0) {
+    if (strcmp(nomMinuscules, "cellvalue.txt") == 0) {
         *description = "le nom d'entree est reserve a une sortie OCR";
         free(nomMinuscules);
         return OCR_ERREUR_ARGUMENT;
@@ -91,7 +90,7 @@ static int ConstruireCheminSortie(const char *entree, char **sortie,
 }
 
 /* Conserver le format attendu par LabVIEW : symbole, score et fin de ligne. */
-static int EcrireResultat(FILE *sortie, const ResultatOCR *resultat,
+int EcrireResultat(FILE *sortie, const ResultatOCR *resultat,
                           const char **description)
 {
     if (fprintf(sortie, "d:'%d', %.6f%%\n", resultat->symbole,

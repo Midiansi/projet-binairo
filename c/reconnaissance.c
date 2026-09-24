@@ -23,7 +23,7 @@ unsigned char GetCellBit(unsigned char *cell, int Width, int line, int col)
     return cell[(size_t)line * (size_t)Width + (size_t)col];
 }
 
-static int EstChiffreDecimal(char caractere)
+int EstChiffreDecimal(char caractere)
 {
     return caractere >= '0' && caractere <= '9';
 }
@@ -81,7 +81,7 @@ int ConvertirSeuil(const char *texte, double *valeur)
 }
 
 /* Les quatre octets du fichier sont en ordre petit-boutiste. */
-static uint32_t LireEntier32PetitBoutiste(const unsigned char *octets)
+uint32_t LireEntier32PetitBoutiste(const unsigned char *octets)
 {
     return (uint32_t)octets[0] |
            ((uint32_t)octets[1] << 8u) |
@@ -176,7 +176,7 @@ nettoyage:
 }
 
 /* Retenir la plus grande marge au-dessus du seuil ; garder 0 a marges egales. */
-static int ChoisirChiffre(const double scores[2], const double seuils[2])
+int ChoisirChiffre(const double scores[2], const double seuils[2])
 {
     int choisi = -1;
     unsigned int chiffre;
