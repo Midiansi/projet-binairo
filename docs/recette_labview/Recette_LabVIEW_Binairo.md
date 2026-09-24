@@ -40,8 +40,8 @@ PNG → LireImage → ComputeRowsCols
 
 1. Démarrez la VM Windows. Ouvrez une session. Repérez un dossier personnel **persistant et inscriptible** : un fichier posé sur le bureau d'une VM peut être perdu lors d'une réinitialisation. Demandez au support EPFL si cette persistance n'est pas documentée. Ne changez pas l'installation logicielle du cours.
 2. Dans l'Explorateur Windows, activez l'affichage des extensions de fichiers. Créez un dossier `Binairo`, puis un sous-dossier `Execution`. Les chemins donnés dans les exemples de commandes ne sont pas à graver dans les VIs.
-3. Copiez dans `Execution` **les cinq fichiers** du dossier `c` de la livraison : `main.c`, `reconnaissance.c`, `reconnaissance.h`, `parametres_ocr.h`, `FontRasterized_0_1.h`. Le dernier vient de Moodle et n'est pas dans GitHub. S'il manque, copiez le fichier exact fourni dans « fichiers utiles ». Ne créez pas une police de remplacement.
-4. Copiez aussi les **treize fichiers `.m`** de la livraison dans `Execution` : `CheckValidMove`, `CheckVectorOk`, `CheckVectorUniqueOk`, `CheminPdfBinairo`, `CreerFigureBinairo`, `DirectValues`, `DispBinairo`, `DisplayBinairo`, `ExecuterBinairo`, `FormatGrilleValide`, `GrilleBinairoValide`, `SolveBinairo`, `printGrid`. Gardez l'extension `.m` et la casse exacte.
+3. Copiez dans `Execution` **les cinq fichiers** du dossier `c` de la livraison : `main.c`, `reconnaissance.c`, `reconnaissance.h`, `parametres_ocr.h`, `FontRasterized_0_1.h`. Le dernier est la police originale du professeur, incluse dans le ZIP de sources. Elle reste exclue du dépôt GitHub ; si vous partez d'un clone, reprenez-la dans le ZIP ou dans « fichiers utiles » sur Moodle. Ne créez pas une police de remplacement.
+4. Copiez aussi les **treize fichiers `.m`** de la livraison dans `Execution` : `CheckValidMove`, `CheckVectorOk`, `CheckVectorUniqueOk`, `CheminPdfBinairo`, `CreerFigureBinairo`, `DirectValues`, `DispBinairo`, `DisplayBinairo`, `ExecuterBinairo`, `FormatGrilleValide`, `GrilleBinairoValide`, `SolveBinairo`, `printGrid`. Gardez l'extension `.m` et la casse exacte. `ExecuterBinairo` reste disponible pour les anciens appels, mais le script généré ci-dessous appelle directement SolveBinairo et DisplayBinairo.
 5. Le mode normal de cette recette lance MATLAB directement par System Exec. **Facultatif :** copiez `MP_LaunchMatlabScript4.vi` depuis Moodle uniquement si vous souhaitez utiliser ce lanceur alternatif ; conservez alors ailleurs son original.
 6. Dans `Binairo`, créez `Images` et `Preuves`. Copiez les PNG du cours dans `Images`, **jamais à la place d'un résultat**. En particulier : `Binairo_6x6.png`, `Binairo_8x8.png`, `Binairo_4x4_Bad.png` et `Binaro_5x6_Bad.png` si ce dernier est fourni. Le nom `Binaro` de cette dernière image n'est pas à corriger.
 7. Ouvrez LabVIEW. `Help > About LabVIEW` : notez version et architecture dans `Preuves/version.txt`. Faites de même avec MATLAB (`version` dans sa fenêtre de commande). Ces notes décrivent votre installation, pas le programme à remettre.
@@ -498,13 +498,31 @@ Dans No Error, posez les objets suivants et câblez exactement :
 | N7 Build Path | base=P5 ; name=`solve.m` | chemin script |
 | N8 EcrireTexte.vi | Chemin=N7 ; Texte=N6 ; error in=N6.error out | erreur finale |
 
-Le format N6 se saisit en **Backslash Codes Display** :
+Le format N6 se saisit en **Normal Display**, avec de vrais retours à la ligne. Agrandissez la constante String et copiez tout le bloc suivant. Ne tapez pas les deux caractères `\n` à la place des retours à la ligne. Le seul `\n` écrit littéralement ci-dessous est celui des chaînes MATLAB de fprintf :
 
 ```text
-B = [\n%s];\nExecuterBinairo(B, '%s', %s, %s);\n
+B = [
+%s];
+fichierSource = '%s';
+printGrid(B);
+if %s
+    [S, ok] = SolveBinairo(B);
+else
+    S = B;
+    ok = GrilleBinairoValide(B);
+end
+DisplayBinairo(B, S, fichierSource, ok);
+if %s
+    uiopen(CheminPdfBinairo(fichierSource), 1);
+end
+if ok
+    fprintf('Binairo traite.\n');
+else
+    fprintf('Grille contradictoire ou sans solution.\n');
+end
 ```
 
-N6.result→P6 ; N7.path→P7 ; N8.error out→P8, via la garde. Les `%s` ne sont pas des instructions MATLAB : ils sont remplacés par Format Into String. Les options deviennent **true/false**, jamais les nombres0/1, car la fonction actuelle exige des booléens MATLAB.
+N6.result→P6 ; N7.path→P7 ; N8.error out→P8, via la garde. Les `%s` ne sont pas des instructions MATLAB : ils sont remplacés par Format Into String. Les options deviennent **true/false**, jamais les nombres0/1, pour produire des conditions MATLAB explicites. Les appels à SolveBinairo et DisplayBinairo figurent directement dans solve.m.
 
 Checkpoint manuel : MatriceTexte contient deux lignes `0 1;\n1 0;\n`, PNG choisi `Grille.png`, options TRUE/FALSE. Ouvrez le fichier enregistré avec un éditeur de texte :
 
@@ -513,7 +531,23 @@ B = [
 0 1;
 1 0;
 ];
-ExecuterBinairo(B, 'Grille.png', true, false);
+fichierSource = 'Grille.png';
+printGrid(B);
+if true
+    [S, ok] = SolveBinairo(B);
+else
+    S = B;
+    ok = GrilleBinairoValide(B);
+end
+DisplayBinairo(B, S, fichierSource, ok);
+if false
+    uiopen(CheminPdfBinairo(fichierSource), 1);
+end
+if ok
+    fprintf('Binairo traite.\n');
+else
+    fprintf('Grille contradictoire ou sans solution.\n');
+end
 ```
 
 Le nom affiché dans le PDF est le nom du PNG ; il n'est pas nécessaire de transmettre son chemin complet à MATLAB, qui n'a pas à relire l'image. Un nom `L'exemple.png` doit devenir `'L''exemple.png'`. Les noms fournis dans les essais du cours sont ASCII ; validez séparément l'encodage natif si vous employez des noms accentués sur Windows. Ne créez pas de protocole `MatlabStatus.txt` : les sources actuelles n'en écrivent pas.
@@ -699,7 +733,23 @@ NaN NaN NaN NaN 1 0;
 NaN 0 NaN 0 NaN NaN;
 NaN NaN NaN NaN 0 NaN;
 ];
-ExecuterBinairo(B, 'Binairo_6x6.png', true, true);
+fichierSource = 'Binairo_6x6.png';
+printGrid(B);
+if true
+    [S, ok] = SolveBinairo(B);
+else
+    S = B;
+    ok = GrilleBinairoValide(B);
+end
+DisplayBinairo(B, S, fichierSource, ok);
+if true
+    uiopen(CheminPdfBinairo(fichierSource), 1);
+end
+if ok
+    fprintf('Binairo traite.\n');
+else
+    fprintf('Grille contradictoire ou sans solution.\n');
+end
 ```
 
 Le PDF doit contenir tous les indices initiaux en noir gras et toutes les valeurs ajoutées en bleu gras. La date/heure doit correspondre à cette exécution. Fermez le lecteur PDF avant un nouvel essai si Windows verrouille le fichier : une erreur d'accès ne doit jamais être ignorée.
@@ -715,7 +765,17 @@ Le PDF doit contenir tous les indices initiaux en noir gras et toutes les valeur
 
 Dans les deux dernières lignes, aucune existence de solution n'est certifiée. Pour une grille initiale déjà contradictoire, le PDF doit afficher `== Error ==`. L'option Résoudre FALSE ne veut pas dire « ne pas lancer MATLAB » : MATLAB reste responsable du dessin.
 
-### 18.3 Deux types d'échec à ne pas confondre
+### 18.3 Tester l'ouverture PDF avec le lancement réel
+
+`uiopen(chemin,1)` est proposé dans l'addendum du cours (`P0.PPI_Projet_addendum.25.r2.pdf`, diapositive « Open a pdf file »). Son ouverture du lecteur PDF en mode `-batch` doit néanmoins être testée sur la VM : elle n'a pas été exécutée ici.
+
+1. Fermez tout PDF ouvert. Dans GenererScript.vi, générez le script du checkpoint2×2 avec Résoudre=TRUE, Ouvrir PDF=FALSE et le nom `Grille.png`.
+2. Lancez-le par LancerMatlab.vi en mode direct, avec le vrai matlab.exe. Attendez la fin. Vérifiez un code de retour0 et l'existence de Grille.pdf. Aucun lecteur ne doit s'ouvrir automatiquement.
+3. Régénérez le même script avec Ouvrir PDF=TRUE. Relancez par le même VI. Vérifiez le code0 **et l'ouverture visible du PDF** ; un fichier créé sans lecteur ouvert ne valide pas l'option.
+4. Répétez les deux essais avec Résoudre=FALSE, puis depuis un dossier contenant des espaces. Utilisez aussi le nom `L'exemple_test.png` pour vérifier les apostrophes et le caractère souligné.
+5. Notez la version MATLAB, le code de retour, la sortie d'erreur et l'observation du lecteur. Si le PDF existe mais ne s'ouvre pas, vérifiez d'abord son ouverture par double-clic dans Windows. Ne marquez pas V05 réussi tant que les quatre combinaisons ne fonctionnent pas par le lancement `-batch` réel.
+
+### 18.4 Deux types d'échec à ne pas confondre
 
 - `Binairo_4x4_Bad.png` peut avoir une géométrie correcte tout en étant contradictoire : OCR complet, MATLAB terminé, PDF `== Error ==` attendu.
 - `Binaro_5x6_Bad.png` a un nombre de lignes/colonnes incompatible : erreur de géométrie **avant** l'OCR et avant le lancement MATLAB.
@@ -730,7 +790,7 @@ Pour chaque ligne : notez date, version des logiciels, PASS/FAIL et observation 
 | V02 | PNG8×8, mêmes options | n=8, tous les indices conservés, règles de la solution vérifiées |
 | V03 | PNG4×4_Bad | n=4, PDF == Error == ; aucun faux résultat résolu |
 | V04 | PNG5×6_Bad | erreur géométrie, pas de lancement MATLAB |
-| V05 | Les quatre lignes du tableau18.2 | comportement exact des deux options |
+| V05 | Les quatre lignes du tableau18.2, par le lancement -batch réel ; suivre18.3 | code0, PDF correct, ouverture visible seulement si demandée |
 | V06 | Sélectionner un chemin PNG inexistant | erreur de lecture visible |
 | V07 | Dans un dossier d'essai, créer un texte `faux.png` contenant abc et le sélectionner | erreur PNG visible, aucun lancement |
 | V08 | Champ PNG vide puis fichier `.jpg` | erreur avant traitement |

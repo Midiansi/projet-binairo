@@ -32,7 +32,7 @@ Le C applique la sélection par marge de la donnée. Les codes de retour, alloca
 | 27 | transitions, axes environ10px après le bord ; nombre pair et égal de cases | IntervallesNoirs et ComputeRowsCols | formule rendue littérale ; coordonnées contrôlées séparément sur les images fournies |
 | 28–31,33–34 | règles du Binairo ; déductions répétées jusqu’à stabilisation ; puis essai0 et1 avec récursion ; NaN pour vide | SolveBinairo, DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk | règles conservées par relecture ; validation globale simplifiée |
 | 32 | DisplayBinairo(Original,Solution,file,...) ; indices noirs gras, ajouts bleus gras ; traits ; nom haut gauche, date/heure haut droite ; == Error == centré | DisplayBinairo et CreerFigureBinairo | propriétés présentes dans le code ; rendu natif à vérifier |
-| 33–35 | fonctions auxiliaires et printGrid ; appels depuis un script généré | fonctions présentes ; GenererScript→ExecuterBinairo→SolveBinairo/DisplayBinairo | le passage par l’auxiliaire ExecuterBinairo conserve les fonctions prescrites ; aucun script fixe ne remplace la matrice reconnue |
+| 33–35 | fonctions auxiliaires et printGrid ; appels depuis un script généré | fonctions présentes ; GenererScript→solve.m→SolveBinairo/DisplayBinairo | appels directs dans le script genere ; aucun script fixe ne remplace la matrice reconnue |
 | 36 | OCR absent/en erreur, PNG absent, script impossible à créer, MATLAB absent, script MATLAB en erreur | gestion d’erreurs C ; recette5,6,12,15–19 | chaque cas possède un essai natif identifié ; résultats natifs encore attendus |
 
 ## Contradictions internes et conventions restantes
@@ -89,3 +89,9 @@ Fondements pédagogiques : la page physique43 de P0.PPI_Projet.25.r6.pdf dit exp
 - Conservation des protections Windows contre la confusion entre le fichier d’entrée et CellValue.txt. Elles ne constituent pas une gestion des noms de périphériques Windows.
 
 Recompiler le C et refaire les essais MATLAB du chapitre1.2, puis vérifier un PDF avec un nom contenant un caractère souligné. La figure peut désormais apparaître pendant sa création ; les fonctions d’export la ferment ensuite. Les essais MATLAB et LabVIEW restent à effectuer dans l’environnement du projet.
+
+## Mise a jour de compilation et du script genere
+
+Les sources C acceptent une paire de guillemets simples ou doubles encore presente autour du chemin dans argv[1]. Les espaces doivent deja etre groupes dans un seul argument par l'appelant. Les fonctions ont leurs en-tetes et prototypes ; _CRT_SECURE_NO_WARNINGS est defini avant les inclusions. La note de compilation du ZIP explique les deux compilateurs. Le ZIP contient la police originale.
+
+Au chapitre13, remplacer seulement la constante de format N6 par le nouveau bloc en Normal Display. Les quatre arguments et les connecteurs restent identiques. solve.m appelle directement SolveBinairo et DisplayBinairo. Refaire le checkpoint et V05 avec les quatre combinaisons d'options. L'ouverture PDF par uiopen en mode -batch reste a valider dans la VM suivant18.3.
