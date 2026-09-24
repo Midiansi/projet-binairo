@@ -7,7 +7,7 @@ Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 Le dossier c contient main.c, reconnaissance.c, reconnaissance.h,
 parametres_ocr.h et FontRasterized_0_1.h. Le dernier est le fichier original
 fourni par le professeur : le conserver sans modification. Il est inclus
-dans ce ZIP, mais reste exclu du depot GitHub.
+dans le depot prive et dans son archive GitHub Code > Download ZIP.
 
 ## Windows avec Visual Studio
 
