@@ -21,7 +21,7 @@ static const char NomSortie[] = "CellValue.txt";
 /**
  * ConstruireCheminSortie - Former le chemin de CellValue.txt sans confondre entree et sortie.
  * Entrees : entree : chemin non vide, au plus 1023 caracteres.
- * Sorties : sortie : chemin alloue a liberer ; description : message en cas d'erreur.
+ * Sorties : sortie : chemin alloue a liberer, ou NULL en cas d'erreur ; description : message en cas d'erreur.
  * Retour : OCR_SUCCES, OCR_ERREUR_ARGUMENT ou OCR_ERREUR_LECTURE.
  */
 int ConstruireCheminSortie(const char *entree, char **sortie,
@@ -32,6 +32,8 @@ int ConstruireCheminSortie(const char *entree, char **sortie,
     size_t finNom;
     size_t indice;
     char *nomMinuscules;
+
+    *sortie = NULL;
 
     while (longueur < OCR_TAILLE_CHEMIN && entree[longueur] != '\0') {
         ++longueur;
@@ -166,15 +168,16 @@ int main(int argc, char *argv[])
         goto nettoyage;
     }
 
+    etat = ReconnaitreCellule(&cellule, &seuils, &resultat, &description);
+    if (etat != OCR_SUCCES) {
+        goto nettoyage;
+    }
+
     /* Un code de retour non nul interdit a LabVIEW d'utiliser le fichier resultat. */
-    sortie = fopen(cheminSortie, "wb");
+    sortie = fopen(cheminSortie, "w");
     if (sortie == NULL) {
         etat = OCR_ERREUR_ECRITURE;
         description = "impossible d'ouvrir le fichier de resultat";
-        goto nettoyage;
-    }
-    etat = ReconnaitreCellule(&cellule, &seuils, &resultat, &description);
-    if (etat != OCR_SUCCES) {
         goto nettoyage;
     }
     etat = EcrireResultat(sortie, &resultat, &description);

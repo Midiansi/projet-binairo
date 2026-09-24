@@ -55,7 +55,7 @@ int EstChiffreDecimal(char caractere)
 /**
  * ConvertirSeuil - Convertir un seuil decimal de 0 a 100, sans espace ni exposant.
  * Entrees : texte : nombre avec point decimal eventuel ; valeur : adresse du resultat.
- * Sorties : valeur : seuil converti en cas de succes.
+ * Sorties : valeur : seuil converti, ou 0 en cas d'erreur si le pointeur est valide.
  * Retour : OCR_SUCCES ou OCR_ERREUR_ARGUMENT.
  */
 int ConvertirSeuil(const char *texte, double *valeur)
@@ -67,6 +67,9 @@ int ConvertirSeuil(const char *texte, double *valeur)
     int chiffreNonNul = 0;
     int fractionNonNulle = 0;
 
+    if (valeur != NULL) {
+        *valeur = 0.0;
+    }
     if (texte == NULL || valeur == NULL || *texte == '\0') {
         return OCR_ERREUR_ARGUMENT;
     }
