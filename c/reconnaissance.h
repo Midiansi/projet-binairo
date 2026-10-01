@@ -11,11 +11,11 @@
 /* Tout code non nul signale un echec ; le message correspondant est ecrit sur stderr. */
 enum EtatOCR {
     OCR_SUCCES = 0,
-    OCR_ERREUR_ARGUMENT = 2,
-    OCR_ERREUR_FORMAT = 3,
-    OCR_ERREUR_LECTURE = 4,
-    OCR_AUCUN_CHIFFRE = 5,
-    OCR_ERREUR_ECRITURE = 6
+    OCR_ERREUR_ARGUMENT = 2, /* Nombre d'arguments, chemin ou seuil invalide. */
+    OCR_ERREUR_FORMAT = 3,   /* Entete, dimensions, nombre ou valeur des pixels. */
+    OCR_ERREUR_LECTURE = 4,  /* Ouverture/lecture de l'entree ou allocation impossible. */
+    OCR_AUCUN_CHIFFRE = 5,   /* Case non vide : aucun modele admissible. */
+    OCR_ERREUR_ECRITURE = 6  /* Ouverture, ecriture ou fermeture de la sortie. */
 };
 
 typedef struct {

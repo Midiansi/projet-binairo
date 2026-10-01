@@ -179,7 +179,8 @@ int LireCellule(const char *chemin, CelluleOCR *cellule, const char **descriptio
         goto nettoyage;
     }
 
-    /* Les dimensions validees bornent l'allocation ; lire tous les pixels en une fois. */
+    /* Une cellule peut etre rectangulaire. Les deux dimensions sont validees
+     * avant le produit : au plus 100 * 100 octets, lus en une fois. */
     nombrePixels = (size_t)cellule->largeur * (size_t)cellule->hauteur;
     cellule->pixels = malloc(nombrePixels);
     if (cellule->pixels == NULL) {
