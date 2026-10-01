@@ -3,7 +3,7 @@
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:32px}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:#006e69;text-underline-offset:3px}nav{position:fixed;inset:0 auto 0 0;width:285px;padding:24px 18px;overflow:auto;border-right:1px solid var(--line);background:#edf3f1}nav .brand{font-size:12px;letter-spacing:.13em;font-weight:750;color:#4a6d68;margin-bottom:8px}nav .title{font-size:21px;font-weight:750;line-height:1.25;margin-bottom:14px}nav a{display:block;text-decoration:none;color:#234a4a;font-size:13px;line-height:1.4;padding:7px 8px;border-radius:5px}nav a:hover{background:#dceae5}nav .level-1{font-weight:750;border-top:1px solid var(--line);margin-top:10px}.tools{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 18px}button{cursor:pointer;border:1px solid #9ebcb6;border-radius:5px;background:white;color:#14534e;padding:6px 10px;font:inherit;font-size:12px}main{margin-left:285px;padding:50px 4vw 100px;max-width:1460px}article{background:white;padding:42px clamp(22px,4vw,68px);border:1px solid var(--line);border-radius:8px;max-width:1040px}h1,h2,h3{line-height:1.25;letter-spacing:-.02em}h1{font-size:34px;max-width:800px;margin:0 0 24px}h1:not(:first-child){margin-top:80px;padding-top:30px;border-top:5px solid var(--accent)}h2{font-size:25px;margin-top:64px;padding-top:22px;border-top:2px solid var(--accent)}h3{font-size:19px;margin-top:32px}p{margin:16px 0}li{margin:9px 0}li p{margin:8px 0}ul,ol{padding-left:26px}strong{font-weight:720}code{font-family:ui-monospace,Consolas,monospace;font-size:.86em;background:#eff3f3;border-radius:3px;padding:2px 4px;overflow-wrap:anywhere}pre{position:relative;padding:45px 18px 18px;border:1px solid #d3e1dd;border-left:4px solid var(--accent);background:#f4f8f6;overflow:auto;line-height:1.55;border-radius:5px}pre code{background:none;padding:0;white-space:pre;overflow-wrap:normal;font-size:13px}pre button{position:absolute;right:8px;top:8px}.table-scroll{overflow-x:auto;margin:22px 0}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.55}th{text-align:left;background:#e8f1ed;font-weight:700}th,td{border:1px solid #d3dfdc;padding:10px 12px;vertical-align:top}tr:nth-child(even) td{background:#f8faf9}td code{font-size:12px}blockquote{border-left:4px solid var(--accent);padding:4px 20px;background:#f0f5f3;margin:20px 0}.check{font-size:13px;color:#41675c;display:flex;gap:8px;align-items:center;margin-top:12px}.check input{width:17px;height:17px;accent-color:var(--accent)}.checked{color:#49705d}.hint{font-size:12px;color:#627b73}#progress{font-size:12px;color:#45635c}
 @media(max-width:1000px){nav{position:relative;width:auto;max-height:320px;border-bottom:1px solid var(--line)}main{margin-left:0;padding:20px}article{padding:24px}h1{font-size:29px}}
 @media print{nav,.tools,.check,pre button{display:none!important}main{margin:0;padding:0;max-width:none}article{padding:0;border:none;max-width:none}body{background:white;font-size:10pt;line-height:1.45}h1{font-size:23pt}h2{font-size:17pt;break-before:page;margin-top:0;border-top:none}h3{font-size:13pt;break-after:avoid}table{font-size:9pt}.table-scroll{overflow:visible}pre{white-space:pre-wrap;padding:10px;break-inside:avoid}pre code{white-space:pre-wrap;font-size:8pt}a{color:inherit;text-decoration:none}tr{break-inside:avoid}@page{size:A4;margin:17mm}
-</style></head><body><nav aria-label="Sommaire"><div class="brand">ME-213 · BINAIRO</div><div class="title">Construire LabVIEW<br>pas à pas</div><div class="hint">2025 Q3 · menus anglais<br>Recette en français · 24 septembre 2026</div><div class="tools"><button id="print">Imprimer / PDF</button><a href="Recette_LabVIEW_Binairo.md" download>Texte Markdown</a></div><div id="progress"></div><a class="level-1" href="#etape-1">Construire la partie LabVIEW du projet Binairo</a>
+</style></head><body><nav aria-label="Sommaire"><div class="brand">ME-213 · BINAIRO</div><div class="title">Construire LabVIEW<br>pas à pas</div><div class="hint">2025 Q3 · menus anglais<br>Recette en français · 1 octobre 2026</div><div class="tools"><button id="print">Imprimer / PDF</button><a href="Recette_LabVIEW_Binairo.md" download>Texte Markdown</a></div><div id="progress"></div><a class="level-1" href="#etape-1">Construire la partie LabVIEW du projet Binairo</a>
 <a class="level-2" href="#etape-2">Mode d’emploi de cette recette</a>
 <a class="level-2" href="#etape-3">1 Préparer le dossier une seule fois</a>
 <a class="level-2" href="#etape-6">2 Les gestes LabVIEW à utiliser partout</a>
@@ -36,8 +36,9 @@
 <a class="level-2" href="#etape-78">G4. <code>ComputeCellRect.vi</code> — rectangle intérieur d&#39;une case</a>
 <a class="level-2" href="#etape-83">G5. <code>ComputeRowsCols.vi</code> — nombre de cases et traits mesurés</a>
 <a class="level-2" href="#etape-90">G6. Essais géométriques sans image et extraction effective</a>
-<a class="level-2" href="#etape-93">Mise a jour des sources et du PDF</a></nav><main><article><h1 id="etape-1">Construire la partie LabVIEW du projet Binairo</h1>
-<p>Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 24 septembre 2026.</p>
+<a class="level-2" href="#etape-93">Mise a jour des sources et du PDF</a>
+<a class="level-2" href="#etape-94">Contrôles annoncés en cours le 1 octobre</a></nav><main><article><h1 id="etape-1">Construire la partie LabVIEW du projet Binairo</h1>
+<p>Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 1 octobre 2026.</p>
 <p>Ce document explique comment construire les VIs, les raccorder au C et à MATLAB, puis vérifier le résultat. Il s&#39;adresse à une personne qui débute dans LabVIEW. Les consignes sont prévues pour <strong>LabVIEW 2025 Q3, menus anglais, sous Windows</strong>, notamment dans la VM EPFL. Les noms anglais ci-dessous sont ceux à rechercher dans LabVIEW ; les noms de vos propres objets sont en français. Ne construisez pas un projet Real-Time, FPGA ou NXG.</p>
 <p><strong>Référence prioritaire : Donnée projet Binairo 2026.2</strong>, fichier <code>P00.PPI_Projet.2026.2.pdf</code>, identifié sous ce titre dans l’export Moodle. Les exercices servent seulement d’aide compatible ; ils ne remplacent aucune consigne de la donnée. La recette conserve la contrainte « Code Matlab : Pas de boucles » des critères généraux de notation2025.</p>
 <p><strong>Ce qui est établi :</strong> exigences de cette donnée, contrats des sources actuelles, principes et terminaux des fonctions NI référencées. <strong>Ce qui reste à mesurer :</strong> exécution des VIs que vous allez construire, interface du lanceur fourni seulement si vous choisissez cette option, et rendu MATLAB dans votre installation. Une recette ne remplace pas ces essais et ne garantit pas une note. Les dernières consignes Moodle restent à vérifier avant remise : le document 2026 annonce encore une liste d&#39;erreurs à venir.</p>
@@ -654,7 +655,9 @@ DisplayBinairo(B, S, &#39;Contradiction.png&#39;, ok)
 </tr>
 </tbody></table></div>
 <p>Le format N6 se saisit en <strong>Normal Display</strong>, avec de vrais retours à la ligne. Agrandissez la constante String et copiez tout le bloc suivant. Ne tapez pas les deux caractères <code>\n</code> à la place des retours à la ligne. Le seul <code>\n</code> écrit littéralement ci-dessous est celui des chaînes MATLAB de fprintf :</p>
-<pre><code class="language-text">B = [
+<pre><code class="language-text">%% Projet Binairo - ME-213
+%% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
+B = [
 %s];
 fichierSource = &#39;%s&#39;;
 disp(B);
@@ -674,9 +677,12 @@ else
     fprintf(&#39;Grille contradictoire ou sans solution.\n&#39;);
 end
 </code></pre>
+<p>Les <code>%%</code> du format produisent chacun un seul <code>%</code> dans solve.m : les deux premières lignes sont les commentaires d’identification des auteurs.</p>
 <p>N6.result→P6 ; N7.path→P7 ; N8.error out→P8, via la garde. Les <code>%s</code> ne sont pas des instructions MATLAB : ils sont remplacés par Format Into String. Les options deviennent <strong>true/false</strong>, jamais les nombres0/1, pour produire des conditions MATLAB explicites. Les appels à SolveBinairo et DisplayBinairo figurent directement dans solve.m.</p>
 <p>Checkpoint manuel : MatriceTexte contient deux lignes <code>0 1;\n1 0;\n</code>, PNG choisi <code>Grille.png</code>, options TRUE/FALSE. Ouvrez le fichier enregistré avec un éditeur de texte :</p>
-<pre><code class="language-matlab">B = [
+<pre><code class="language-matlab">% Projet Binairo - ME-213
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
+B = [
 0 1;
 1 0;
 ];
@@ -963,7 +969,9 @@ end
 <h2 id="etape-51">18 Lire les résultats attendus</h2>
 <h3 id="etape-52">18.1 Exemple 6 par 6</h3>
 <p>Attendez Taille grille=6 et la matrice suivante dans le script (espaces et fins de lignes peuvent différer, pas les valeurs) :</p>
-<pre><code class="language-matlab">B = [
+<pre><code class="language-matlab">% Projet Binairo - ME-213
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
+B = [
 NaN 0 NaN NaN NaN NaN;
 NaN NaN 0 NaN 0 NaN;
 NaN NaN NaN NaN 1 0;
@@ -2091,9 +2099,13 @@ Merci beaucoup.
 <p>Les fonctions DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk et printGrid sont locales a SolveBinairo.m, comme dans le modele fourni. Supprimez leurs anciens fichiers .m du dossier Execution. Elles ne s&#39;appellent plus directement depuis la fenetre de commande. Le script genere utilise disp(B) pour afficher la matrice ; remplacez aussi printGrid(B) par disp(B) dans une ancienne constante N6.</p>
 <p>Le dessin utilise axis ij, axis equal et axis off. Le PDF utilise les reglages papier par defaut de MATLAB ; la date provient de char(datetime(&#39;now&#39;)) et depend de la langue et des preferences de l&#39;installation. Verifiez le PDF natif : grille entiere, cases carrees, nom et date lisibles, couleurs et message d&#39;erreur. Ce nouveau rendu n&#39;a pas ete execute ici.</p>
 <p>Le C ne cree ni ne vide CellValue.txt lorsque la reconnaissance echoue. Un ancien resultat peut donc rester present : le code de retour reste obligatoire pour decider si le resultat est utilisable. Une erreur d&#39;ecriture apres ouverture peut encore laisser un resultat incomplet.</p>
+<h2 id="etape-94">Contrôles annoncés en cours le 1 octobre</h2>
+<p>La documentation courte du projet se trouve dans <code>docs/projet/Documentation_projet.pdf</code> du dépôt GitHub. Elle indique la machine et le compilateur du test C réellement effectué, le rôle des fichiers et la correspondance entre les codes OCR et les erreurs. Complétez ses informations VM après les essais natifs : version Windows, modèle/VM, compilateur et version, MATLAB et version, LabVIEW et version. Ne recopiez pas les versions de l&#39;exemple Billard du professeur.</p>
+<p>Le C accepte une cellule rectangulaire dont chaque dimension est dans10..100 et qui contient exactement largeur×hauteur octets0/1. Une grille Binairo, en revanche, doit avoir le même nombre pair de lignes et de colonnes. Les coordonnées et seuils restent contrôlés avant leur utilisation. Les codes−2/−3 cités oralement ne sont pas encore confirmés comme numérotation imposée ; les codes actuellement implémentés sont0,2,3,4,5,6. Toute erreur non nulle interdit de lire l&#39;ancien résultat.</p>
+<p>Pendant les essais natifs, vérifier aussi le refus d&#39;un fichier tronqué, d&#39;un octet supplémentaire, d&#39;une dimension négative encodée en U32 et d&#39;une dimension10000. Conserver le message complet, pas seulement le numéro.</p>
 </article></main><script>
 document.querySelectorAll('pre').forEach(pre=>{const b=document.createElement('button');b.textContent='Copier';b.addEventListener('click',async()=>{const text=pre.querySelector('code').textContent;try{await navigator.clipboard.writeText(text);b.textContent='Copié';}catch(e){const range=document.createRange();range.selectNodeContents(pre.querySelector('code'));const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);b.textContent='Sélectionné : Ctrl+C';}setTimeout(()=>b.textContent='Copier',2500);});pre.prepend(b);});
-const key='binairo-recette-20260924-simplification-v4';let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
+const key='binairo-recette-20261001-lecture-v5';let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
 const heads=[...document.querySelectorAll('h2')].filter(h=>!/^22 |^23 |^Mode/.test(h.textContent));
 function progress(){document.getElementById('progress').textContent=heads.filter(h=>saved[h.id]).length+' / '+heads.length+' étapes cochées';}
 heads.forEach(h=>{const label=document.createElement('label');label.className='check';const input=document.createElement('input');input.type='checkbox';input.checked=!!saved[h.id];label.append(input,document.createTextNode('Étape terminée et contrôlée'));h.after(label);input.addEventListener('change',()=>{saved[h.id]=input.checked;try{localStorage.setItem(key,JSON.stringify(saved));}catch(e){}progress();});});progress();

@@ -1,6 +1,6 @@
 # Construire la partie LabVIEW du projet Binairo
 
-Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 24 septembre 2026.
+Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 1 octobre 2026.
 
 Ce document explique comment construire les VIs, les raccorder au C et à MATLAB, puis vérifier le résultat. Il s'adresse à une personne qui débute dans LabVIEW. Les consignes sont prévues pour **LabVIEW 2025 Q3, menus anglais, sous Windows**, notamment dans la VM EPFL. Les noms anglais ci-dessous sont ceux à rechercher dans LabVIEW ; les noms de vos propres objets sont en français. Ne construisez pas un projet Real-Time, FPGA ou NXG.
 
@@ -501,6 +501,8 @@ Dans No Error, posez les objets suivants et câblez exactement :
 Le format N6 se saisit en **Normal Display**, avec de vrais retours à la ligne. Agrandissez la constante String et copiez tout le bloc suivant. Ne tapez pas les deux caractères `\n` à la place des retours à la ligne. Le seul `\n` écrit littéralement ci-dessous est celui des chaînes MATLAB de fprintf :
 
 ```text
+%% Projet Binairo - ME-213
+%% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 B = [
 %s];
 fichierSource = '%s';
@@ -522,11 +524,15 @@ else
 end
 ```
 
+Les `%%` du format produisent chacun un seul `%` dans solve.m : les deux premières lignes sont les commentaires d’identification des auteurs.
+
 N6.result→P6 ; N7.path→P7 ; N8.error out→P8, via la garde. Les `%s` ne sont pas des instructions MATLAB : ils sont remplacés par Format Into String. Les options deviennent **true/false**, jamais les nombres0/1, pour produire des conditions MATLAB explicites. Les appels à SolveBinairo et DisplayBinairo figurent directement dans solve.m.
 
 Checkpoint manuel : MatriceTexte contient deux lignes `0 1;\n1 0;\n`, PNG choisi `Grille.png`, options TRUE/FALSE. Ouvrez le fichier enregistré avec un éditeur de texte :
 
 ```matlab
+% Projet Binairo - ME-213
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 B = [
 0 1;
 1 0;
@@ -725,6 +731,8 @@ Enregistrez. La flèche doit être entière. Sélectionnez le PNG6×6 et matlab.
 Attendez Taille grille=6 et la matrice suivante dans le script (espaces et fins de lignes peuvent différer, pas les valeurs) :
 
 ```matlab
+% Projet Binairo - ME-213
+% Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 B = [
 NaN 0 NaN NaN NaN NaN;
 NaN NaN 0 NaN 0 NaN;
@@ -1265,3 +1273,11 @@ Les fonctions DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk e
 Le dessin utilise axis ij, axis equal et axis off. Le PDF utilise les reglages papier par defaut de MATLAB ; la date provient de char(datetime('now')) et depend de la langue et des preferences de l'installation. Verifiez le PDF natif : grille entiere, cases carrees, nom et date lisibles, couleurs et message d'erreur. Ce nouveau rendu n'a pas ete execute ici.
 
 Le C ne cree ni ne vide CellValue.txt lorsque la reconnaissance echoue. Un ancien resultat peut donc rester present : le code de retour reste obligatoire pour decider si le resultat est utilisable. Une erreur d'ecriture apres ouverture peut encore laisser un resultat incomplet.
+
+## Contrôles annoncés en cours le 1 octobre
+
+La documentation courte du projet se trouve dans `docs/projet/Documentation_projet.pdf` du dépôt GitHub. Elle indique la machine et le compilateur du test C réellement effectué, le rôle des fichiers et la correspondance entre les codes OCR et les erreurs. Complétez ses informations VM après les essais natifs : version Windows, modèle/VM, compilateur et version, MATLAB et version, LabVIEW et version. Ne recopiez pas les versions de l'exemple Billard du professeur.
+
+Le C accepte une cellule rectangulaire dont chaque dimension est dans10..100 et qui contient exactement largeur×hauteur octets0/1. Une grille Binairo, en revanche, doit avoir le même nombre pair de lignes et de colonnes. Les coordonnées et seuils restent contrôlés avant leur utilisation. Les codes−2/−3 cités oralement ne sont pas encore confirmés comme numérotation imposée ; les codes actuellement implémentés sont0,2,3,4,5,6. Toute erreur non nulle interdit de lire l'ancien résultat.
+
+Pendant les essais natifs, vérifier aussi le refus d'un fichier tronqué, d'un octet supplémentaire, d'une dimension négative encodée en U32 et d'une dimension10000. Conserver le message complet, pas seulement le numéro.
