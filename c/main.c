@@ -159,7 +159,7 @@ int main(int argc, char *argv[])
         ConvertirSeuil(argv[3], &seuils.zero) != OCR_SUCCES ||
         ConvertirSeuil(argv[4], &seuils.un) != OCR_SUCCES) {
         etat = OCR_ERREUR_ARGUMENT;
-        description = "les seuils doivent etre des nombres decimaux avec un point, dans [0,100]";
+        description = "les seuils doivent etre des entiers de 1 a 99 inclus (sans point decimal)";
         goto nettoyage;
     }
 
@@ -184,6 +184,7 @@ int main(int argc, char *argv[])
 
 /* Meme nettoyage pour une execution normale et pour tous les cas d'erreur. */
 nettoyage:
+    /* fclose vide aussi le tampon : verifier son retour detecte une ecriture differee en echec. */
     if (sortie != NULL && fclose(sortie) != 0) {
         etat = OCR_ERREUR_ECRITURE;
         description = "impossible de fermer le fichier de resultat";

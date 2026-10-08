@@ -53,19 +53,15 @@ int EstChiffreDecimal(char caractere)
 }
 
 /**
- * ConvertirSeuil - Convertir un seuil decimal de 0 a 100, sans espace ni exposant.
- * Entrees : texte : nombre avec point decimal eventuel ; valeur : adresse du resultat.
+ * ConvertirSeuil - Lire un entier decimal compris entre 1 et 99 inclus.
+ * Entrees : texte : chiffres, precedes eventuellement de + ; valeur : adresse du resultat.
  * Sorties : valeur : seuil converti, ou 0 en cas d'erreur si le pointeur est valide.
  * Retour : OCR_SUCCES ou OCR_ERREUR_ARGUMENT.
  */
 int ConvertirSeuil(const char *texte, double *valeur)
 {
     const char *curseur;
-    unsigned int partieEntiere = 0;
-    int negatif = 0;
-    int chiffrePresent = 0;
-    int chiffreNonNul = 0;
-    int fractionNonNulle = 0;
+    unsigned int entier = 0;
 
     if (valeur != NULL) {
         *valeur = 0.0;
@@ -74,41 +70,27 @@ int ConvertirSeuil(const char *texte, double *valeur)
         return OCR_ERREUR_ARGUMENT;
     }
     curseur = texte;
-    if (*curseur == '+' || *curseur == '-') {
-        negatif = *curseur == '-';
+    if (*curseur == '+') {
         ++curseur;
     }
-    while (EstChiffreDecimal(*curseur)) {
-        chiffrePresent = 1;
-        if (*curseur != '0') {
-            chiffreNonNul = 1;
+    if (*curseur == '\0') {
+        return OCR_ERREUR_ARGUMENT;
+    }
+    while (*curseur != '\0') {
+        if (!EstChiffreDecimal(*curseur)) {
+            return OCR_ERREUR_ARGUMENT;
         }
-
-        partieEntiere = 10u * partieEntiere + (unsigned int)(*curseur - '0');
-        if (partieEntiere > 100u) {
+        /* Verifier a chaque chiffre garde aussi le calcul dans un petit entier. */
+        entier = 10u * entier + (unsigned int)(*curseur - '0');
+        if (entier > 99u) {
             return OCR_ERREUR_ARGUMENT;
         }
         ++curseur;
     }
-    if (*curseur == '.') {
-        ++curseur;
-        while (EstChiffreDecimal(*curseur)) {
-            chiffrePresent = 1;
-            if (*curseur != '0') {
-                chiffreNonNul = 1;
-                fractionNonNulle = 1;
-            }
-            ++curseur;
-        }
-    }
-
-    if (!chiffrePresent || *curseur != '\0' ||
-        (negatif && chiffreNonNul) ||
-        (partieEntiere == 100u && fractionNonNulle)) {
+    if (entier < 1u) {
         return OCR_ERREUR_ARGUMENT;
     }
-
-    *valeur = atof(texte);
+    *valeur = (double)entier;
     return OCR_SUCCES;
 }
 
@@ -180,7 +162,7 @@ int LireCellule(const char *chemin, CelluleOCR *cellule, const char **descriptio
     }
 
     /* Une cellule peut etre rectangulaire. Les deux dimensions sont validees
-     * avant le produit : au plus 100 * 100 octets, lus en une fois. */
+     * avant le produit : au plus 1000 * 1000 octets, lus en une fois. */
     nombrePixels = (size_t)cellule->largeur * (size_t)cellule->hauteur;
     cellule->pixels = malloc(nombrePixels);
     if (cellule->pixels == NULL) {
@@ -247,7 +229,7 @@ int ChoisirChiffre(const double scores[2], const double seuils[2])
 
 /**
  * ReconnaitreCellule - Tester le vide puis comparer la cellule aux deux modeles de chiffres.
- * Entrees : cellule : pixels valides ; seuils : valeurs de 0 a 100.
+ * Entrees : cellule : pixels valides ; seuils : entiers de 1 a 99, stockes en double.
  * Sorties : resultat : symbole et score ; description : message en cas d'echec.
  * Retour : OCR_SUCCES ou OCR_AUCUN_CHIFFRE.
  */
