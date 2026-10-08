@@ -46,7 +46,7 @@ Pour le replay image, TRUE si la moyenne RGB est inférieure à 100,128,160 ou 2
 
 - Build Visual Studio/GCC et exécution OCR.exe sur la VM ; la configuration projet est fournie mais n’a pas été exécutée sous MSVC ici.
 - Construction des VIs ; conversion NI et câblage réel ; erreurs système et valeurs par défaut.
-- Tests MATLAB du script `tests/VerifierMatlab.m`, rendu des cinq PDF, puis intégration via le solve.m réellement généré.
+- Tests MATLAB du script `temp/tests/VerifierMatlab.m`, rendu des cinq PDF, puis intégration via le solve.m réellement généré.
 - Quatre options résolution/ouverture par System Exec, avec attente et remontée d’erreurs réelles.
 - Essais V01–V25, fichiers par séquence et archive retéléchargée/testée ailleurs.
 

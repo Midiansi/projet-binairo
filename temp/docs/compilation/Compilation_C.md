@@ -29,7 +29,7 @@ Depuis le dossier c :
 cc -std=c11 -Wall -Wextra -Wpedantic -Werror -Wvla main.c reconnaissance.c -o OCR
 ```
 
-Sous Windows avec GCC, remplacer cc par gcc et utiliser `-o OCR.exe`. Ne pas renommer un exécutable macOS en .exe. Le binaire fourni dans `bin/macos-arm64/OCR` est uniquement pour macOS Apple Silicon ; la recette Windows demande de compiler et tester OCR.exe dans la VM.
+Sous Windows avec GCC, remplacer cc par gcc et utiliser `-o OCR.exe`. Ne pas renommer un exécutable macOS en .exe. Le binaire fourni dans `c/bin/macos-arm64/OCR` est uniquement pour macOS Apple Silicon ; la recette Windows demande de compiler et tester OCR.exe dans la VM.
 
 ## Arguments et résultat
 
@@ -48,12 +48,12 @@ Sous cmd, lire `echo %ERRORLEVEL%` immédiatement après l’appel. Sous macOS, 
 | CellEmpty.bin |0| `d:'-2', 0.000000%` |
 | BadCell_1.bin |3| diagnostic de pixels manquants sur stderr |
 
-La largeur et la hauteur doivent chacune être entre 50 et 1000 inclus ; le payload contient exactement largeur×hauteur octets 0/1. Le choix d’arrêt sur excès de pixels ou absence de chiffre est documenté dans `docs/Documentation_projet.md`. À code non nul, ne jamais consommer un ancien CellValue.txt. À succès, stdout et stderr restent vides.
+La largeur et la hauteur doivent chacune être entre 50 et 1000 inclus ; le payload contient exactement largeur×hauteur octets 0/1. Le choix d’arrêt sur excès de pixels ou absence de chiffre est documenté dans `temp/docs/Documentation_projet.md`. À code non nul, ne jamais consommer un ancien CellValue.txt. À succès, stdout et stderr restent vides.
 
 Une paire de guillemets simples ou doubles encore présente autour de argv[1] est retirée. Dans cmd, seules les doubles guillemets groupent un chemin avec espaces. Le chemin est limité à 1023 caractères après retrait de la paire ; son allocation est dynamique.
 
 ## Validation réellement obtenue
 
-Compilation stricte Apple Clang 21, macOS 27.0.1, arm64 : réussie, sans avertissement. Les bornes de dimensions, seuils, exemples et erreurs sont contrôlés par des appels au vrai exécutable. Les tests ASan/UBSan sont des outils de vérification, pas des dépendances du programme. Les résultats précis sont dans `docs/recette_labview/Verification_donnee.md`.
+Compilation stricte Apple Clang 21, macOS 27.0.1, arm64 : réussie, sans avertissement. Les bornes de dimensions, seuils, exemples et erreurs sont contrôlés par des appels au vrai exécutable. Les tests ASan/UBSan sont des outils de vérification, pas des dépendances du programme. Les résultats précis sont dans `temp/docs/recette_labview/Verification_donnee.md`.
 
 Le projet complet ne sera validé qu’après compilation Windows, construction des VIs et exécution MATLAB/LabVIEW sur la VM. Le guide contient ces étapes et l’inventaire de remise.

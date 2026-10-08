@@ -45,7 +45,7 @@ La mise à jour des seuils utilise uniquement caractères, entiers, if/while et 
 
 Le produit des masques 0/1 dans GrilleBinairoValide n’introduit pas une nouvelle bibliothèque : il applique le produit matriciel enseigné pour compter les positions égales. Une somme égale à n implique deux lignes complètes identiques. Les récursions, opérations matricielles et signatures du squelette sont conservées. Aucun arrayfun/cellfun, classe, toolbox d’optimisation, solveur externe ou boucle explicite n’est ajouté.
 
-Le script `tests/VerifierMatlab.m` emploie les mêmes fonctions, comparaisons, if et error. Il est à exécuter dans MATLAB ; son existence ne vaut pas un résultat de test.
+Le script `temp/tests/VerifierMatlab.m` emploie les mêmes fonctions, comparaisons, if et error. Il est à exécuter dans MATLAB ; son existence ne vaut pas un résultat de test.
 
 ## LabVIEW
 

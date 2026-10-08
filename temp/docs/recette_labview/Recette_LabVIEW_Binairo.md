@@ -1,6 +1,6 @@
 # Construire la partie LabVIEW du projet Binairo
 
-Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 8 octobre 2026, après l’addendum du 7 octobre.
+Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 9 octobre 2026, après l’addendum du 7 octobre ; rangement en c, matlab et temp.
 
 Ce document explique comment construire les VIs, les raccorder au C et à MATLAB, puis vérifier le résultat. Il s'adresse à une personne qui débute dans LabVIEW. Les consignes sont prévues pour **LabVIEW 2025 Q3, menus anglais, sous Windows**, notamment dans la VM EPFL. Les noms anglais ci-dessous sont ceux à rechercher dans LabVIEW ; les noms de vos propres objets sont en français. Ne construisez pas un projet Real-Time, FPGA ou NXG.
 
@@ -39,11 +39,11 @@ PNG → LireImage → ComputeRowsCols
 ## 1 Préparer le dossier une seule fois
 
 1. Démarrez la VM Windows. Ouvrez une session. Repérez un dossier personnel **persistant et inscriptible** : un fichier posé sur le bureau d'une VM peut être perdu lors d'une réinitialisation. Demandez au support EPFL si cette persistance n'est pas documentée. Ne changez pas l'installation logicielle du cours.
-2. Dans l'Explorateur Windows, activez l'affichage des extensions de fichiers. Créez un dossier `Binairo`, puis un sous-dossier `Execution`. Les chemins donnés dans les exemples de commandes ne sont pas à graver dans les VIs.
+2. Dans l'Explorateur Windows, activez l'affichage des extensions de fichiers. Utilisez un dossier `Binairo` contenant les trois dossiers `c`, `matlab` et `temp`, comme dans le dépôt. Créez `temp/Execution`. Dans toute la suite, `Execution` désigne ce dossier ; `Images` et `Preuves` désignent `temp/Images` et `temp/Preuves`. Les chemins donnés dans les exemples de commandes ne sont pas à graver dans les VIs.
 3. Copiez dans `Execution` **les cinq fichiers** du dossier `c` de la livraison : `main.c`, `reconnaissance.c`, `reconnaissance.h`, `parametres_ocr.h`, `FontRasterized_0_1.h`. Le dernier est la police originale du professeur, incluse dans le dépôt et dans son archive GitHub `Code > Download ZIP`. Ne créez pas une police de remplacement. Copiez aussi `OCR.sln` et `OCR.vcxproj` du même dossier : ce sont les fichiers projet associés aux sources C.
 4. Copiez aussi les **sept fichiers `.m`** de la livraison dans `Execution` : `CheminPdfBinairo`, `CreerFigureBinairo`, `DispBinairo`, `DisplayBinairo`, `FormatGrilleValide`, `GrilleBinairoValide`, `SolveBinairo`. Gardez l'extension `.m` et la casse exacte. Le script généré ci-dessous appelle directement SolveBinairo et DisplayBinairo.
 5. Le mode normal de cette recette lance MATLAB directement par System Exec. **Facultatif :** copiez `MP_LaunchMatlabScript4.vi` depuis Moodle uniquement si vous souhaitez utiliser ce lanceur alternatif ; conservez alors ailleurs son original.
-6. Dans `Binairo`, créez `Images` et `Preuves`. Copiez les PNG du cours dans `Images`, **jamais à la place d'un résultat**. En particulier : `Binairo_6x6.png`, `Binairo_8x8.png`, `Binairo_4x4_Bad.png`, `Binaro_5x6_Bad.png` et **`BadBinairo.png`**. Ce dernier est volontairement un document Word renommé : gardez-le tel quel pour le test d’erreur. Le nom `Binaro_5x6_Bad.png` n'est pas à corriger.
+6. Dans `Binairo/temp`, créez `Images` et `Preuves`. Copiez les PNG du cours dans `Images`, **jamais à la place d'un résultat**. En particulier : `Binairo_6x6.png`, `Binairo_8x8.png`, `Binairo_4x4_Bad.png`, `Binaro_5x6_Bad.png` et **`BadBinairo.png`**. Ce dernier est volontairement un document Word renommé : gardez-le tel quel pour le test d’erreur. Le nom `Binaro_5x6_Bad.png` n'est pas à corriger.
 7. Ouvrez LabVIEW. `Help > About LabVIEW` : notez version et architecture dans `Preuves/version.txt`. Faites de même avec MATLAB (`version` dans sa fenêtre de commande). Ces notes décrivent votre installation, pas le programme à remettre.
 8. Dans LabVIEW : `File > Create Project > Blank Project`, puis enregistrez `Binairo.lvproj` **dans `Execution`**. Tous les VIs et `.ctl` de cette recette sont enregistrés à cet endroit, sous `My Computer`. Ajoutez les fichiers avec clic droit `My Computer > Add > File` si nécessaire.
 9. Une seule personne modifie les VIs à la fois. Ne faites pas tourner deux exemplaires du programme dans le même dossier : ils partageraient `Cell.bin`, `CellValue.txt` et `solve.m`.
@@ -86,7 +86,7 @@ Résultats attendus : code `0` à chaque fois ; respectivement `d:'0', 97.167969
 
 ### 1.2 Tester MATLAB avant de construire le lanceur
 
-Copiez aussi `tests/VerifierMatlab.m` dans Execution, puis tapez `VerifierMatlab` dans la Command Window. Il effectue des contrôles de règles, préservation des indices, résolution 6×6/8×8 et contradiction 4×4, puis crée cinq PDF à inspecter. Il ne lance pas LabVIEW et ne valide pas les options du lanceur. Conservez les observations et les PDF dans Preuves/Matlab, puis retirez les sorties de test de Execution avant l’intégration. Les contrôles manuels ci-dessous permettent de localiser un éventuel échec.
+Copiez aussi `temp/tests/VerifierMatlab.m` dans Execution, puis tapez `VerifierMatlab` dans la Command Window. Il effectue des contrôles de règles, préservation des indices, résolution 6×6/8×8 et contradiction 4×4, puis crée cinq PDF à inspecter. Il ne lance pas LabVIEW et ne valide pas les options du lanceur. Conservez les observations et les PDF dans Preuves/Matlab, puis retirez les sorties de test de Execution avant l’intégration. Les contrôles manuels ci-dessous permettent de localiser un éventuel échec.
 
 Après avoir copié les dernières fonctions .m, effectuez aussi les trois contrôles simples ci-dessous dans MATLAB, avec Current Folder réglé sur Execution :
 
@@ -374,7 +374,7 @@ Le fichier contient exactement `8 + largeur*hauteur` octets. Le `prepend=FALSE` 
 
 ### 9.3 Checkpoint asymétrique sans outil externe
 
-Créez un VI temporaire `ControleBinaire.vi` dans un sous-dossier `Binairo/Preuves/Essais`, pas dans les fichiers finaux à remettre.
+Créez un VI temporaire `ControleBinaire.vi` dans un sous-dossier `Binairo/temp/Preuves/Essais`, pas dans les fichiers finaux à remettre.
 
 1. `Initialize Array` : élément FALSE, dimension 0=55, dimension 1=60. `Replace Array Subset` : cette matrice→array, row=2, col=9, new element=TRUE.
 2. Résultat→EcrireCellule.Cellule ; créez une commande Path pour un fichier temporaire `Asymetrique.bin`, erreur claire→error in, affichez error out.
@@ -939,16 +939,16 @@ L’addendum du 7 octobre fixe ce contenu. La recette, un binaire Mac ou les seu
 
 ### 21.3 Remplir la documentation courte et réunir l’archive
 
-1. Ouvrez `docs/Documentation_projet.md`. Son état de préparation décrit honnêtement ce qui a été vérifié. Après les essais, inscrivez les versions VM/Windows/compilateur/MATLAB/LabVIEW réellement utilisées, les résultats et les limites restantes, puis exportez en PDF. Ne remplacez pas « non exécuté » par « réussi » sans essai. Comparez au modèle `Ex. Documentation projet.pdf`.
+1. Ouvrez `temp/docs/Documentation_projet.md`. Son état de préparation décrit honnêtement ce qui a été vérifié. Après les essais, inscrivez les versions VM/Windows/compilateur/MATLAB/LabVIEW réellement utilisées, les résultats et les limites restantes, puis exportez en PDF. Ne remplacez pas « non exécuté » par « réussi » sans essai. Comparez au modèle `Ex. Documentation projet.pdf`.
 2. Exportez **les conversations complètes d’aide IA en PDF**, y compris l’audit et les corrections. Le rapport d’audit ou un résumé ne remplace pas le transcript. Déclarez aussi toute autre source de code et toute coopération significative avec un autre groupe, si applicable ; n’inventez pas une déclaration d’absence à leur place.
-3. Créez un dossier de remise portant les noms **Pedelaborde_MugnierDeAlmeida_Pical**. À sa racine, copiez le contenu utile de Execution : principal, tous ses sous-VIs, quatre typedefs, projet LabVIEW, sept fonctions MATLAB, cinq fichiers C/header, **OCR.exe Windows compilé et testé**, `OCR.sln`, `OCR.vcxproj`. Conservez leurs chemins relatifs ; aucun projet ne doit dépendre du dossier d’un développeur.
-4. Ajoutez la documentation courte PDF, les transcripts PDF, Preuves avec les résultats de chaque séquence, et les références nécessaires. **Excluez Images et les PNG de test**, les dossiers `.git`, `.vs`, les fichiers de compilation intermédiaires et les exécutables pour une autre plateforme. Les exemples binaires d’entrée du professeur servent aux tests locaux ; les résultats générés sont dans Preuves.
+3. Créez un dossier de remise portant les noms **Pedelaborde_MugnierDeAlmeida_Pical**, avec les trois sous-dossiers **c**, **matlab** et **temp**. Dans c, conservez les cinq fichiers C/header et `OCR.sln`/`OCR.vcxproj` ; dans matlab, les sept fonctions `.m`. Dans `temp/Execution`, copiez le contenu utile du dossier Execution testé : principal, tous ses sous-VIs, quatre typedefs, projet LabVIEW, sept fonctions MATLAB, cinq fichiers C/header, **OCR.exe Windows compilé et testé**, `OCR.sln`, `OCR.vcxproj`. Les copies d’exécution doivent correspondre aux dernières sources de c/matlab. Conservez leurs chemins relatifs ; aucun projet ne doit dépendre du dossier d’un développeur.
+4. Dans temp, conservez `docs` avec la documentation courte PDF et les références nécessaires, ajoutez `Transcripts` avec les conversations complètes en PDF et `Preuves` avec les résultats de chaque séquence. Le dossier temp regroupe provisoirement le reste du projet : ne le supprimez pas avant remise, car il contient les VIs et les pièces exigées. **Excluez Images et les PNG de test**, les dossiers `.git`, `.vs`, les fichiers de compilation intermédiaires et les exécutables pour une autre plateforme. Les exemples binaires d’entrée du professeur servent aux tests locaux ; les résultats générés sont dans Preuves.
 5. Comparez le contenu avec cette liste, puis compressez le dossier en `Pedelaborde_MugnierDeAlmeida_Pical.zip`. Conservez une copie datée avant toute soumission.
 
 ### 21.4 Vérifier exactement ce qui sera évalué
 
 1. Extrayez le ZIP dans **un autre dossier avec espaces**, idéalement sur une autre machine/VM prévue par le cours.
-2. Ouvrez BinairoSolver.vi depuis ce dossier, sélectionnez le PNG conservé à part et le MATLAB de cette machine, puis utilisez la flèche Run. Vérifiez 6×6/8×8, les cas invalides et l’absence de dépendance manquante.
+2. Ouvrez `temp/Execution/BinairoSolver.vi` depuis le dossier extrait, sélectionnez le PNG conservé à part et le MATLAB de cette machine, puis utilisez la flèche Run. Vérifiez 6×6/8×8, les cas invalides et l’absence de dépendance manquante.
 3. Après la soumission Moodle, **retéléchargez l’archive déposée**, extrayez-la ailleurs et répétez le contrôle. Seule la dernière soumission est retenue. Ce document ne dépose rien à votre place.
 4. Relisez toute nouvelle annonce Moodle avant la remise. L’addendum du 7 octobre est intégré ; une nouvelle instruction postérieure devra être comparée explicitement.
 
@@ -1359,7 +1359,7 @@ Le C ne cree ni ne vide CellValue.txt lorsque la reconnaissance echoue. Un ancie
 
 ## Contrôles de remise après l’addendum du 7 octobre
 
-La documentation de préparation est fournie dans docs/Documentation_projet.md et PDF. Complétez sa validation après les essais sur la VM EPFL. Relevez alors la version Windows, l'identification de la VM, le compilateur et sa version, MATLAB et sa version, ainsi que LabVIEW et sa version. Documentez la configuration dans laquelle le projet complet fonctionne ; ne recopiez pas les versions de l'exemple Billard du professeur.
+La documentation de préparation est fournie dans temp/docs/Documentation_projet.md et PDF. Complétez sa validation après les essais sur la VM EPFL. Relevez alors la version Windows, l'identification de la VM, le compilateur et sa version, MATLAB et sa version, ainsi que LabVIEW et sa version. Documentez la configuration dans laquelle le projet complet fonctionne ; ne recopiez pas les versions de l'exemple Billard du professeur.
 
 Le C accepte une cellule rectangulaire dont chaque dimension est dans 50..1000 et qui contient exactement largeur×hauteur octets 0/1. Une grille Binairo, en revanche, doit avoir le même nombre pair de lignes et de colonnes. Les coordonnées et seuils restent contrôlés avant leur utilisation. Les codes−2/−3 cités en cours étaient des exemples, et non une numérotation imposée. Les codes actuellement implémentés restent 0,2,3,4,5,6 ; leur signification est précisée dans reconnaissance.h et les messages d'erreur. Toute erreur non nulle interdit de lire l'ancien résultat.
 

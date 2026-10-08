@@ -1,3 +1,3 @@
 *.pdf binary
 *.exe binary
-bin/** binary
+c/bin/** binary

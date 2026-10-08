@@ -6,7 +6,7 @@ Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
 
 ## Environnement et état des fichiers
 
-Contrôle local effectué sur **macOS 27.0.1, arm64, Apple Clang 21.0.0**. Compilation C11 avec `-Wall -Wextra -Wpedantic -Werror -Wvla`. Le binaire `bin/macos-arm64/OCR` est pour cette plateforme. Le projet Visual Studio est fourni mais n’a pas été compilé sur Windows ici. La plateforme visée par la recette est la VM Windows du cours avec LabVIEW 2025 Q3 ; **les versions Windows, compilateur, MATLAB et LabVIEW réellement utilisées devront être relevées sur cette VM**. Aucune exécution native MATLAB/LabVIEW n’est attestée au 8 octobre.
+Contrôle local effectué sur **macOS 27.0.1, arm64, Apple Clang 21.0.0**. Compilation C11 avec `-Wall -Wextra -Wpedantic -Werror -Wvla`. Le binaire `c/bin/macos-arm64/OCR` est pour cette plateforme. Le projet Visual Studio est fourni mais n’a pas été compilé sur Windows ici. La plateforme visée par la recette est la VM Windows du cours avec LabVIEW 2025 Q3 ; **les versions Windows, compilateur, MATLAB et LabVIEW réellement utilisées devront être relevées sur cette VM**. Aucune exécution native MATLAB/LabVIEW n’est attestée au 8 octobre.
 
 | Fichiers | Rôle et état |
 |---|---|
@@ -19,9 +19,11 @@ Contrôle local effectué sur **macOS 27.0.1, arm64, Apple Clang 21.0.0**. Compi
 | CheminPdfBinairo.m, DispBinairo.m | nom de sortie et alias de compatibilité |
 | BinairoSolver.vi, sous-VIs et quatre .ctl | à construire suivant la recette ; pas encore livrés comme VIs exécutables |
 | Cell.bin, CellValue.txt, solve.m, Binairo_XXX.pdf | fichiers générés à conserver par séquence après les essais natifs |
-| tests/VerifierMatlab.m | tests séparés et combinés MATLAB ; pas encore exécutés nativement |
+| temp/tests/VerifierMatlab.m | tests séparés et combinés MATLAB ; pas encore exécutés nativement |
 
 Inventaire des VIs à construire : **BinairoSolver**, ErreurSi, LireTexte, EcrireTexte, SupprimerResultat, TexteCheminValide, LireImage, EtendueNoire, IntervallesNoirs, ComputeCellRect, ComputeRowsCols, EcrireCellule, CommandeOCR, AnalyserResultatOCR, LireCase, GenererScript, LancerMatlab et VerifierPDF. Les quatre types sont SeuilsOCR, OptionsBinairo, LignesGrille et RectangleCellule (`.ctl`). Le lanceur MP_LaunchMatlabScript4 est facultatif et n’est pas une dépendance du mode direct. Chaque rôle est détaillé dans le chapitre homonyme de la recette.
+
+Le dépôt et le dossier de remise conservent trois dossiers : `c/`, `matlab/` et `temp/`. La documentation est dans `temp/docs/`, les tests dans `temp/tests/`. Lors de la construction native, les VIs et leurs dépendances copiées sont réunis dans `temp/Execution/`, et les sorties par séquence dans `temp/Preuves/`. Le VI à ouvrir après extraction sera `temp/Execution/BinairoSolver.vi`. Le dossier temp contient donc des pièces nécessaires et ne doit pas être supprimé lors de la remise.
 
 ## Flux des données et algorithmes
 
