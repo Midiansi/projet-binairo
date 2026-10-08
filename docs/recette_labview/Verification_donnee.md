@@ -1,103 +1,66 @@
-# Vérification du projet contre la donnée Binairo 2026.2
+# Vérification — addendum Binairo du 7 octobre 2026
 
-24 septembre 2026. Référence prioritaire : **Donnée projet Binairo 2026.2**, fichier `P00.PPI_Projet.2026.2.pdf`, version du 7 septembre 2026. Le titre et le lien ont été vérifiés dans l’index de l’export Moodle. Les pages ci-dessous sont les pages physiques du PDF ; la page physique18 porte le numéro imprimé17.
+Mise à jour du 8 octobre 2026. L’addendum `P0.PPI_Projet_soumission.26.1.pdf` prime pour les noms, erreurs et constantes ; `P00.PPI_Projet.2026.2.pdf` et les exercices compatibles donnent les algorithmes. Pages physiques à partir de 1. Ce document remplace le contrôle du 24 septembre, devenu partiellement obsolète.
 
-Les exercices ne remplacent pas cette donnée. Ils restent utilisables pour les exemples, les fichiers fournis et les détails qui ne la contredisent pas. La contrainte « Code Matlab : Pas de boucles » des critères généraux de notation2025 est conservée ; les exigences techniques du Billard ne sont pas reprises.
+## Corrections apportées
 
-## Écarts corrigés
+| Point | Modification | Référence |
+|---|---|---|
+| Dimensions C et LabVIEW |50..1000 inclus, exemples géométriques et binaires corrigés | addendum p. 10 |
+| Seuils | entiers 1..99 ; parseur C sans fractions ; validation DBL/intégralité puis commande I32 | addendum p. 10–11 |
+| Défauts |88/90/90 partout, avec sauvegarde des défauts des contrôles | addendum p. 11–12 et 15 |
+| Crop et vide | conserver au plus 2 pixels réels du trait de chaque côté ; limiter la bordure extérieure ; ne pas modifier le test OCR demandé | donnée p. 10 ; exercice LV1 p. 16 |
+| Génération de solve.m | doubler la barre inverse du format N6 pour conserver le backslash-n MATLAB | LV2 chaînes/formats ; documentation NI Format Into String |
+| Parser OCR | Scan From String puis reformatage/comparaison stricte, sans expressions régulières | LV2 p. 47–48 |
+| Contrôles de chemins | boucle de caractères + comparaisons, sans expressions régulières ; lancement MATLAB direct sans shell | LV1/LV2 ; exercice de lancement |
+| Erreur d’existence de fichier | propager error out de Check if File or Folder Exists | LV2 erreurs ; documentation NI |
+| Documentation et projets | solution/projet Visual Studio, documentation courte et carte des techniques | addendum p. 4 et 8 |
+| Remise | sauvegarde des résultats par séquence, transcripts, archive nominative et contrôle après téléchargement | addendum p. 3–4 et 8 |
 
-| Point | Ancien état | Correction | Source |
-|---|---|---|---|
-| Chiffre dont le score égale son seuil | rejeté par `>` | accepté par `>=` | donnée p18, étape3 |
-| Deux chiffres admissibles, seuils différents | meilleur score brut | plus grande marge `score - seuil` ; le résultat écrit conserve le score brut | donnée p18, étape3 |
-| Argument du programme OCR dans la recette | `Cell.bin` relatif, avec dossier de travail | chemin complet calculé depuis le dossier du VI ; chemin complet de l’exécutable également, tous deux entre guillemets | donnée p23 |
-| Lancement MATLAB | recours au VI de l’exercice présenté comme obligatoire pour terminer | lancement direct complet par défaut ; VI fourni facultatif, sans en inventer les bornes | donnée p26 et36 |
-| Comptage des cases | nombre de débuts de traits moins1, mathématiquement équivalent | formulation littérale : total des transitions/2−1 pour chaque axe | donnée p27 |
-| Statut des exercices | certaines conventions présentées comme exigences du projet | donnée explicitement prioritaire ; noms de sous-VIs et lanceur de l’exercice identifiés comme aides compatibles | donnée p3 et27 ; instruction du groupe |
+Les scores restent décimaux ; les seuils sont des entiers. Le nombre de cellules de la grille doit être pair et égal sur les deux axes ; une cellule bitmap peut être rectangulaire. Les cinq sources/header C et les sept fonctions MATLAB conservent leurs interfaces. Le header original de police reste inchangé.
 
-Le C applique la sélection par marge de la donnée. Les codes de retour, allocations, fichiers, formats et limites restent identiques. La simplification décrite ci-dessous modifie également la conversion des seuils et le remplacement du résultat réservé. Les algorithmes MATLAB continuent de suivre la donnée ; leur validation globale a été simplifiée.
+## Techniques conformes au programme
 
-## Couverture de la donnée
+[Conformite_programme.md](../Conformite_programme.md) donne les références ME-213/CS-119a pour les techniques et fonctions. Les structures, allocation, bitwise, fichiers, nettoyage goto, matrice/masques et récursion proviennent de ces cours. Les trois expressions régulières de la recette ont été remplacées par chaînes/boucles/comparaisons du cours. Aucune bibliothèque d’OCR, de résolution ou de traitement d’image n’est ajoutée.
 
-| Pages | Exigence vérifiée | Implantation ou construction | Conclusion |
-|---|---|---|---|
-| 2,5–6 | C pour l’OCR ; LabVIEW pour image et orchestration ; MATLAB pour résolution/PDF ; échanges par fichiers | architecture actuelle et recette17 | respecté dans les sources et le plan de construction |
-| 7–12 | octets0/1, blanc/noir ; police fournie32×32 ; balayage pixel par pixel ; compter les blancs et noirs égaux ; tester le vide en premier | GetDigitBitmapBit, GetCellBit, ReconnaitreCellule | conservé ; exemples et116 cellules testés localement |
-| 15–16,20–22 | largeur puis hauteur, uint32 petit-boutiste ; pixels unsigned char ligne par ligne ; lecture groupée et allocation dynamique | LireCellule ; EcrireCellule.vi, chapitre9 | respecté dans C ; checkpoint binaire LabVIEW à exécuter |
-| 17 | valeur reconnue et pourcentage dans CellValue.txt, puis fin de ligne | main.c ; AnalyserResultatOCR.vi | syntaxe respectée ; six décimales et valeur vide−2 précisés par les exemples Moodle compatibles |
-| 18 | candidats au seuil inclus et sélection par marge | ChoisirChiffre corrigé | testé avec égalité réelle, seuils différents, marges égales et aucun candidat |
-| 19 | dimensions raisonnables10..100 ; nombre exact de pixels ; erreurs d’ouverture/création | LireCellule et main.c | contrôles déjà présents, conservés |
-| 23 | chemin complet de cellule et trois seuils ; argc=5 | main.c ; CommandeOCR.vi corrigé | appel C testé avec chemin complet contenant des espaces ; appel natif LabVIEW à vérifier |
-| 24–27 | interface source/image/options/erreurs ; PNG lu et converti nativement ; comptage pair/carré ; découpage ; OCR ; matrice texte ; script généré et exécuté | chapitres7–17 et annexeG | chaque opération possède une construction ; pas d’exécution LabVIEW revendiquée |
-| 27 | transitions, axes environ10px après le bord ; nombre pair et égal de cases | IntervallesNoirs et ComputeRowsCols | formule rendue littérale ; coordonnées contrôlées séparément sur les images fournies |
-| 28–31,33–34 | règles du Binairo ; déductions répétées jusqu’à stabilisation ; puis essai0 et1 avec récursion ; NaN pour vide | SolveBinairo, DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk | règles conservées par relecture ; validation globale simplifiée |
-| 32 | DisplayBinairo(Original,Solution,file,...) ; indices noirs gras, ajouts bleus gras ; traits ; nom haut gauche, date/heure haut droite ; == Error == centré | DisplayBinairo et CreerFigureBinairo | propriétés présentes dans le code ; rendu natif à vérifier |
-| 33–35 | fonctions auxiliaires et printGrid ; appels depuis un script généré | fonctions présentes ; GenererScript→solve.m→SolveBinairo/DisplayBinairo | appels directs dans le script genere ; aucun script fixe ne remplace la matrice reconnue |
-| 36 | OCR absent/en erreur, PNG absent, script impossible à créer, MATLAB absent, script MATLAB en erreur | gestion d’erreurs C ; recette5,6,12,15–19 | chaque cas possède un essai natif identifié ; résultats natifs encore attendus |
+## Mesures réellement réalisées
 
-## Contradictions internes et conventions restantes
-
-- **Score brut contre marge :** la page10 de la donnée décrit le score brut, tandis que la page18 définit explicitement la marge. Le code suit maintenant **la procédure détaillée de la page18**, et non l’exercice. Il serait inexact de déclarer ces deux passages simultanément respectés lorsque les seuils diffèrent. La question de confirmation dans la recette cite cette contradiction précise.
-- **Égalité des marges :** aucun départage n’est prescrit. À marges exactement égales, le programme conserve0, premier chiffre essayé. Le pourcentage retourné est toujours son score, jamais sa marge.
-- **Case vide :** test prioritaire et strict `ratio de blancs > seuil vide` selon p10. L’égalité incluse de p18 concerne les chiffres0/1, pas le vide.
-- **Noms MATLAB :** la donnée emploie plusieurs graphies dans ses titres, mais donne la signature explicite DisplayBinairo p32 et SolveBinairo p33–34. Ces fonctions sont présentes ; DispBinairo reste un alias compatible avec l’appel de p35. `solve.m` est conservé selon les chemins/fichiers demandés p6,26,35 malgré la majuscule de certains titres.
-- **Connecteur principal et codes d’erreur :** aucun connecteur Binairo définitif ni tableau exhaustif des codes n’est fourni dans la donnée reçue. Les connecteurs et codes locaux sont documentés comme choix du projet ; ceux du Billard ne sont pas repris. La page36 annonce une liste d’erreurs ultérieure : la version locale exportée ne prouve pas qu’aucun complément n’a été publié depuis.
-- **Réglages OCR :** 98/90/90 pour les cellules intérieures découpées, 88/90/90 uniquement pour les trois fichiers binaires fournis. Ce sont des réglages validés sur ces exemples, pas des valeurs déclarées officielles. Les seuils restent réglables.
-
-## Vérifications réellement exécutées
-
-- Compilation C avec `-std=c11 -Wall -Wextra -Wpedantic -Werror -Wvla` : aucune erreur ni avertissement.
-- Huit tests ciblés de sélection : égalité au seuil pour chacun des deux chiffres, marge donnant un gagnant différent du score brut, égalité de marges, seuil100 et absence de candidat.
-- Cent seize appels OCR sur les cellules découpées des PNG6×6,8×8 et4×4 ; matrices reconnues comparées aux indices attendus.
-- Neuf appels C supplémentaires : les trois exemples binaires Moodle, les deux modèles exacts à score100/seuil100, deux cas de vide au seuil strict, une égalité au seuil sur Cell0 et une sélection par marge sur Cell0 avec vérification du pourcentage écrit.
-- Relecture des allocations et tableaux : pas de VLA ni de tableau déclaré par le projet dépassant100 éléments ; police originale2×32=64 éléments. Les chemins restent alloués par malloc, avec limite1023 caractères.
-- Relecture des fonctions MATLAB, sans les exécuter ; vérification des chaînes et branchements modifiés de la recette. Ni MATLAB, ni LabVIEW, ni une VM n’ont été opérés.
-
-## Si vous aviez déjà commencé la construction
-
-1. Reprendre le C corrigé et recompiler OCR.exe sur Windows.
-2. Au chapitre10, ajouter l’entrée Dossier à CommandeOCR.vi, construire les deux chemins complets et remplacer le format de commande. Au chapitre12, brancher LireCase.Dossier vers cette nouvelle entrée.
-3. Dans ComputeRowsCols, appliquer le calcul explicite du pointG5.4.6. Les dimensions reconnues restent identiques.
-4. Enregistrer Lanceur fourni=FALSE comme défaut et suivre le mode direct15.2. Le chapitre14 devient facultatif.
-5. Refaire les essais du chapitre19 dans l’environnement réel. Ne pas marquer un essai réussi sur la seule base de ce rapport.
-
-Les sources restent dans la livraison réservée aux `.c/.h/.m`. Ce rapport et la recette restent à part. Aucun document original du cours n’a été modifié.
-
-## Simplification des sources
-
-Les modifications conservent les interfaces publiques et n’imposent aucun nouveau câblage LabVIEW. Recompiler OCR.exe et remplacer les fichiers .m par les versions actualisées avant de refaire les essais natifs.
-
-| Élément examiné | Décision |
+| Vérification | Résultat |
 |---|---|
-| ParcourirCases dans DirectValues | Conservé après vérification des contraintes : il maintient l’ordre des déductions avec une profondeur logarithmique pour parcourir les cases. Un parcours récursif linéaire augmenterait cette profondeur et pourrait échouer sur des grilles jusque-là traitables. Remplacer ce mécanisme par une boucle demande une dérogation au critère « Pas de boucles ». |
-| VerifierIntervalle dans GrilleBinairoValide | Supprimé. Les comptes et suites de trois sont vérifiés sur les matrices. Les produits des masques0/1 comptent les positions identiques entre lignes/colonnes ; une correspondance sur n positions n’est possible que pour deux lignes/colonnes complètes. |
-| ConvertirSeuil | La reconstruction manuelle de la fraction est remplacée par atof. Les vérifications préalables conservent les décimales avec point, les bornes0..100 et le refus des entrées mal formées. |
-| VerifierAncienResultat | Supprimé. CellValue.txt, fichier de sortie réservé au programme, est remplacé sans examiner ses trois premiers octets. Un dossier ou un fichier impossible à ouvrir reste une erreur. |
-| ConstruireCheminSortie | Conservé : séparateurs Windows/Unix, limite1023 caractères, allocation exacte et refus de confondre l’entrée avec la sortie sont des comportements utiles. |
-| DecouperNom | Conservé : il permet d’afficher les noms longs sur plusieurs lignes dans le PDF, sans introduire de boucle interdite. |
-| Validation des arguments MATLAB | Conservée : les fonctions publiques doivent rejeter les grilles invalides et éviter d’afficher une fausse solution. |
+| Build C11 Apple Clang 21/macOS 27.0.1 arm64 | passe avec Wall/Wextra/Wpedantic/Werror/Wvla |
+|126 appels du vrai C |0 désaccord ; limites 49/50/1000/1001 sur chaque axe, seuils invalides dans les 3 positions, fichiers et erreurs |
+|16 appels directs de ConvertirSeuil | domaine/syntaxe attendus ; sortie 0 à l’échec |
+|8 cas de choix de chiffre | égalité du score au seuil, marges différentes, égalité des marges et absence de candidat corrects |
+|2048 bits de la police | corrects ; fichier fourni inchangé |
+|6 appels avec ASan/UBSan | pas de diagnostic ; ce n’est pas une preuve exhaustive d’absence de faute mémoire |
+|116 cellules ×4 conversions RGB |464 sorties correctes à 88/90/90 ; aucun des 29 indices perdu |
+|Géométrie du 5×6 | refus dans les 4 conversions d’essai |
+|Vérification du texte généré | quatre combinaisons des options et nom avec apostrophe ; messages MATLAB sur une seule ligne source |
+|Ancienne revue des fonctions MATLAB, restées inchangées | modèles indépendants : 65536 grilles complètes 4×4 et 381 partielles, sans désaccord ; pas une exécution de .m |
 
-Fondements pédagogiques : la page physique43 de P0.PPI_Projet.25.r6.pdf dit explicitement « Code Matlab : Pas de boucles ». Les opérations matricielles, comparaisons, indexations et transpositions sont traitées dans M1.PPI_Matlab_I.26.r1.pdf ; fonctions/conditions dans M2.PPI_Matlab_II.26.r1.pdf ; la récursion est demandée par la donnée et travaillée dans l’exercice dédié. La fonction atof figure dans standard_atof.c fourni avec ICC. Aucun recours à arrayfun, cellfun ou une bibliothèque supplémentaire n’a été ajouté. Les commentaires du professeur et la récursion du backtracking sont conservés.
+Pour le replay image, TRUE si la moyenne RGB est inférieure à 100,128,160 ou 200 ; l’intervalle du trait est mesuré sur chaque bitmap. Ce protocole vérifie le contrat rectangle/C ; la conversion native Picture to Pixmap reste à essayer sur la VM.
 
-## Dernières simplifications
+À 128, les cases vides ont environ 89,41–89,62 % de blanc et les chiffres 82,74–85,53 %. La première cellule 6×6 est [4,4,80,76), largeur 76, hauteur 72, soit 5480 octets. La première 8×8 est [6,11,82,83), largeur 76, hauteur 72. L’exemple binaire indépendant 55×60 possède 3308 octets ; son pixel noir(2,9) est à l’offset 137. Les fichiers74×74 du professeur restent des exemples séparés.
 
-- Retrait de `static` sur les fonctions C et du nom de sortie obsolète `cellvalue.txt.tmp`.
-- Les indices MATLAB sont vérifiés par leur appartenance à `1:n`, sans `imag()`.
-- Suppression des autres contrôles `imag()` : les grilles attendues contiennent 0, 1 ou NaN.
-- Suppression du masquage de la fenêtre de figure et des options Interpreter sur les chiffres, la date et le message d’erreur.
-- Conservation de Interpreter=none pour le nom du fichier : ses caractères doivent être affichés tels quels. Conservation des axes invisibles pour ne pas ajouter de graduations à la grille.
-- Conservation des protections Windows contre la confusion entre le fichier d’entrée et CellValue.txt. Elles ne constituent pas une gestion des noms de périphériques Windows.
+## Ce qui reste à prouver nativement
 
-Recompiler le C et refaire les essais MATLAB du chapitre1.2, puis vérifier un PDF avec un nom contenant un caractère souligné. La figure peut désormais apparaître pendant sa création ; les fonctions d’export la ferment ensuite. Les essais MATLAB et LabVIEW restent à effectuer dans l’environnement du projet.
+- Build Visual Studio/GCC et exécution OCR.exe sur la VM ; la configuration projet est fournie mais n’a pas été exécutée sous MSVC ici.
+- Construction des VIs ; conversion NI et câblage réel ; erreurs système et valeurs par défaut.
+- Tests MATLAB du script `tests/VerifierMatlab.m`, rendu des cinq PDF, puis intégration via le solve.m réellement généré.
+- Quatre options résolution/ouverture par System Exec, avec attente et remontée d’erreurs réelles.
+- Essais V01–V25, fichiers par séquence et archive retéléchargée/testée ailleurs.
 
-## Mise a jour de compilation et du script genere
+Ni capture, ni score de test natif, ni transcript intégral ne sont inventés. La recette est corrigée et accompagnée de checkpoints, mais ne devient une construction vérifiée qu’après ces essais.
 
-Les sources C acceptent une paire de guillemets simples ou doubles encore presente autour du chemin dans argv[1]. Les espaces doivent deja etre groupes dans un seul argument par l'appelant. Les fonctions ont leurs en-tetes et prototypes ; _CRT_SECURE_NO_WARNINGS est defini avant les inclusions. La note de compilation du ZIP explique les deux compilateurs. Le ZIP contient la police originale.
+## Migration depuis la recette du 1 octobre
 
-Au chapitre13, remplacer seulement la constante de format N6 par le nouveau bloc en Normal Display. Les quatre arguments et les connecteurs restent identiques. solve.m appelle directement SolveBinairo et DisplayBinairo. Refaire le checkpoint et V05 avec les quatre combinaisons d'options. L'ouverture PDF par uiopen en mode -batch reste a valider dans la VM suivant18.3.
+1. Remplacer les fichiers C par cette révision et recompiler. Conserver les cinq sources/header et les deux fichiers Visual Studio ensemble.
+2. SeuilsOCR.ctl garde ses trois DBL ; changer le défaut à 88/90/90. Refaire CommandeOCR suivant 10 : plage 1..99, comparaison avec conversion I32, puis format `%d`.
+3. Refaire G4.1/G4.3 : huit coordonnées de traits, quatre épaisseurs et quatre Less?/Select. Remplacer les checkpoints G4.4/G6.1 ; ne plus attendre une cellule 72×68 sans bord.
+4. EcrireCellule : bornes 50..1000 ; checkpoint 55×60. Son connecteur et son format binaire ne changent pas.
+5. Construire TexteCheminValide.vi(6.1), refaire les validations des chemins 15.2/17.2 et remplacer la commande MATLAB par l’appel direct indiqué. Ne pas garder cmd /c autour du nouveau format.
+6. Refaire AnalyserResultatOCR suivant 11 avec Scan/Format/comparaison ; le connecteur reste inchangé. SupprimerResultat doit propager N1.error out.
+7. Remplacer **seulement le bloc de format N6** par le bloc 13, en Normal Display, avec deux barres inverses devant n dans les fprintf. Les scripts d’exemple générés en ont une seule.
+8. Remettre les defaults, exécuter les checkpoints puis V01–V25. Les matrices 6×6,8×8 et 4×4_Bad figurent au chapitre 18. Suivre 21 pour la remise.
 
-## Ajustements des sorties et du solveur
-
-ConvertirSeuil initialise la valeur a 0 si son pointeur est valide ; ConstruireCheminSortie initialise le chemin de sortie a NULL. La reconnaissance precede l'ouverture de CellValue.txt en mode texte w. Un echec de reconnaissance conserve donc l'ancien fichier, dont le contenu ne doit jamais etre exploite apres un code non nul.
-
-Les cinq auxiliaires du modele sont reunis dans SolveBinairo.m ; les validations communes a l'affichage restent separees. Le dessin utilise axis ij/equal/off et les reglages papier par defaut. La date est convertie par char(datetime('now')) : sa presentation depend des preferences et de la langue MATLAB. Le rendu natif reste a verifier.
+Le choix de marge p. 18, la stricte inégalité du vide p. 10, le choix 0 à marge égale et les politiques de warning sont décrits dans [Documentation_projet.md](../Documentation_projet.md). La liste d’erreurs n’est plus considérée comme « à venir » : elle est publiée dans l’addendum du 7 octobre.

@@ -5,8 +5,9 @@
 #ifndef BINAIRO_PARAMETRES_OCR_H
 #define BINAIRO_PARAMETRES_OCR_H
 
-#define OCR_DIMENSION_MIN 10u
-#define OCR_DIMENSION_MAX 100u
+/* Addendum du projet du 7 octobre 2026, pages physiques 10 et 11. */
+#define OCR_DIMENSION_MIN 50u
+#define OCR_DIMENSION_MAX 1000u
 
 /* Limite incluant le caractere nul ; les chemins sont alloues avec malloc. */
 #define OCR_TAILLE_CHEMIN 1024
