@@ -3,13 +3,13 @@
 *{box-sizing:border-box}html{scroll-behavior:smooth;scroll-padding-top:32px}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,-apple-system,"Segoe UI",sans-serif}a{color:#006e69;text-underline-offset:3px}nav{position:fixed;inset:0 auto 0 0;width:285px;padding:24px 18px;overflow:auto;border-right:1px solid var(--line);background:#edf3f1}nav .brand{font-size:12px;letter-spacing:.13em;font-weight:750;color:#4a6d68;margin-bottom:8px}nav .title{font-size:21px;font-weight:750;line-height:1.25;margin-bottom:14px}nav a{display:block;text-decoration:none;color:#234a4a;font-size:13px;line-height:1.4;padding:7px 8px;border-radius:5px}nav a:hover{background:#dceae5}nav .level-1{font-weight:750;border-top:1px solid var(--line);margin-top:10px}.tools{display:flex;gap:6px;flex-wrap:wrap;margin:12px 0 18px}button{cursor:pointer;border:1px solid #9ebcb6;border-radius:5px;background:white;color:#14534e;padding:6px 10px;font:inherit;font-size:12px}main{margin-left:285px;padding:50px 4vw 100px;max-width:1460px}article{background:white;padding:42px clamp(22px,4vw,68px);border:1px solid var(--line);border-radius:8px;max-width:1040px}h1,h2,h3{line-height:1.25;letter-spacing:-.02em}h1{font-size:34px;max-width:800px;margin:0 0 24px}h1:not(:first-child){margin-top:80px;padding-top:30px;border-top:5px solid var(--accent)}h2{font-size:25px;margin-top:64px;padding-top:22px;border-top:2px solid var(--accent)}h3{font-size:19px;margin-top:32px}p{margin:16px 0}li{margin:9px 0}li p{margin:8px 0}ul,ol{padding-left:26px}strong{font-weight:720}code{font-family:ui-monospace,Consolas,monospace;font-size:.86em;background:#eff3f3;border-radius:3px;padding:2px 4px;overflow-wrap:anywhere}pre{position:relative;padding:45px 18px 18px;border:1px solid #d3e1dd;border-left:4px solid var(--accent);background:#f4f8f6;overflow:auto;line-height:1.55;border-radius:5px}pre code{background:none;padding:0;white-space:pre;overflow-wrap:normal;font-size:13px}pre button{position:absolute;right:8px;top:8px}.table-scroll{overflow-x:auto;margin:22px 0}table{border-collapse:collapse;width:100%;font-size:14px;line-height:1.55}th{text-align:left;background:#e8f1ed;font-weight:700}th,td{border:1px solid #d3dfdc;padding:10px 12px;vertical-align:top}tr:nth-child(even) td{background:#f8faf9}td code{font-size:12px}blockquote{border-left:4px solid var(--accent);padding:4px 20px;background:#f0f5f3;margin:20px 0}.check{font-size:13px;color:#41675c;display:flex;gap:8px;align-items:center;margin-top:12px}.check input{width:17px;height:17px;accent-color:var(--accent)}.checked{color:#49705d}.hint{font-size:12px;color:#627b73}#progress{font-size:12px;color:#45635c}
 @media(max-width:1000px){nav{position:relative;width:auto;max-height:320px;border-bottom:1px solid var(--line)}main{margin-left:0;padding:20px}article{padding:24px}h1{font-size:29px}}
 @media print{nav,.tools,.check,pre button{display:none!important}main{margin:0;padding:0;max-width:none}article{padding:0;border:none;max-width:none}body{background:white;font-size:10pt;line-height:1.45}h1{font-size:23pt}h2{font-size:17pt;break-before:page;margin-top:0;border-top:none}h3{font-size:13pt;break-after:avoid}table{font-size:9pt}.table-scroll{overflow:visible}pre{white-space:pre-wrap;padding:10px;break-inside:avoid}pre code{white-space:pre-wrap;font-size:8pt}a{color:inherit;text-decoration:none}tr{break-inside:avoid}@page{size:A4;margin:17mm}
-</style></head><body><nav aria-label="Sommaire"><div class="brand">ME-213 · BINAIRO</div><div class="title">Construire LabVIEW<br>pas à pas</div><div class="hint">2025 Q3 · menus anglais<br>9 octobre 2026 · addendum intégré</div><div class="tools"><button id="print">Imprimer / PDF</button><a href="Recette_LabVIEW_Binairo.md" download>Texte Markdown</a></div><div id="progress"></div><a class="level-1" href="#etape-1">Construire la partie LabVIEW du projet Binairo</a><a class="level-2" href="#etape-2">Mode d’emploi de cette recette</a><a class="level-2" href="#etape-3">1 Préparer le dossier une seule fois</a><a class="level-2" href="#etape-6">2 Les gestes LabVIEW à utiliser partout</a><a class="level-2" href="#etape-13">3 Créer les types communs</a><a class="level-2" href="#etape-14">4 ErreurSi.vi</a><a class="level-2" href="#etape-15">5 LireTexte.vi et EcrireTexte.vi</a><a class="level-2" href="#etape-18">6 SupprimerResultat.vi</a><a class="level-2" href="#etape-20">7 LireImage.vi</a><a class="level-2" href="#etape-26">8 Géométrie de la grille</a><a class="level-2" href="#etape-27">9 EcrireCellule.vi</a><a class="level-2" href="#etape-31">10 CommandeOCR.vi</a><a class="level-2" href="#etape-32">11 AnalyserResultatOCR.vi</a><a class="level-2" href="#etape-35">12 LireCase.vi</a><a class="level-2" href="#etape-39">13 GenererScript.vi</a><a class="level-2" href="#etape-40">14 Option facultative : inspecter le lanceur fourni</a><a class="level-2" href="#etape-41">15 LancerMatlab.vi</a><a class="level-2" href="#etape-45">16 VerifierPDF.vi</a><a class="level-2" href="#etape-46">17 BinairoSolver.vi le programme principal</a><a class="level-2" href="#etape-52">18 Lire les résultats attendus</a><a class="level-2" href="#etape-58">19 Batterie finale de validation native</a><a class="level-2" href="#etape-60">20 Si quelque chose ne marche pas</a><a class="level-2" href="#etape-62">21 Assembler le rendu, étape par étape</a><a class="level-2" href="#etape-67">22 Références à consulter en cas de différence</a><a class="level-2" href="#etape-68">23 Contrôle de couverture avant de déclarer la partie terminée</a><a class="level-1" href="#etape-70">Annexe G — Détecter la grille et découper ses cases</a><a class="level-2" href="#etape-71">G0. Conventions à appliquer à chaque fil</a><a class="level-2" href="#etape-72">G1. Vérifier les deux types et attribuer les connecteurs</a><a class="level-2" href="#etape-76">G2. <code>EtendueNoire.vi</code> — trouver le premier et le dernier pixel occupé</a><a class="level-2" href="#etape-80">G3. <code>IntervallesNoirs.vi</code> — relever tous les traits, même aux bords</a><a class="level-2" href="#etape-84">G4. <code>ComputeCellRect.vi</code> — case avec bord mesuré</a><a class="level-2" href="#etape-89">G5. <code>ComputeRowsCols.vi</code> — nombre de cases et traits mesurés</a><a class="level-2" href="#etape-96">G6. Essais géométriques sans image et extraction effective</a><a class="level-2" href="#etape-99">Mise a jour des sources et du PDF</a><a class="level-2" href="#etape-100">Contrôles de remise après l’addendum du 7 octobre</a></nav><main><article><h1 id="etape-1">Construire la partie LabVIEW du projet Binairo</h1>
+</style></head><body><nav aria-label="Sommaire"><div class="brand">ME-213 · BINAIRO</div><div class="title">Construire LabVIEW<br>pas à pas</div><div class="hint">2025 Q3 · menus anglais<br>9 octobre 2026 · addendum intégré</div><div class="tools"><button id="print">Imprimer / PDF</button><a href="Recette_LabVIEW_Binairo.md" download>Texte Markdown</a></div><div id="progress"></div><a class="level-1" href="#etape-1">Construire la partie LabVIEW du projet Binairo</a><a class="level-2" href="#etape-2">Mode d’emploi de cette recette</a><a class="level-2" href="#etape-3">1 Préparer le dossier une seule fois</a><a class="level-2" href="#etape-7">2 Les gestes LabVIEW à utiliser partout</a><a class="level-2" href="#etape-14">3 Créer les types communs</a><a class="level-2" href="#etape-15">4 ErreurSi.vi</a><a class="level-2" href="#etape-16">5 LireTexte.vi et EcrireTexte.vi</a><a class="level-2" href="#etape-19">6 SupprimerResultat.vi</a><a class="level-2" href="#etape-21">7 LireImage.vi</a><a class="level-2" href="#etape-27">8 Géométrie de la grille</a><a class="level-2" href="#etape-28">9 EcrireCellule.vi</a><a class="level-2" href="#etape-32">10 CommandeOCR.vi</a><a class="level-2" href="#etape-33">11 AnalyserResultatOCR.vi</a><a class="level-2" href="#etape-36">12 LireCase.vi</a><a class="level-2" href="#etape-40">13 GenererScript.vi</a><a class="level-2" href="#etape-41">14 Option facultative : inspecter le lanceur fourni</a><a class="level-2" href="#etape-42">15 LancerMatlab.vi</a><a class="level-2" href="#etape-46">16 VerifierPDF.vi</a><a class="level-2" href="#etape-47">17 BinairoSolver.vi le programme principal</a><a class="level-2" href="#etape-53">18 Lire les résultats attendus</a><a class="level-2" href="#etape-59">19 Batterie finale de validation native</a><a class="level-2" href="#etape-61">20 Si quelque chose ne marche pas</a><a class="level-2" href="#etape-63">21 Assembler le rendu, étape par étape</a><a class="level-2" href="#etape-68">22 Références à consulter en cas de différence</a><a class="level-2" href="#etape-69">23 Contrôle de couverture avant de déclarer la partie terminée</a><a class="level-1" href="#etape-71">Annexe G — Détecter la grille et découper ses cases</a><a class="level-2" href="#etape-72">G0. Conventions à appliquer à chaque fil</a><a class="level-2" href="#etape-73">G1. Vérifier les deux types et attribuer les connecteurs</a><a class="level-2" href="#etape-77">G2. <code>EtendueNoire.vi</code> — trouver le premier et le dernier pixel occupé</a><a class="level-2" href="#etape-81">G3. <code>IntervallesNoirs.vi</code> — relever tous les traits, même aux bords</a><a class="level-2" href="#etape-85">G4. <code>ComputeCellRect.vi</code> — case avec bord mesuré</a><a class="level-2" href="#etape-90">G5. <code>ComputeRowsCols.vi</code> — nombre de cases et traits mesurés</a><a class="level-2" href="#etape-97">G6. Essais géométriques sans image et extraction effective</a><a class="level-2" href="#etape-100">Mise a jour des sources et du PDF</a><a class="level-2" href="#etape-101">Contrôles de remise après l’addendum du 7 octobre</a><a class="level-1" href="#etape-102">Annexe H - Techniques et références ME-213 / CS-119a</a><a class="level-2" href="#etape-103">H1 C</a><a class="level-2" href="#etape-104">H2 MATLAB</a><a class="level-2" href="#etape-105">H3 LabVIEW</a></nav><main><article><h1 id="etape-1">Construire la partie LabVIEW du projet Binairo</h1>
 <p>Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 9 octobre 2026, après l’addendum du 7 octobre ; rangement en c, matlab et temp.</p>
 <p>Ce document explique comment construire les VIs, les raccorder au C et à MATLAB, puis vérifier le résultat. Il s&#x27;adresse à une personne qui débute dans LabVIEW. Les consignes sont prévues pour <strong>LabVIEW 2025 Q3, menus anglais, sous Windows</strong>, notamment dans la VM EPFL. Les noms anglais ci-dessous sont ceux à rechercher dans LabVIEW ; les noms de vos propres objets sont en français. Ne construisez pas un projet Real-Time, FPGA ou NXG.</p>
 <p><strong>Références prioritaires :</strong> <code>P0.PPI_Projet_soumission.26.1.pdf</code>, addendum du <strong>7 octobre 2026</strong>, puis <code>P00.PPI_Projet.2026.2.pdf</code>, donnée du 7 septembre. L’addendum fait foi pour les noms, les erreurs C et les constantes (pages physiques 9–11). Les exercices précisent la construction. Les anciennes consignes Billard ne sont pas utilisées pour définir le contrat Binairo. Le critère MATLAB actuel est « utilisation minimale (~ absence) de boucles » ; les sources restent sans boucle explicite.</p>
-<p><strong>État réel :</strong> le C est compilé et testé sur macOS ; les nouveaux découpages ont été contrôlés avec cet exécutable à 88/90/90. Les VIs Windows et le rendu MATLAB natif restent à construire/exécuter sur la VM. Les résultats attendus ci-dessous sont des checkpoints à mesurer, pas des captures de VIs déjà réalisés. Les concepts utilisés et leurs références ME-213/CS-119a sont indiqués dans <a href="../Conformite_programme.md">Conformite_programme.md</a>. Aucun traitement d’image externe ni bibliothèque de résolution n’est nécessaire.</p>
+<p><strong>État réel :</strong> le C est compilé et testé sur macOS ; les nouveaux découpages ont été contrôlés avec cet exécutable à 88/90/90. Les VIs Windows et le rendu MATLAB natif restent à construire/exécuter sur la VM. Les résultats attendus ci-dessous sont des checkpoints à mesurer, pas des captures de VIs déjà réalisés. Les concepts utilisés et leurs références ME-213/CS-119a sont regroupés dans l’annexe H de cette recette. Aucun traitement d’image externe ni bibliothèque de résolution n’est nécessaire.</p>
 <p><strong>Règle OCR appliquée :</strong> la procédure détaillée de la donnée, page physique 18, impose <code>score &gt;= seuil</code> pour les chiffres, puis le maximum de <code>score - seuil</code>. Elle prime ici sur le résumé « score brut » de sa page 10. Il existe donc une contradiction interne à la donnée, explicitement signalée ; le code suit désormais sa procédure détaillée. La case vide reste testée en premier avec <code>ratio de blancs &gt; seuil vide</code> (page 10). Si les marges sont exactement égales, conserver 0 est notre convention déterministe, faute de départage prescrit. Aucun connecteur principal définitif n’apparaît dans cette donnée : les connecteurs ci-dessous sont nos choix de construction, pas celui du Billard 2025.</p>
-<p><strong>Mise à jour de conformité :</strong> voir <a href="Verification_donnee.md">le contrôle contre la donnée</a>, qui indique les corrections et les points de la donnée restant ambigus. Si vous avez déjà commencé, suivez sa section « Migration depuis la recette du 1 octobre ».</p>
+<p><strong>Contenu du dépôt :</strong> <code>c/</code> contient uniquement les cinq sources/en-têtes C ; <code>matlab/</code> contient les sept fonctions MATLAB ; <code>temp/</code> contient cette recette en Markdown, HTML et PDF. La compilation, la création des projets, la construction des VIs et la production des résultats seront effectuées dans la VM Windows. Aucun exécutable ni fichier projet préconfiguré n’est fourni. Les pièces de remise seront préparées après les essais, suivant le chapitre 21.</p>
 <h2 id="etape-2">Mode d’emploi de cette recette</h2>
 <ol start="1">
 <li>Ouvrez ce document à côté de LabVIEW. La recette est en français ; les noms des menus et des primitives restent en anglais.</li>
@@ -34,7 +34,7 @@
 <ol start="1">
 <li>Démarrez la VM Windows. Ouvrez une session. Repérez un dossier personnel <strong>persistant et inscriptible</strong> : un fichier posé sur le bureau d&#x27;une VM peut être perdu lors d&#x27;une réinitialisation. Demandez au support EPFL si cette persistance n&#x27;est pas documentée. Ne changez pas l&#x27;installation logicielle du cours.</li>
 <li>Dans l&#x27;Explorateur Windows, activez l&#x27;affichage des extensions de fichiers. Utilisez un dossier <code>Binairo</code> contenant les trois dossiers <code>c</code>, <code>matlab</code> et <code>temp</code>, comme dans le dépôt. Créez <code>temp/Execution</code>. Dans toute la suite, <code>Execution</code> désigne ce dossier ; <code>Images</code> et <code>Preuves</code> désignent <code>temp/Images</code> et <code>temp/Preuves</code>. Les chemins donnés dans les exemples de commandes ne sont pas à graver dans les VIs.</li>
-<li>Copiez dans <code>Execution</code> <strong>les cinq fichiers</strong> du dossier <code>c</code> de la livraison : <code>main.c</code>, <code>reconnaissance.c</code>, <code>reconnaissance.h</code>, <code>parametres_ocr.h</code>, <code>FontRasterized_0_1.h</code>. Le dernier est la police originale du professeur, incluse dans le dépôt et dans son archive GitHub <code>Code &gt; Download ZIP</code>. Ne créez pas une police de remplacement. Copiez aussi <code>OCR.sln</code> et <code>OCR.vcxproj</code> du même dossier : ce sont les fichiers projet associés aux sources C.</li>
+<li>Copiez dans <code>Execution</code> <strong>les cinq fichiers</strong> du dossier <code>c</code> de la livraison : <code>main.c</code>, <code>reconnaissance.c</code>, <code>reconnaissance.h</code>, <code>parametres_ocr.h</code>, <code>FontRasterized_0_1.h</code>. Le dernier est la police originale du professeur, incluse dans le dépôt et dans son archive GitHub <code>Code &gt; Download ZIP</code>. Ne créez pas une police de remplacement.</li>
 <li>Copiez aussi les <strong>sept fichiers <code>.m</code></strong> de la livraison dans <code>Execution</code> : <code>CheminPdfBinairo</code>, <code>CreerFigureBinairo</code>, <code>DispBinairo</code>, <code>DisplayBinairo</code>, <code>FormatGrilleValide</code>, <code>GrilleBinairoValide</code>, <code>SolveBinairo</code>. Gardez l&#x27;extension <code>.m</code> et la casse exacte. Le script généré ci-dessous appelle directement SolveBinairo et DisplayBinairo.</li>
 <li>Le mode normal de cette recette lance MATLAB directement par System Exec. <strong>Facultatif :</strong> copiez <code>MP_LaunchMatlabScript4.vi</code> depuis Moodle uniquement si vous souhaitez utiliser ce lanceur alternatif ; conservez alors ailleurs son original.</li>
 <li>Dans <code>Binairo/temp</code>, créez <code>Images</code> et <code>Preuves</code>. Copiez les PNG du cours dans <code>Images</code>, <strong>jamais à la place d&#x27;un résultat</strong>. En particulier : <code>Binairo_6x6.png</code>, <code>Binairo_8x8.png</code>, <code>Binairo_4x4_Bad.png</code>, <code>Binaro_5x6_Bad.png</code> et <strong><code>BadBinairo.png</code></strong>. Ce dernier est volontairement un document Word renommé : gardez-le tel quel pour le test d’erreur. Le nom <code>Binaro_5x6_Bad.png</code> n&#x27;est pas à corriger.</li>
@@ -44,7 +44,7 @@
 </ol>
 <p><strong>Après préparation :</strong> tous les <code>.vi</code>, <code>.ctl</code>, <code>.m</code>, les sources C et l&#x27;exécutable seront côte à côte dans <code>Execution</code>. Les images peuvent rester dans <code>Images</code>. Ne créez pas de copie de travail supplémentaire à synchroniser à chaque changement.</p>
 <h3 id="etape-4">1.1 Compiler le C dans Windows</h3>
-<p>Ouvrez le terminal du compilateur <strong>fourni dans votre environnement de cours</strong>. Placez-vous dans <code>Execution</code> avec <code>cd /d &quot;chemin réel vers Execution&quot;</code> dans l&#x27;invite Windows. Cette saisie manuelle n&#x27;est pas un chemin absolu intégré au code.</p>
+<p>Effectuez la compilation dans la VM Windows. Ouvrez le terminal du compilateur <strong>fourni dans votre environnement de cours</strong>. Placez-vous dans <code>Execution</code> avec <code>cd /d &quot;chemin réel vers Execution&quot;</code> dans l&#x27;invite Windows. Cette saisie manuelle n&#x27;est pas un chemin absolu intégré au code.</p>
 <ul>
 <li>Si <code>gcc --version</code> fonctionne, utilisez :</li>
 </ul>
@@ -67,10 +67,10 @@ OCR.exe CellEmpty.bin 88 90 90
 echo %ERRORLEVEL%
 type CellValue.txt
 </code></pre>
-<p>Résultats attendus : code <code>0</code> à chaque fois ; respectivement <code>d:&#x27;0&#x27;, 97.167969%</code>, <code>d:&#x27;1&#x27;, 97.753906%</code>, <code>d:&#x27;-2&#x27;, 0.000000%</code>, chacun suivi d&#x27;une fin de ligne. Le programme normal n&#x27;écrit rien sur stdout/stderr. Conservez une capture. Les fichiers du cours sont lus, jamais réécrits. Le résultat <code>CellValue.txt</code> est remplacé à chaque appel réussi. Lancez aussi <code>OCR.exe BadCell_1.bin 88 90 90</code> : code 3 et message de pixels manquants, sans utiliser le précédent résultat. Dans chacune des trois positions de seuil, essayez 0, 100, 88.5, <code>nan</code> et <code>90junk</code> : code 2. Les valeurs 1 et 99 sont admises. Pour compiler depuis l’IDE, ouvrez <code>OCR.sln</code>, choisissez Release/x64, puis Build Solution ; le projet place OCR.exe à côté des sources. Conservez les fichiers projet avec le rendu.</p>
+<p>Résultats attendus : code <code>0</code> à chaque fois ; respectivement <code>d:&#x27;0&#x27;, 97.167969%</code>, <code>d:&#x27;1&#x27;, 97.753906%</code>, <code>d:&#x27;-2&#x27;, 0.000000%</code>, chacun suivi d&#x27;une fin de ligne. Le programme normal n&#x27;écrit rien sur stdout/stderr. Conservez une capture. Les fichiers du cours sont lus, jamais réécrits. Le résultat <code>CellValue.txt</code> est remplacé à chaque appel réussi. Lancez aussi <code>OCR.exe BadCell_1.bin 88 90 90</code> : code 3 et message de pixels manquants, sans utiliser le précédent résultat. Dans chacune des trois positions de seuil, essayez 0, 100, 88.5, <code>nan</code> et <code>90junk</code> : code 2. Les valeurs 1 et 99 sont admises. Si vous travaillez depuis un IDE, créez le projet dans la VM avec les fichiers ci-dessus et les réglages du cours. Placez son OCR.exe compilé dans Execution. Conservez les fichiers projet réellement créés dans la VM pour le rendu ; aucun projet préconfiguré n’est à récupérer dans le dépôt.</p>
 <h3 id="etape-5">1.2 Tester MATLAB avant de construire le lanceur</h3>
-<p>Copiez aussi <code>temp/tests/VerifierMatlab.m</code> dans Execution, puis tapez <code>VerifierMatlab</code> dans la Command Window. Il effectue des contrôles de règles, préservation des indices, résolution 6×6/8×8 et contradiction 4×4, puis crée cinq PDF à inspecter. Il ne lance pas LabVIEW et ne valide pas les options du lanceur. Conservez les observations et les PDF dans Preuves/Matlab, puis retirez les sorties de test de Execution avant l’intégration. Les contrôles manuels ci-dessous permettent de localiser un éventuel échec.</p>
-<p>Après avoir copié les dernières fonctions .m, effectuez aussi les trois contrôles simples ci-dessous dans MATLAB, avec Current Folder réglé sur Execution :</p>
+<p>Effectuez les contrôles ci-dessous directement dans MATLAB sur la VM. Conservez les observations et les PDF dans Preuves/Matlab, puis retirez les sorties de test de Execution avant l’intégration. Ces contrôles sont indépendants de LabVIEW ; les quatre options et le lancement réel seront vérifiés aux chapitres 18 et 19.</p>
+<p>Après avoir copié les dernières fonctions .m, effectuez les trois contrôles simples ci-dessous dans MATLAB, avec Current Folder réglé sur Execution :</p>
 <pre><code class="language-matlab">GrilleBinairoValide([0 1; 1 0])
 GrilleBinairoValide([0 1; 0 1])
 [G, ok] = SolveBinairo([0 NaN; NaN 0])
@@ -93,8 +93,31 @@ DisplayBinairo(B, S, &#x27;Binairo_6x6.png&#x27;, ok)
 DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 </code></pre>
 <p>Attendez <code>ok = 0</code> et un PDF avec <code>== Error ==</code>. Une grille insoluble n&#x27;est pas la même chose qu&#x27;une panne MATLAB. Une panne doit produire une erreur de lancement/script ; une grille insoluble doit tout de même produire le PDF demandé. Conservez les PDF dans <code>Preuves</code>, puis supprimez les copies de test d&#x27;<code>Execution</code> pour éviter de les confondre avec un futur résultat.</p>
-<h2 id="etape-6">2 Les gestes LabVIEW à utiliser partout</h2>
-<h3 id="etape-7">2.1 Placer un objet et tirer un fil</h3>
+<h3 id="etape-6">1.3 Compléter les contrôles MATLAB séparés</h3>
+<p>Vérifiez le format et les règles avec les expressions suivantes. Attendez FALSE pour chacune des six expressions :</p>
+<pre><code class="language-matlab">FormatGrilleValide([])
+FormatGrilleValide(zeros(2, 4))
+FormatGrilleValide([0 2; 1 0])
+GrilleBinairoValide(zeros(3, 3))
+GrilleBinairoValide([0 0 0 NaN; NaN NaN NaN NaN; ...
+    NaN NaN NaN NaN; NaN NaN NaN NaN])
+GrilleBinairoValide([0 1 0 1; 0 1 0 1; ...
+    NaN NaN NaN NaN; NaN NaN NaN NaN])
+</code></pre>
+<p>Testez l’affichage indépendamment du solveur, puis un nom contenant une apostrophe et un underscore :</p>
+<pre><code class="language-matlab">DisplayBinairo([0 NaN; NaN 0], [0 1; 1 0], ...
+    &#x27;Controle_affichage.png&#x27;, true)
+DisplayBinairo([0 NaN; NaN 0], [0 NaN; NaN 0], ...
+    &#x27;L&#x27;&#x27;exemple_test.png&#x27;, true)
+</code></pre>
+<p>Inspectez les deux PDF : indices noirs gras, ajouts bleus gras dans le premier, cases vides dans le second, nom exact, date/heure et grille entière lisibles. Reprenez ensuite la matrice 8×8 du chapitre 18.1b dans B, appelez <code>[S, ok] = SolveBinairo(B)</code> et <code>DisplayBinairo(B, S, &#x27;Binairo_8x8.png&#x27;, ok)</code>. Attendez ok=TRUE, une grille complète valide et des indices inchangés. Pour le 6×6 comme le 8×8, ces trois expressions doivent donner respectivement TRUE, FALSE, TRUE :</p>
+<pre><code class="language-matlab">GrilleBinairoValide(S)
+any(isnan(S(:)))
+isequal(S(~isnan(B)), B(~isnan(B)))
+</code></pre>
+<p>Avec la matrice 4×4_Bad du chapitre 18.1b, attendez ok=FALSE et un PDF portant <code>== Error ==</code>. Copiez chaque sortie dans Preuves/Matlab avant l’essai suivant. Ces vérifications ne remplacent pas les essais du solve.m généré par LabVIEW.</p>
+<h2 id="etape-7">2 Les gestes LabVIEW à utiliser partout</h2>
+<h3 id="etape-8">2.1 Placer un objet et tirer un fil</h3>
 <ol start="1">
 <li><code>Ctrl+E</code> alterne entre <strong>Front Panel</strong> (les boutons/indicateurs) et <strong>Block Diagram</strong> (le programme). <code>Ctrl+S</code> enregistre.</li>
 <li>Sur le diagramme, <code>Ctrl+Space</code> ouvre <strong>Quick Drop</strong>. Tapez le nom exact du nœud anglais indiqué, choisissez le résultat correspondant, appuyez sur Entrée, puis cliquez pour le déposer. N&#x27;utilisez pas un Express VI ni un objet IMAQ à la place d&#x27;une primitive homonyme.</li>
@@ -107,7 +130,7 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li>Pour obtenir exactement le bon type d&#x27;une image, d&#x27;un chemin ou d&#x27;une erreur : clic droit sur la borne correspondante <code>Create &gt; Control/Indicator/Constant</code>. Ne reconstruisez pas de mémoire les clusters NI.</li>
 <li>N&#x27;utilisez pas <code>Run Continuously</code>. Cliquez une fois sur la flèche <strong>Run</strong> pour un essai. Si la flèche est cassée, cliquez dessus et traitez la première erreur de l&#x27;Error List ; gardez une capture si elle ne correspond pas à la recette.</li>
 </ol>
-<h3 id="etape-8">2.2 Tableaux et clusters</h3>
+<h3 id="etape-9">2.2 Tableaux et clusters</h3>
 <ul>
 <li>Un tableau 2D est indexé <strong>ligne, colonne</strong>. <code>Array Size</code> renvoie <code>[hauteur, largeur]</code>. En revanche le fichier C commence par <strong>largeur, hauteur</strong>.</li>
 <li>Créez une coquille <code>Array</code> puis déposez son élément dedans. Clic droit sur l&#x27;afficheur d&#x27;index <code>Add Dimension</code> pour passer de 1D à 2D. Pour un tableau vide, <code>Data Operations &gt; Empty Array</code> ; un tableau <code>[0]</code> n&#x27;est pas vide.</li>
@@ -116,15 +139,15 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li><code>Build Array</code> : <strong>Concatenate Inputs OFF</strong> lorsqu&#x27;on assemble des scalaires ; <strong>ON</strong> lorsqu&#x27;on concatène des vecteurs en un seul vecteur. Le guide précise les exceptions.</li>
 </ul>
 <p>Une <strong>erreur claire</strong> signifie ici : status=FALSE, code=0, source vide. Cela veut dire « aucune erreur ». Un cluster d’erreur n’est pas une chaîne de caractères ; créez-le depuis une borne error in/out.</p>
-<h3 id="etape-9">2.3 Cases et boucles</h3>
+<h3 id="etape-10">2.3 Cases et boucles</h3>
 <p>Tous les sous-VIs sauf <code>ErreurSi.vi</code> ont une <strong>Case Structure de garde</strong>. Câblez le cluster <code>error in</code> à son sélecteur : les cases s&#x27;appellent <strong>Error</strong> et <strong>No Error</strong>. Dans Error, pas de lecture, écriture, lancement ou calcul d&#x27;index : renvoyez l&#x27;erreur inchangée et les sorties neutres indiquées. Dans No Error, placez les nœuds décrits.</p>
 <p>Les tunnels de sortie d&#x27;une Case doivent être câblés dans <strong>toutes</strong> les cases. Laissez <strong>Use Default If Unwired désactivé</strong>. Une donnée traversant un bord devient un tunnel ; réutilisez ce même tunnel dans l&#x27;autre case. Les sorties d&#x27;une Case intérieure se raccordent aux sorties de la Case extérieure de même nom, puis aux indicateurs.</p>
 <p>Une <strong>garde supplémentaire</strong> après une vérification signifie littéralement : poser une nouvelle Case, brancher l&#x27;erreur obtenue au sélecteur, placer les opérations suivantes dans No Error ; dans Error renvoyer les sorties neutres et cette erreur. Ce geste interdit notamment d&#x27;indexer un tableau ou de lancer un programme après validation échouée.</p>
 <p>Pour chaque For Loop : le terminal <code>i</code> commence à 0. Un tunnel <strong>auto-indexé</strong> distribue un élément/une ligne à chaque tour ; un tunnel <strong>non indexé</strong> transmet l&#x27;objet entier. Clic droit sur le tunnel pour choisir. Un <strong>Shift Register</strong> se crée par clic droit sur le bord de la boucle <code>Add Shift Register</code> : câbler sa valeur initiale <strong>à gauche, depuis l&#x27;extérieur</strong> ; à l&#x27;intérieur lire la borne gauche et écrire la droite à chaque tour. Tous les registres de cette recette sont initialisés. Désactivez le parallélisme des boucles qui écrivent les fichiers ou appellent OCR.</p>
-<h3 id="etape-10">2.4 Chaînes et booléens</h3>
+<h3 id="etape-11">2.4 Chaînes et booléens</h3>
 <p><strong>Normal Display</strong> conserve les caractères tapés tels quels dans la constante. <strong>Backslash Codes Display</strong> interprète <code>\n</code> comme LF et <code>\r</code> comme CR. <strong>Format Into String interprète ensuite lui aussi les barres inverses de son format.</strong> Pour transmettre les deux caractères <code>\n</code> à MATLAB, le format saisi en Normal Display doit donc contenir <code>\\n</code>. Suivez exactement le chapitre 13 ; ne confondez pas constante de format et résultat généré. Ne recopiez pas les accents typographiques d’un traitement de texte dans les commandes.</p>
 <p>Les commandes booléennes d&#x27;options sont des <strong>switches</strong>, pas des boutons à verrouillage/latch. Défaut TRUE pour résoudre et afficher le PDF. Un contrôle numérique affiché arrondi conserve parfois davantage de décimales en mémoire : la recette ne suppose jamais le contraire.</p>
-<h3 id="etape-11">2.5 Connecteurs des sous-VIs</h3>
+<h3 id="etape-12">2.5 Connecteurs des sous-VIs</h3>
 <p>Sur la face avant : clic droit sur l&#x27;icône en haut à droite <code>Show Connector</code>, puis <code>Patterns</code>. Choisissez le motif à <strong>12 bornes, 4×2×2×4</strong>. Ne le tournez pas. Convention : L1..L4 = côté gauche de haut en bas ; R1..R4 = côté droit de haut en bas ; T1,T2 = haut gauche à droite ; B1,B2 = bas gauche à droite.</p>
 <pre><code class="language-text">             T1   T2
        L1  ┌───────────┐ R1
@@ -134,9 +157,9 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
              B1   B2
 </code></pre>
 <p>Pour attribuer une borne : cliquez sur elle, puis sur sa commande/son indicateur. Les entrées sont à gauche et les sorties à droite selon les tables. Toutes les bornes non citées restent <strong>non attribuées</strong>. L4 et R4 servent à <code>error in</code>/<code>error out</code>. Pour vérifier, passez la souris avec Context Help sur une instance du sous-VI.</p>
-<h3 id="etape-12">2.6 Sauvegarde et documentation de chaque VI</h3>
+<h3 id="etape-13">2.6 Sauvegarde et documentation de chaque VI</h3>
 <p>Après chaque checkpoint : <code>File &gt; VI Properties &gt; Documentation</code>. Copiez la phrase « But » du chapitre, puis ajoutez <code>Auteurs : Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical.</code> Inscrivez les unités/indices et le comportement en cas d&#x27;erreur indiqués. Mettez le diagramme de gauche à droite sans fils passant sous les nœuds. Désactivez <code>Enable automatic error handling</code> dans <code>VI Properties &gt; Execution</code> : les erreurs remontent au VI principal. Revenez à des commandes vides et une erreur claire, puis <code>Edit &gt; Make Current Values Default</code>, <code>Ctrl+S</code>. Les valeurs temporaires de test ne sont pas les valeurs par défaut de remise.</p>
-<h2 id="etape-13">3 Créer les types communs</h2>
+<h2 id="etape-14">3 Créer les types communs</h2>
 <p>Construisez les quatre <code>.ctl</code> suivants dans <code>Execution</code>. Tous les éléments sont des <strong>commandes</strong>, dans l&#x27;ordre indiqué.</p>
 <div class="table-scroll"><table>
 <tr><th>Fichier</th><th>Éléments du cluster dans l&#x27;ordre</th><th>Valeurs par défaut</th></tr>
@@ -148,8 +171,8 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <p>Les coordonnées droite/bas sont <strong>exclusives</strong> : une cellule <code>[gauche,droite)</code> a largeur <code>droite-gauche</code>. Les indices commencent à 0. Le cluster Rectangle natif des images NI utilise des I16 : ne le remplacez pas par <code>RectangleCellule.ctl</code>.</p>
 <p>Les seuils officiels sont <strong>88/90/90</strong>, pour les exemples binaires et pour les cellules générées. Les trois valeurs doivent être des <strong>entiers de 1 à 99</strong>. Le type DBL permet de détecter et refuser une saisie fractionnaire au chapitre 10, au lieu de l’arrondir silencieusement dans un contrôle I32. Il ne rend pas les fractions admissibles.</p>
 <p>Le découpage G4 conserve au maximum <strong>deux pixels du trait existant de chaque côté</strong>. Aucun pixel n’est ajouté ou recolorié. Sur les exemples fournis, le contrôle indépendant à 128 donne environ 89,41–89,62 % de blanc pour les cases vides et 82,74–85,53 % pour les chiffres : le seuil 88 les sépare. Le même contrôle a conservé toutes les cases pour quatre seuils de conversion RGB (100,128,160,200). Ce contrôle est une approximation documentée de la conversion native ; les checkpoints dans LabVIEW restent obligatoires. Garder toute une bordure extérieure épaisse ou retirer tous les traits ne donne pas le même résultat.</p>
-<p>Les scores de chiffres peuvent être décimaux, même si les seuils sont entiers. Le C accepte <code>score &gt;= seuil</code>, choisit la plus grande marge <code>score - seuil</code> et garde 0 à marge égale. Le score écrit est le score brut. Le test du vide est prioritaire et strict <code>&gt;</code>. Les trois comportements de warning sont documentés dans <a href="../Documentation_projet.md">Documentation_projet.md</a> : arrêt sur pixels supplémentaires, arrêt si aucun chiffre n’est reconnu, sélection par marge si les deux sont admissibles. Aucun warning non fatal n’est écrit dans stderr ; le contrôleur du chapitre 12 est cohérent avec ce choix.</p>
-<h2 id="etape-14">4 ErreurSi.vi</h2>
+<p>Les scores de chiffres peuvent être décimaux, même si les seuils sont entiers. Le C accepte <code>score &gt;= seuil</code>, choisit la plus grande marge <code>score - seuil</code> et garde 0 à marge égale. Le score écrit est le score brut. Le test du vide est prioritaire et strict <code>&gt;</code>. Les trois comportements de warning à décrire dans la documentation finale sont : arrêt sur pixels supplémentaires, arrêt si aucun chiffre n’est reconnu, sélection par marge si les deux sont admissibles. Aucun warning non fatal n’est écrit dans stderr ; le contrôleur du chapitre 12 est cohérent avec ce choix.</p>
+<h2 id="etape-15">4 ErreurSi.vi</h2>
 <p><strong>But :</strong> conserver une erreur existante ; sinon créer l&#x27;erreur demandée quand Condition est TRUE.</p>
 <p>Face avant et connecteur : <code>Condition</code> booléen FALSE L1 ; <code>Code</code> I32 7001 L2 ; <code>Message</code> chaîne vide L3 ; <code>error in</code> L4 ; <code>error out</code> R4. Les codes 6101..6105 et 7001..7012 de la recette sont des codes choisis pour notre programme.</p>
 <p>Posez N1 <code>Unbundle By Name</code> champ <code>status</code>, N2 <code>Bundle By Name</code> champs <code>status,code,source</code>, N3 <code>Select</code>, N4 <code>Select</code>, C1 booléen TRUE. Le cluster de base de N2 vient de <code>error in</code>.</p>
@@ -167,14 +190,14 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <tr><td>N4.sortie</td><td>error out</td></tr>
 </table></div>
 <p>Checkpoint : Condition FALSE transmet une erreur claire ; TRUE crée code/message choisis ; si <code>error in</code> contient déjà TRUE/123/<code>test</code>, la sortie reste exactement TRUE/123/<code>test</code>.</p>
-<h2 id="etape-15">5 LireTexte.vi et EcrireTexte.vi</h2>
-<h3 id="etape-16">5.1 LireTexte.vi</h3>
+<h2 id="etape-16">5 LireTexte.vi et EcrireTexte.vi</h2>
+<h3 id="etape-17">5.1 LireTexte.vi</h3>
 <p><strong>But :</strong> lire tout un fichier texte sans masquer les erreurs et fermer le fichier même si la lecture échoue.</p>
 <p>P1 <code>Chemin</code> Path L1 ; P2 <code>error in</code> L4 ; P3 <code>Texte</code> String R1 ; P4 <code>error out</code> R4. Garde extérieure : Error renvoie chaîne vide et P2.</p>
 <p>Dans No Error : N1 <code>Open/Create/Replace File</code>, opération <strong>open</strong>, accès <strong>read-only</strong> ; N2 Case sur N1.error out. Branchez P1→N1.file path, P2→N1.error in. Prompt chaîne vide, disable buffering FALSE. Les autres sorties inutilisées restent libres.</p>
 <p>N2.Error : Texte vide et N1.error out. N2.No Error : posez une <code>Flat Sequence Structure</code> <strong>deux frames</strong>. Frame 0 : N3 <code>Read from Text File</code>, <code>count</code> I32 <strong>-1</strong>, mode <code>Read Lines</code> OFF et <code>Convert EOL</code> OFF (clic droit). N1.refnum→N3.file ; N1.error out→N3.error in. N3.text traverse la séquence jusqu&#x27;à la sortie Texte. Frame 1 : N4 <code>Close File</code>, N5 <code>Merge Errors</code> à deux entrées. N1.refnum traverse la séquence→N4.refnum ; constante erreur claire FALSE/0/chaîne vide→N4.error in ; N3.error out→N5.entrée 0 ; N4.error out→N5.entrée 1 ; N5.error out→sortie erreur. Le passage à la frame 1 impose la fermeture <strong>après</strong> la lecture, même si la lecture a échoué.</p>
 <p>Reliez sorties Texte/erreur de N2 aux tunnels correspondants de la garde extérieure, puis P3/P4. N2.Error et la garde Error ont bien leurs deux sorties câblées.</p>
-<h3 id="etape-17">5.2 EcrireTexte.vi</h3>
+<h3 id="etape-18">5.2 EcrireTexte.vi</h3>
 <p><strong>But :</strong> remplacer/créer le fichier texte, écrire exactement la chaîne reçue, fermer et transmettre les erreurs.</p>
 <p>P1 <code>Chemin</code> Path L1 ; P2 <code>Texte</code> String L2 ; P3 <code>error in</code> L4 ; P4 <code>error out</code> R4. Garde extérieure Error : P3→sortie. Dans No Error : même chaîne d&#x27;ouverture et de fermeture que ci-dessus, avec les différences <strong>complètes</strong> suivantes :</p>
 <ol start="1">
@@ -184,7 +207,7 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li>Frame 1 : N4 <code>Close File</code> avec erreur claire ; N5 <code>Merge Errors</code> reçoit N3.error out puis N4.error out, dans cet ordre ; résultat→N2→garde→P4. Refnum N1 traverse le tunnel de séquence.</li>
 </ol>
 <p>Checkpoint : écrivez une chaîne <code>abc\n</code> saisie en Backslash Codes Display dans un fichier de test, relisez-la avec LireTexte : String Length doit donner 4. Recommencez avec <code>x\n</code> : longueur 2, pas de reste <code>c</code> de l&#x27;ancien fichier. Un dossier à la place du fichier doit produire une erreur, pas être remplacé.</p>
-<h2 id="etape-18">6 SupprimerResultat.vi</h2>
+<h2 id="etape-19">6 SupprimerResultat.vi</h2>
 <p><strong>But :</strong> effacer un ancien fichier généré avant une nouvelle exécution ; ne jamais supprimer un dossier.</p>
 <p>P1 <code>Chemin</code> Path L1 ; P2 <code>error in</code> L4 ; P3 <code>error out</code> R4. Garde extérieure Error : P2→P3. Dans No Error : N1 <code>Check if File or Folder Exists</code>, P1→path, P2→error in. <strong>N1.error out sélectionne une garde G1</strong>, et doit être propagé.</p>
 <ol start="1">
@@ -195,7 +218,7 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li>Remonter chaque erreur N5→N2→G1→garde extérieure→P3. Ne remplacez aucun error out par une erreur claire.</li>
 </ol>
 <p>Cette fonction ne reçoit que <code>CellValue.txt</code>, <code>solve.m</code>, ou le PDF calculé. Jamais le PNG, une source ou un dossier arbitraire. Checkpoint : absent = succès ; présent = supprimé ; dossier = erreur 7002 et dossier intact ; erreur entrante = conservée. Vérifiez aussi l’erreur d’accès sur un fichier protégé.</p>
-<h3 id="etape-19">6.1 TexteCheminValide.vi — contrôler une chaîne sans expression régulière</h3>
+<h3 id="etape-20">6.1 TexteCheminValide.vi — contrôler une chaîne sans expression régulière</h3>
 <p><strong>But :</strong> refuser un chemin texte vide ou contenant un guillemet double, LF, CR ou NUL, avec les chaînes, boucles et comparaisons du cours.</p>
 <p>Face avant : P1 <code>Texte</code> String L1, P2 <code>error in</code> L4, P3 <code>Valide</code> Boolean R1, P4 <code>error out</code> R4. Error : FALSE et P2. Dans No Error :</p>
 <ol start="1">
@@ -206,12 +229,12 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li>Hors boucle : <code>Or Array Elements</code> sur ce tableau ; OR avec <code>Equal To 0?(L)</code> ; NOT du résultat→Valide. P2→error out. Remonter les deux sorties.</li>
 </ol>
 <p>Checkpoint : chaîne vide, guillemet double, retour à la ligne ou NUL donnent FALSE ; un chemin normal avec espaces, accent, apostrophe ou tiret donne TRUE. Avec erreur entrante 123 : FALSE et même erreur 123. Ce VI ne vérifie ni extension, ni existence : les appelants le font.</p>
-<h2 id="etape-20">7 LireImage.vi</h2>
+<h2 id="etape-21">7 LireImage.vi</h2>
 <p><strong>But :</strong> lire le PNG avec les fonctions natives LabVIEW, afficher l&#x27;image et fournir un tableau 2D TRUE=noir, FALSE=blanc. Aucune lecture d&#x27;image n&#x27;est déléguée à C, MATLAB ou Python.</p>
-<h3 id="etape-21">7.1 Face avant et objets</h3>
+<h3 id="etape-22">7.1 Face avant et objets</h3>
 <p>P1 <code>PNG</code> Path L1 ; P2 <code>error in</code> L4 ; P3 <code>Bitmap</code> Boolean 2D R1 ; P4 <code>Image</code> <strong>2D Picture</strong> R2 ; P5 <code>Largeur</code> I32 R3 ; P6 <code>Hauteur</code> I32 T2 ; P7 <code>error out</code> R4. Créez Image depuis la sortie <code>new picture</code> de Draw Flattened Pixmap. Fond de l&#x27;indicateur blanc : <code>View &gt; Tools Palette</code>, outil couleur, clic droit dans la zone de dessin, blanc.</p>
 <p>La garde Error renvoie Bitmap vide 0×0, picture vide, largeur/hauteur 0, P2. Dans No Error, construisez les étapes suivantes dans cet ordre. Une garde après chaque validation empêche de convertir/indexer après erreur. Chacune de ses branches Error renvoie les mêmes quatre valeurs neutres et l&#x27;erreur de cette étape.</p>
-<h3 id="etape-22">7.2 Lecture et dimensions</h3>
+<h3 id="etape-23">7.2 Lecture et dimensions</h3>
 <ol start="1">
 <li>N1 <code>Read PNG File.vi</code> : P1→<code>path to PNG file</code>, P2→<code>error in</code>, constante U8 128→<code>Transparency Thresh</code>. N1.error out sélectionne la garde G1 ; son image data entre dans G1.No Error. La sortie path de N1 est inutilisée.</li>
 <li>Dans G1.No Error : U1 <code>Unbundle By Name</code> de image data, champ <strong>Rectangle</strong>. U2 <code>Unbundle By Name</code> du Rectangle, champs left/top/right/bottom. Posez quatre <code>To Long Integer</code> T1..T4 ; left→T1, top→T2, right→T3, bottom→T4.</li>
@@ -219,7 +242,7 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li>Posez <code>Build Array</code> à six entrées scalaires booléennes, <strong>Concatenate Inputs OFF</strong>, puis <code>Or Array Elements</code>. Câblez les six résultats dans l&#x27;ordre ci-dessus→Build Array→OR. OR→ErreurSi.Condition ; code 6101 ; message <code>Dimensions PNG invalides.</code> ; N1.error out→error in. L&#x27;erreur obtenue sélectionne G2. Largeur, Hauteur, Rectangle original et image data traversent dans G2.No Error.</li>
 </ol>
 <p>32..4096 est une borne de travail explicite ; l&#x27;image n&#x27;a pas besoin d&#x27;être carrée en pixels. La grille en cellules doit, elle, être carrée. Une image Word renommée <code>.png</code> doit échouer dès la lecture, pas être prise pour une image vide.</p>
-<h3 id="etape-23">7.3 Conversion native en un bit</h3>
+<h3 id="etape-24">7.3 Conversion native en un bit</h3>
 <p>Dans G2.No Error, posez D1 <code>Draw Flattened Pixmap.vi</code>, D2 <code>Picture to Pixmap.vi</code>, D3 <code>Unflatten Pixmap.vi</code>, A1 <code>Array Size</code>, I1/I2 <code>Index Array</code> 1D.</p>
 <div class="table-scroll"><table>
 <tr><th>Source</th><th>Destination</th></tr>
@@ -237,13 +260,13 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 </table></div>
 <p>N&#x27;employez aucune autre sortie pixmap de D3. D1/D2/D3 n&#x27;ont pas à recevoir des bornes d&#x27;erreur inventées. D3.colors est conservé pour la polarité. Les autres sorties éventuelles de D2, ainsi que D3.top left/mask/autres profondeurs, sont inutilisées.</p>
 <p>Vérifiez I1=Hauteur et I2=Largeur avec deux <code>Not Equal?</code> puis OR. Dépliez D2.image data avec <code>Unbundle By Name</code>, champ <code>image depth</code> : comparer à 1, ajouter ce résultat à OR. OR→ErreurSi.Condition, code 6101, message <code>Conversion image incoherente.</code>, erreur G2→error in. Garde G3 sur son résultat. G3.No Error reçoit brut, colors, Image, Largeur, Hauteur.</p>
-<h3 id="etape-24">7.4 Normaliser la polarité</h3>
+<h3 id="etape-25">7.4 Normaliser la polarité</h3>
 <p>D3 renvoie des indices de palette : TRUE n&#x27;est pas à supposer noir sans vérification. Posez <code>Array Size</code> sur colors puis une Case numérique sur sa longueur, avec les cases <strong>2</strong>, <strong>0</strong>, <strong>Default</strong>. Ses sorties sont <code>noirVautTrue</code> Boolean et erreur.</p>
 <p><strong>Case 2 :</strong> I1/I2 <code>Index Array</code>, indices I32 0 et 1 sur colors. Pour chaque couleur U32, placez <code>Color to RGB</code> ; branchez color0/color1 à leur entrée couleur. Convertissez chacun des six résultats R/G/B en U32 avec <code>To Unsigned Long Integer</code> avant addition. Pour color0, deux Add calculent <code>(R0+G0)+B0</code> ; pour color1, deux Add calculent <code>(R1+G1)+B1</code>. <code>Less?</code> somme 1&lt;somme 0→noirVautTrue. <code>Equal?</code> somme 1=somme 0→ErreurSi.Condition ; code 6105 ; message <code>Palette sans contraste.</code> ; erreur G3→error in ; résultat→erreur de Case.</p>
 <p><strong>Case 0 :</strong> placez deux constantes booléennes sur le diagramme, étiquetées <code>PolariteVerifiee</code> FALSE et <code>NoirVautTrue</code> TRUE. NOT(PolariteVerifiee)→ErreurSi.Condition ; code 6105 ; message <code>Verifier la polarite avec Binairo_6x6.png avant execution.</code> ; erreur G3→error in. NoirVautTrue→sortie booléenne ; ErreurSi.error out→sortie erreur. Ce réglage sera effectué une seule fois au checkpoint ci-dessous si la palette est vide.</p>
 <p><strong>Default :</strong> FALSE→noirVautTrue ; ErreurSi(TRUE,6105,<code>Palette 1 bit invalide.</code>,erreur G3)→sortie erreur.</p>
 <p>Après cette Case : <code>NOT</code> sur le tableau brut entier ; <code>Select</code> avec s=noirVautTrue, t=brut, f=NOT(brut). La sortie de Select est le bitmap normalisé. Garde finale G4 sur l&#x27;erreur de palette : No Error renvoie ce Bitmap, Image, Largeur, Hauteur et erreur ; Error renvoie les valeurs neutres. Remontez ces cinq sorties dans G3→G2→G1→garde extérieure→indicateurs. Dans chaque branche Error extérieure, le cluster est celui qui a déclenché la branche, pas une erreur claire.</p>
-<h3 id="etape-25">7.5 Checkpoint image et palette</h3>
+<h3 id="etape-26">7.5 Checkpoint image et palette</h3>
 <ol start="1">
 <li>Ouvrez LireImage seul, choisissez le vrai <code>Binairo_6x6.png</code>, lancez une fois. Si l&#x27;erreur est 6105 et demande de vérifier la polarité, mettez une sonde sur le fil <code>brut</code>, pas sur Bitmap neutralisé après erreur.</li>
 <li>Dans le tableau de la sonde, regardez <code>[ligne0,colonne0]</code> et <code>[20,20]</code>. Dans ce fichier précis, le premier est noir, le second blanc.</li>
@@ -252,12 +275,12 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li>Avec <code>Binairo_8x8.png</code>, attendez largeur 610, hauteur 577 ; Bitmap[5,2]=TRUE et Bitmap[30,30]=FALSE. Les tailles sont celles des images reçues ; si Moodle a remplacé les fichiers, ne forcez pas ces nombres dans le diagramme.</li>
 <li>Déplacez l&#x27;image dans un autre dossier, re-sélectionnez-la : elle doit encore être lue. La calibration n&#x27;est à refaire que si la version/environnement de conversion change.</li>
 </ol>
-<h2 id="etape-26">8 Géométrie de la grille</h2>
+<h2 id="etape-27">8 Géométrie de la grille</h2>
 <p>Construisez maintenant, dans cet ordre : <code>EtendueNoire.vi</code>, <code>IntervallesNoirs.vi</code>, <code>ComputeCellRect.vi</code>, <code>ComputeRowsCols.vi</code>, en suivant l’<strong>annexe G — Détecter la grille et découper ses cases</strong> placée à la fin de cette recette. Revenez ensuite au chapitre 9. Les bornes de cellule sont <strong>50 à 1000 pixels</strong>, identiques au C et à l’addendum p. 10.</p>
-<h2 id="etape-27">9 EcrireCellule.vi</h2>
+<h2 id="etape-28">9 EcrireCellule.vi</h2>
 <p><strong>But :</strong> écrire exactement le format attendu par <code>LireCellule</code> en C, sans dimensions supplémentaires et sans inverser largeur et hauteur.</p>
 <p>P1 <code>Cellule</code> Boolean 2D L1 ; P2 <code>Chemin</code> Path L2 ; P3 <code>error in</code> L4 ; P4 <code>error out</code> R4. Garde Error transmet P3.</p>
-<h3 id="etape-28">9.1 Valider puis convertir</h3>
+<h3 id="etape-29">9.1 Valider puis convertir</h3>
 <p>Dans No Error : A1 <code>Array Size</code> sur P1 ; I1/I2 <code>Index Array</code> sur A1, indices 0/1 ; I1=hauteur, I2=largeur. Deux <code>In Range and Coerce</code> reçoivent hauteur/largeur avec lower=50 et upper=1000, <strong>Include lower limit et Include upper limit TRUE</strong>. AND des deux <code>in range?</code>, puis NOT→ErreurSi.Condition ; code 7003 ; message <code>Cellule hors des bornes 50 a 1000 pixels.</code> ; P3→error in. Garde G1 sur le résultat.</p>
 <p>G1.No Error :</p>
 <ol start="1">
@@ -265,12 +288,12 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li>F1 For Loop : P1 Cellule→tunnel auto-indexé, qui fournit une ligne Boolean 1D ; N non câblé. Dans F1, F2 For Loop : ligne→tunnel auto-indexé, qui fournit un booléen ; N non câblé. Dans F2, <code>Select</code> : s=pixel, t=U8 1, f=U8 0. Sortie auto-indexée de F2 = ligne U8. Cette ligne sort par tunnel auto-indexé de F1 = matrice U8.</li>
 <li>M1 <code>Multiply</code> largeur×hauteur en I32. M2 <code>Reshape Array</code> sur la matrice U8, <strong>une seule dimension de sortie</strong>, M1→dimension size. Résultat = vecteur U8 dans l&#x27;ordre ligne par ligne. Ne transposez rien.</li>
 </ol>
-<h3 id="etape-29">9.2 Écrire et fermer</h3>
+<h3 id="etape-30">9.2 Écrire et fermer</h3>
 <p>N1 <code>Open/Create/Replace File</code> : operation <strong>replace or create</strong>, access <strong>write-only</strong>, disable buffering FALSE, prompt vide ; P2→file path ; erreur G1→error in. Garde G2 sur N1.error out. Error transmet cette erreur. No Error contient une Flat Sequence de deux frames.</p>
 <p>Frame 0 : N2/N3 <code>Write to Binary File</code>. N1.refnum→N2.file ; H3→N2.data ; FALSE→N2.prepend array or string size? ; constante créée depuis byte order réglée <strong>2 little-endian</strong>→N2.byte order ; N1.error out→N2.error in. N2.refnum out→N3.file ; M2→N3.data ; FALSE→N3.prepend ; little-endian→N3.byte order ; N2.error out→N3.error in. Prompt vide pour les deux. Les sorties cancelled restent libres.</p>
 <p>Frame 1 : N4 <code>Close File</code> reçoit refnum N1 et erreur claire ; N5 <code>Merge Errors</code> reçoit N3.error out puis N4.error out. Résultat→G2→G1→garde extérieure→P4. La séquence impose que les deux écritures finissent avant la fermeture. <strong>Ne branchez pas le chemin à la seconde écriture : cela pourrait rouvrir/remplacer le fichier au lieu de continuer après l&#x27;en-tête.</strong></p>
 <p>Le fichier contient exactement <code>8 + largeur*hauteur</code> octets. Le <code>prepend=FALSE</code> est volontaire : nous avons écrit nous-mêmes l&#x27;en-tête U32 dans l&#x27;ordre du C. Le raccourci consistant à préfixer directement une matrice LabVIEW risquerait d&#x27;écrire hauteur puis largeur.</p>
-<h3 id="etape-30">9.3 Checkpoint asymétrique sans outil externe</h3>
+<h3 id="etape-31">9.3 Checkpoint asymétrique sans outil externe</h3>
 <p>Créez un VI temporaire <code>ControleBinaire.vi</code> dans un sous-dossier <code>Binairo/temp/Preuves/Essais</code>, pas dans les fichiers finaux à remettre.</p>
 <ol start="1">
 <li><code>Initialize Array</code> : élément FALSE, dimension 0=55, dimension 1=60. <code>Replace Array Subset</code> : cette matrice→array, row=2, col=9, new element=TRUE.</li>
@@ -279,7 +302,7 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li>Exécutez : taille 3308 ; huit premiers octets décimaux <code>[60,0,0,0,55,0,0,0]</code>. À l&#x27;index <strong>137</strong>, valeur 1 ; les autres pixels 0. L&#x27;index 137 est <code>8 + 2*60 + 9</code>.</li>
 <li>Testez ensuite une matrice 49×60 : erreur 7003. Revenez aux valeurs normales. Ce contrôle est de développement ; gardez-le dans Preuves, pas dans le code évalué si seuls les VIs de fonctionnement sont demandés.</li>
 </ol>
-<h2 id="etape-31">10 CommandeOCR.vi</h2>
+<h2 id="etape-32">10 CommandeOCR.vi</h2>
 <p><strong>But :</strong> construire l’appel OCR avec le <strong>chemin complet de Cell.bin</strong>, comme demandé par la donnée p. 23, et les trois seuils. Les chemins sont calculés depuis le dossier du VI, jamais inscrits comme constantes personnelles.</p>
 <p>P1 <code>Seuils</code> SeuilsOCR.ctl L1 ; P2 <code>error in</code> L4 ; P3 <code>Commande</code> String R1 ; P4 <code>error out</code> R4 ; <strong>P5 <code>Dossier</code> Path L2</strong>, dossier absolu d’Execution. Garde Error : chaîne vide/P2.</p>
 <p>Dans No Error : U1 <code>Unbundle By Name</code> donne vide,zero,un. Construisez les contrôles suivants, <strong>pour chacun des trois DBL</strong> :</p>
@@ -307,10 +330,10 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <pre><code class="language-text">&quot;C:\Travail Binairo\Execution\OCR.exe&quot; &quot;C:\Travail Binairo\Execution\Cell.bin&quot; 88 90 90
 </code></pre>
 <p>Ce chemin est un exemple de résultat : ne le copiez pas dans le diagramme. Les <code>%d</code> reçoivent des I32 et produisent des entiers sans séparateur décimal. Dans chacun des trois champs, testez 0,100,88.5,-1,101,NaN,Inf : erreur 7004 et commande vide. Testez 1 et 99 : commande construite. Les valeurs normales sont 88/90/90. Le checkpoint de LireCase et V19 vérifieront l’appel réel sous Windows, y compris dans un dossier avec espaces.</p>
-<h2 id="etape-32">11 AnalyserResultatOCR.vi</h2>
+<h2 id="etape-33">11 AnalyserResultatOCR.vi</h2>
 <p><strong>But :</strong> transformer une réponse valide de C en <code>0</code>, <code>1</code> ou <code>NaN</code> pour MATLAB. Toute autre réponse est une erreur.</p>
 <p>P1 <code>Texte</code> String L1 ; P2 <code>error in</code> L4 ; P3 <code>ValeurMatlab</code> String R1 ; P4 <code>Pourcentage</code> DBL R2 ; P5 <code>error out</code> R4. Sorties neutres : chaîne vide, DBL 0, erreur transmise.</p>
-<h3 id="etape-33">11.1 Lire, reformater et comparer toute la ligne</h3>
+<h3 id="etape-34">11.1 Lire, reformater et comparer toute la ligne</h3>
 <p>Utilisez <strong>Scan From String et Format Into String</strong>, présentés au chapitre chaînes de LV2. Aucune expression régulière n’est nécessaire. Le reformatage impose les six décimales et les espaces exacts ; le scan seul serait trop permissif.</p>
 <ol start="1">
 <li>Dans la garde No Error : N1 <code>String Length(P1)</code> donne L. <code>Less?(L,2)</code>→ErreurSi(7005,<code>Ligne OCR trop courte.</code>,P2). Garde G1 sur son erreur : tous les String Subset suivants sont dans G1.No Error.</li>
@@ -329,7 +352,7 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <tr><td>Default</td><td>chaîne vide</td><td>DBL 0</td><td>ErreurSi(TRUE,7005,<code>Symbole OCR invalide.</code>,erreur G4)</td></tr>
 </table></div>
 <p>Dans -2, garde supplémentaire : si erreur, chaîne vide/DBL 0 ; sinon NaN/score. Remonter les trois sorties via G4→G3→G2→G1→garde extérieure→P3/P4/P5. <strong>Chaque Error renvoie chaîne vide, DBL 0 et l’erreur qui l’a sélectionné.</strong></p>
-<h3 id="etape-34">11.2 Checkpoint du parseur</h3>
+<h3 id="etape-35">11.2 Checkpoint du parseur</h3>
 <p>Saisissez les entrées ci-dessous en <strong>Backslash Codes Display</strong> pour fabriquer les fins de ligne, puis repassez en Normal Display si désiré.</p>
 <div class="table-scroll"><table>
 <tr><th>Texte d&#x27;essai</th><th>Résultat</th></tr>
@@ -345,9 +368,9 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <tr><td><code>d:&#x27;0&#x27;, 90.0%\n</code> ou <code>d:&#x27;0&#x27;, 9e1%\n</code></td><td>erreur 7005 après comparaison</td></tr>
 <tr><td><code>d:&#x27;-2&#x27;, 1.000000%\n</code></td><td>erreur 7005</td></tr>
 </table></div>
-<h2 id="etape-35">12 LireCase.vi</h2>
+<h2 id="etape-36">12 LireCase.vi</h2>
 <p><strong>But :</strong> traiter exactement une cellule, dans l&#x27;ordre découpage → fichier → OCR → validation → lecture du résultat. Une erreur ne devient jamais une case vide.</p>
-<h3 id="etape-36">12.1 Face avant</h3>
+<h3 id="etape-37">12.1 Face avant</h3>
 <div class="table-scroll"><table>
 <tr><th>Commande ou indicateur</th><th>Type</th><th>Connecteur</th></tr>
 <tr><td>Bitmap</td><td>Boolean 2D commande</td><td>L1</td></tr>
@@ -362,7 +385,7 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <tr><td>error out</td><td>erreur indicateur</td><td>R4</td></tr>
 </table></div>
 <p>Garde Error : chaîne vide,DBL 0,chaîne vide,error in. No Error contient U1 <code>Unbundle By Name</code> ligne/colonne, V1 <code>ComputeCellRect.vi</code>, U2 <code>Unbundle By Name</code> du Rectangle, deux Subtract et V2 <code>Array Subset</code> 2D.</p>
-<h3 id="etape-37">12.2 Découper et écrire</h3>
+<h3 id="etape-38">12.2 Découper et écrire</h3>
 <ol start="1">
 <li>Indices→U1.cluster ; U1.ligne/colonne→V1.ligne/colonne ; Lignes→V1.Lignes ; error in→V1.error in. V1.Rectangle→U2 ; U2.droite−gauche→largeur ; U2.bas−haut→hauteur.</li>
 <li>Bitmap→V2.array ; U2.haut→V2.index0 ; hauteur→V2.length0 ; U2.gauche→V2.index1 ; largeur→V2.length1. Garde G1 sur V1.error out <strong>avant toute écriture</strong>. Les calculs purs peuvent être à gauche de G1, mais V2 peut aussi être placé dedans.</li>
@@ -370,7 +393,7 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <li>V3 <code>SupprimerResultat.vi</code> : B2→Chemin, V1.error out→error in. V4 <code>EcrireCellule.vi</code> : V2.subarray→Cellule, B1→Chemin, V3.error out→error in.</li>
 <li>V5 <code>CommandeOCR.vi</code> : Seuils→Seuils, <strong>Dossier→Dossier</strong>, V4.error out→error in. V6 <code>System Exec.vi</code> : V5.Commande→command line, <strong>Dossier→working directory</strong>, TRUE→wait until completion?, TRUE→run minimized?, chaîne vide→standard input, constante créée depuis expected output size réglée 65536, V5.error out→error in.</li>
 </ol>
-<h3 id="etape-38">12.3 Vérifier le programme avant de lire son fichier</h3>
+<h3 id="etape-39">12.3 Vérifier le programme avant de lire son fichier</h3>
 <p>Posez C1 <code>Not Equal?</code> return code≠I32 0 ; C2 <code>String Length</code> sur standard error ; C3 <code>Greater?</code> longueur&gt;0 ; C4 OR(C1,C3). Posez F1 <code>Format Into String</code> avec <strong>quatre arguments</strong> ligne,colonne,return code,standard error, format saisi Backslash Codes Display :</p>
 <pre><code class="language-text">Cellule ligne %d colonne %d : code OCR %d\nstderr : %s\n
 </code></pre>
@@ -378,7 +401,7 @@ DisplayBinairo(B, S, &#x27;Contradiction.png&#x27;, ok)
 <p>V8 <code>LireTexte.vi</code> : B2→Chemin ; V7.error out→error in. V9 <code>AnalyserResultatOCR.vi</code> : V8.Texte→Texte ; V8.error out→error in. V9.ValeurMatlab/Pourcentage/error out→sorties correspondantes ; Diagnostic reste celui de F2 même en cas d&#x27;échec. Remontez G1 puis la garde extérieure vers les quatre indicateurs. G1.Error renvoie neutres et V1.error out.</p>
 <p><strong>Pourquoi supprimer le résultat avant chaque cellule :</strong> un ancien fichier ne doit pas survivre à un exécutable manquant ou défectueux. Le code de retour et le cluster System Exec sont deux contrôles distincts. Notre enveloppe LabVIEW considère stderr non vide comme diagnostic d&#x27;échec ; stdout est conservé pour inspection.</p>
 <p>Checkpoint : pour la première cellule du 6×6, indices 0,0, les coordonnées sont gauche 4,haut 4,droite 80,bas 76, soit <strong>76×72</strong> et <code>Cell.bin</code> de <strong>5480 octets</strong>. Résultat <code>NaN</code>. La case 0,1 doit donner <code>0</code>. Les fichiers Cell0.bin/Cell1.bin du cours ont un cadrage 74×74 différent : leurs dimensions ne sont pas le résultat attendu ici. Vérifiez aussi la case 2,4 (un <code>1</code>) : à 88/90/90 elle ne doit jamais devenir NaN.</p>
-<h2 id="etape-39">13 GenererScript.vi</h2>
+<h2 id="etape-40">13 GenererScript.vi</h2>
 <p><strong>But :</strong> produire <code>solve.m</code> depuis la matrice réellement reconnue par les boucles LabVIEW. Aucun exemple prérempli ne remplace cette génération.</p>
 <p>P1 <code>MatriceTexte</code> String L1 ; P2 <code>PNG</code> Path L2 ; P3 <code>Options</code> OptionsBinairo.ctl L3 ; P4 <code>error in</code> L4 ; P5 <code>Dossier</code> Path T1 ; P6 <code>Script</code> String R1 ; P7 <code>CheminScript</code> Path R2 ; P8 <code>error out</code> R4. Garde Error : chaîne vide, chemin vide, P4.</p>
 <p>Dans No Error, posez les objets suivants et câblez exactement :</p>
@@ -444,7 +467,7 @@ else
 end
 </code></pre>
 <p>Le nom affiché dans le PDF est le nom du PNG ; il n&#x27;est pas nécessaire de transmettre son chemin complet à MATLAB, qui n&#x27;a pas à relire l&#x27;image. Un nom <code>L&#x27;exemple.png</code> doit devenir <code>&#x27;L&#x27;&#x27;exemple.png&#x27;</code>. Les noms fournis dans les essais du cours sont ASCII ; validez séparément l&#x27;encodage natif si vous employez des noms accentués sur Windows. Ne créez pas de protocole <code>MatlabStatus.txt</code> : les sources actuelles n&#x27;en écrivent pas.</p>
-<h2 id="etape-40">14 Option facultative : inspecter le lanceur fourni</h2>
+<h2 id="etape-41">14 Option facultative : inspecter le lanceur fourni</h2>
 <p>La donnée exige de lancer MATLAB avec le script généré et de détecter ses erreurs (p. 26 et 36). <strong>Elle n’impose pas MP_LaunchMatlabScript4.vi.</strong> Ce VI est proposé dans les fichiers utiles et employé par l’exercice. Le mode direct du chapitre 15.2 est donc le parcours normal de cette recette ; vous pouvez passer directement à ce chapitre sans inspecter le lanceur fourni. La page 6 de l&#x27;exercice LabVIEW 2 indique son rôle, sa co-localisation avec le script et une option interne de test ; elle ne donne pas les noms/types de toutes ses bornes. Cette inspection ne peut pas être remplacée par un connecteur inventé.</p>
 <ol start="1">
 <li>Ouvrez la copie d&#x27;Execution dans LabVIEW, sans modifier l&#x27;original Moodle. Montrez son Front Panel et son connector pane. Activez Context Help.</li>
@@ -457,12 +480,12 @@ end
 <li>Si une nouvelle version du lanceur ou un <code>Binairo...ConPane.vi</code> est disponible sur Moodle, conservez aussi le fichier et son aide. Le connecteur de <code>Billard2025_ConPane.vi</code> ne doit pas être copié dans ce projet.</li>
 </ol>
 <p>L’interface inconnue de ce VI facultatif ne bloque ni la construction ni la validation du mode direct. N’ajoutez pas une dépendance au VI fourni si vous ne l’utilisez pas.</p>
-<h2 id="etape-41">15 LancerMatlab.vi</h2>
+<h2 id="etape-42">15 LancerMatlab.vi</h2>
 <p><strong>But :</strong> lancer <code>solve.m</code>, attendre sa fin, conserver le diagnostic et transmettre une erreur réelle en cas d&#x27;échec. Il n&#x27;effectue pas le calcul du Binairo lui-même.</p>
-<h3 id="etape-42">15.1 Interface et préparation</h3>
+<h3 id="etape-43">15.1 Interface et préparation</h3>
 <p>P1 <code>Dossier</code> Path L1 ; P2 <code>ExecutableMatlab</code> Path L2 ; P3 <code>LanceurFourni</code> booléen FALSE L3 ; P4 <code>error in</code> L4 ; P5 <code>Diagnostic</code> String R1 ; P6 <code>error out</code> R4. <strong>FALSE est la valeur normale et le défaut enregistré.</strong> TRUE est réservé à l’option du lanceur fourni si vous la construisez et la validez.</p>
 <p>Garde Error : Diagnostic vide et P4. No Error : N1 <code>Build Path</code> base=P1, name=<code>solve.m</code> ; Case C1 sélectionnée par P3. C1.FALSE est le mode direct suivant ; C1.TRUE est le mode fourni décrit ensuite. Les deux renvoient Diagnostic et erreur aux sorties de la garde.</p>
-<h3 id="etape-43">15.2 Mode direct entièrement déterminé</h3>
+<h3 id="etape-44">15.2 Mode direct entièrement déterminé</h3>
 <ol start="1">
 <li>Dans C1.FALSE, posez N2 <code>Path To String</code> sur P2, puis N3 <code>TexteCheminValide.vi</code>, Texte=N2 et error in=P4. <code>Strip Path(P2)</code> donne le nom ; <code>To Lower Case</code> sur le nom, puis <code>Equal?</code> avec la constante <code>matlab.exe</code>. N4 AND de cette comparaison et N3.Valide.</li>
 <li>NOT(N4)→N5 ErreurSi.Condition, code 7008, message <code>Choisir le fichier matlab.exe sans guillemet ni caractere de controle.</code>, error in=N3.error out. Garde G1. Le contrôle Path doit désigner un fichier existant de votre installation. Une absence réelle sera détectée par System Exec. Les accents et espaces ne sont pas interdits.</li>
@@ -477,7 +500,7 @@ end
 <li>N9 Not Equal?(N7.return code,0)→N10 ErreurSi.Condition ; code 7008 ; N8.result→Message et Diagnostic. Merge Errors(N7.error out,N8.error out)→N10.error in ; N10.error out→sortie erreur. G1.Error renvoie diagnostic vide et erreur G1.</li>
 </ol>
 <p>MATLAB peut écrire un avertissement dans stderr sans échec : on conserve ce texte, mais le code de retour et le cluster d&#x27;erreur déterminent l&#x27;échec. L&#x27;option <code>-batch</code> doit être disponible dans MATLAB (R2019a ou plus récent). Vérifiez dans la VM ; si elle est plus ancienne, utilisez le lanceur du cours et retournez sa version au lieu d&#x27;inventer une commande différente.</p>
-<h3 id="etape-44">15.3 Mode fourni et adaptation exacte à l&#x27;interface observée</h3>
+<h3 id="etape-45">15.3 Mode fourni et adaptation exacte à l&#x27;interface observée</h3>
 <p><strong>Parcours normal, sans lanceur fourni :</strong> dans C1.TRUE, placez ErreurSi(TRUE,7009,<code>Option lanceur fourni non installee ; utiliser le mode direct.</code>,P4) ; câblez son error out à la sortie erreur et la même chaîne à Diagnostic. La case FALSE contient le lancement complet et constitue le fonctionnement normal. Cette branche TRUE signale une option indisponible, pas une fonction requise manquante. Gardez LanceurFourni=FALSE par défaut.</p>
 <p><strong>Seulement si vous installez l’option :</strong> remplacez ces deux sorties par l’intégration suivante et placez <strong>le vrai MP_LaunchMatlabScript4.vi</strong>. Utilisez la fiche du chapitre 14 pour appliquer cette table, uniquement aux bornes qui existent réellement :</p>
 <div class="table-scroll"><table>
@@ -496,12 +519,12 @@ end
 <p>Toutes les autres entrées doivent être identifiées et leur défaut confirmé par l&#x27;aide/diagramme : <strong>une borne inconnue est une information à retourner, pas une invitation à deviner</strong>. Si le VI n&#x27;a pas error in, il reste protégé par la garde extérieure de LancerMatlab. Si error out n&#x27;existe pas ou ne reflète pas une vraie erreur de script, ce mode n&#x27;est pas encore validé : conservez un ErreurSi(TRUE,7009,<code>Interface du lanceur fourni a verifier.</code>,P4) et diagnostic identique jusqu&#x27;à correction fondée sur sa vraie interface. Cela empêche un faux succès.</p>
 <p>Si return code/stdout/stderr existent, reprenez N8/N9/N10 du mode direct avec ces <strong>sorties réelles</strong>. S&#x27;il n&#x27;existe qu&#x27;un error out fiable, celui-ci devient la sortie erreur ; Diagnostic vaut une chaîne constante <code>Lanceur fourni termine ; verifier le PDF et error out.</code>. Le contrôle du fichier frais, au chapitre 16, reste obligatoire. Il ne remplace jamais une sortie d&#x27;erreur fiable.</p>
 <p>Checkpoint pour les deux modes validés : script 2×2 de chapitre 13→fin d&#x27;exécution, PDF nouveau ; script <code>error(&#x27;Essai volontaire&#x27;);</code>→erreur visible et aucun succès annoncé. Renommez temporairement l&#x27;exécutable MATLAB sélectionné <strong>dans la commande de test en choisissant un chemin inexistant</strong>, sans toucher au fichier d&#x27;installation : erreur. Remettez ensuite le script normal par GenererScript.</p>
-<h2 id="etape-45">16 VerifierPDF.vi</h2>
+<h2 id="etape-46">16 VerifierPDF.vi</h2>
 <p><strong>But :</strong> confirmer qu&#x27;après une exécution réussie de MATLAB, le fichier attendu existe et n&#x27;est pas vide. Le vieux PDF doit avoir été supprimé avant le lancement.</p>
 <p>P1 <code>CheminPDF</code> Path L1 ; P2 <code>error in</code> L4 ; P3 <code>error out</code> R4. Garde Error transmet P2. No Error : N1 <code>File/Directory Info</code>, P1→path,P2→error in. N2 <code>Equal To 0?</code> sur la sortie size ; N3 OR(N1.directory,N2). N4 ErreurSi : Condition=N3, Code 7007, Message=<code>PDF absent, vide ou remplace par un dossier.</code>, error in=N1.error out ; sortie→P3. Le type de size est celui fourni par NI, sans conversion réductrice. Un fichier absent provoque l&#x27;erreur native de N1.</p>
 <p>Cette fonction ne prouve pas la mise en page ni la validité logique. Une grille insoluble avec PDF <code>== Error ==</code> reste une production correcte. Le contrôle visuel et les exemples attendus viennent au chapitre 19.</p>
-<h2 id="etape-46">17 BinairoSolver.vi le programme principal</h2>
-<h3 id="etape-47">17.1 Construire la face avant</h3>
+<h2 id="etape-47">17 BinairoSolver.vi le programme principal</h2>
+<h3 id="etape-48">17.1 Construire la face avant</h3>
 <p>Enregistrez <code>BinairoSolver.vi</code> dans <code>Execution</code>. Ajoutez ces objets ; textes et clusters exacts :</p>
 <div class="table-scroll"><table>
 <tr><th>ID</th><th>Nom</th><th>Type et défaut</th><th>Borne</th></tr>
@@ -523,7 +546,7 @@ end
 </table></div>
 <p>B1/B2 non attribuées. Alignez P1..P6 à gauche, l&#x27;image à droite, les textes et erreurs en dessous. Ajoutez des étiquettes : <code>Résoudre avec MATLAB</code> et <code>Ouvrir le PDF</code> près des options si leurs champs vous semblent trop courts. Conservez les noms internes resoudre/afficherPDF du typedef.</p>
 <p>Zone de dessin Image originale : environ 650×620 pixels et fond blanc. Clic droit <code>Visible Items</code> : activez les barres de défilement horizontale/verticale si disponibles. Cela affiche les exemples 6×6/8×8 à taille lisible sans redimensionner la matrice de pixels. Le PNG sélectionné est un <strong>fichier</strong>, pas un dossier. Le programme s&#x27;exécute une fois avec la flèche Run.</p>
-<h3 id="etape-48">17.2 Dossier et validation de l&#x27;entrée</h3>
+<h3 id="etape-49">17.2 Dossier et validation de l&#x27;entrée</h3>
 <ol start="1">
 <li>Hors de toute Case : N1 <code>Current VI&#x27;s Path</code>→N2 <code>Strip Path</code> ; <strong>stripped path</strong> de N2→P11 et fil Dossier utilisé partout. N2.name est inutilisé. Le VI doit avoir été enregistré, sinon ce chemin est indéfini. Aucun chemin personnel constant n&#x27;entre dans le diagramme.</li>
 <li>Garde S0 sélectionnée par P4. Dans Error : P7 picture vide ; P8/P9/P14 chaînes vides ; P12 I32 0 ; P13 tableau Boolean 2D vide ; P15 Path vide ; P10=P4.</li>
@@ -531,10 +554,10 @@ end
 <li>V1 LireImage : PNG=P1,error in=erreur précédente. V1.Image→tunnel Image ; Bitmap→P13 via tunnel et V2 ComputeRowsCols.Bitmap ; V1.error out→V2.error in. V2.n→tunnel Taille. Garde S1 sur V2.error out.</li>
 <li>S1.Error : MatriceTexte/Diagnostic/Script vides, PDF path vide,error out=V2.error out. Image/Bitmap/Taille restent raccordés depuis V1/V2, ce qui aide à diagnostiquer une géométrie invalide.</li>
 </ol>
-<h3 id="etape-49">17.3 Déterminer les résultats et supprimer les anciens</h3>
+<h3 id="etape-50">17.3 Déterminer les résultats et supprimer les anciens</h3>
 <p>Dans S1.No Error : N7 Strip Path(P1)→name ; N8 String Length(name) ; N9 Subtract(N8,4) ; N10 String Subset(name,offset 0,length=N9) ; N11 Concatenate Strings(N10,<code>.pdf</code>) ; N12 Build Path(base=Dossier,name=N11)→P15 via les tunnels. Cette expression correspond à CheminPdfBinairo.m. Un PNG nommé <code>a.png</code> donne <code>a.pdf</code>.</p>
 <p>N13 Build Path(Dossier,<code>solve.m</code>). V3 SupprimerResultat sur N13 avec error in=V2.error out ; V4 SupprimerResultat sur N12 avec error in=V3.error out. Cela protège contre les résultats d&#x27;une exécution précédente. Ne supprimez ni PNG ni source MATLAB. CellValue est supprimé par LireCase avant chaque appel OCR.</p>
-<h3 id="etape-50">17.4 Boucle de lignes puis boucle de colonnes</h3>
+<h3 id="etape-51">17.4 Boucle de lignes puis boucle de colonnes</h3>
 <p>Dans S1.No Error, posez F1 For Loop extérieur ; V2.n→F1.N. <strong>Aucun auto-indexing</strong>, aucun parallélisme, aucun arrêt conditionnel. Ajoutez trois Shift Registers :</p>
 <ul>
 <li><code>matrice</code> String, initialisé avec chaîne vide ;</li>
@@ -556,7 +579,7 @@ end
 </ol>
 <p>Après F2 mais encore dans F1 : N18 Concatenate Strings trois entrées : F1.matrice gauche, <strong>valeur finale de F2.ligneTexte</strong>, constante <code>;\n</code> saisie en Backslash Codes Display. N18→F1.matrice droite ; F2.diagnostic final→F1.diagnostic droite ; F2.erreur final→F1.erreur droite.</p>
 <p>Une erreur peut laisser une matrice partielle affichée pour diagnostic, mais elle empêche GenererScript/LancerMatlab grâce aux gardes. Les tours restants des boucles ne font plus d&#x27;accès disque ou de processus. Les boucles n&#x27;ont pas besoin d&#x27;un arrêt anticipé pour être sûres.</p>
-<h3 id="etape-51">17.5 Générer lancer vérifier</h3>
+<h3 id="etape-52">17.5 Générer lancer vérifier</h3>
 <p>Après F1, toujours dans S1.No Error :</p>
 <div class="table-scroll"><table>
 <tr><th>Sous-VI ou nœud</th><th>Câblage</th></tr>
@@ -568,8 +591,8 @@ end
 <p>F1.matrice final→Matrice reconnue ; V6.Script→Script genere ; N19→Diagnostic ; V8.error out→P10, en passant par les tunnels S1 puis S0. P7/P13/P12 reçoivent les valeurs Image/Bitmap/n de l&#x27;étape 17.2 via S0. P15 reçoit N12.path via S1/S0. <strong>Un chemin affiché dans PDF attendu n&#x27;est pas un indicateur de succès</strong> : seul error out clair après VerifierPDF autorise à considérer le nouveau fichier produit.</p>
 <p>Pour rendre la panne immédiatement visible, ajoutez une LED <code>Erreur</code> non connectée au connector pane : <code>Unbundle By Name status</code> sur le fil final error out→LED. Ajoutez près du cluster : <code>Si Erreur est allumée, ne pas utiliser les anciens fichiers.</code> Ne masquez pas le code ou la source du cluster erreur.</p>
 <p>Enregistrez. La flèche doit être entière. Sélectionnez le PNG6×6 et matlab.exe ; choisissez le mode direct (Lanceur fourni=FALSE). Seuils88/90/90, deux options TRUE. Lancez <strong>une fois</strong>. Attendez la fin avant de recliquer. La reconnaissance remplace Cell.bin à chaque cellule : seule la dernière reste disponible à la fin.</p>
-<h2 id="etape-52">18 Lire les résultats attendus</h2>
-<h3 id="etape-53">18.1 Exemple 6 par 6</h3>
+<h2 id="etape-53">18 Lire les résultats attendus</h2>
+<h3 id="etape-54">18.1 Exemple 6 par 6</h3>
 <p>Attendez Taille grille=6 et la matrice suivante dans le script (espaces et fins de lignes peuvent différer, pas les valeurs) :</p>
 <pre><code class="language-matlab">% Projet Binairo - ME-213
 % Auteurs : Louis Pedelaborde, Romeo Mugnier de Almeida, Raphael Pical
@@ -600,7 +623,7 @@ else
 end
 </code></pre>
 <p>Le PDF doit contenir tous les indices initiaux en noir gras et toutes les valeurs ajoutées en bleu gras. La date/heure doit correspondre à cette exécution. Fermez le lecteur PDF avant un nouvel essai si Windows verrouille le fichier : une erreur d&#x27;accès ne doit jamais être ignorée.</p>
-<h3 id="etape-54">18.1b Exemple 8 par 8 et grille impossible</h3>
+<h3 id="etape-55">18.1b Exemple 8 par 8 et grille impossible</h3>
 <p>Avant d’observer une solution, comparez <strong>toutes les cases reconnues</strong> à ces matrices. Ne les mettez jamais dans GenererScript à la place du résultat OCR.</p>
 <p>8×8, 15 indices :</p>
 <pre><code class="language-matlab">B = [NaN 0 0 NaN NaN NaN NaN 0;
@@ -619,7 +642,7 @@ NaN 0 0 NaN;
 NaN NaN NaN NaN];
 </code></pre>
 <p>Le 4×4 a une géométrie correcte ; après déductions, il n’a aucune solution. Avec Résoudre=TRUE, attendez <code>ok=false</code> et un PDF portant <code>== Error ==</code>. Un PDF de grille résolue indiquerait une perte d’indices ou une erreur.</p>
-<h3 id="etape-55">18.2 Quatre combinaisons des options</h3>
+<h3 id="etape-56">18.2 Quatre combinaisons des options</h3>
 <div class="table-scroll"><table>
 <tr><th>Résoudre</th><th>Ouvrir PDF</th><th>Résultat attendu</th></tr>
 <tr><td>TRUE</td><td>TRUE</td><td>PDF de la solution produit et ouvert</td></tr>
@@ -628,7 +651,7 @@ NaN NaN NaN NaN];
 <tr><td>FALSE</td><td>FALSE</td><td>PDF de la grille initiale produit, pas ouvert automatiquement</td></tr>
 </table></div>
 <p>Dans les deux dernières lignes, aucune existence de solution n&#x27;est certifiée. Pour une grille initiale déjà contradictoire, le PDF doit afficher <code>== Error ==</code>. L&#x27;option Résoudre FALSE ne veut pas dire « ne pas lancer MATLAB » : MATLAB reste responsable du dessin.</p>
-<h3 id="etape-56">18.3 Tester l&#x27;ouverture PDF avec le lancement réel</h3>
+<h3 id="etape-57">18.3 Tester l&#x27;ouverture PDF avec le lancement réel</h3>
 <p><code>uiopen(chemin,1)</code> est proposé dans l’addendum actuel (<code>P0.PPI_Projet_soumission.26.1.pdf</code>, page physique 14). Son ouverture du lecteur PDF en mode <code>-batch</code> doit néanmoins être testée sur la VM : elle n&#x27;a pas été exécutée ici.</p>
 <ol start="1">
 <li>Fermez tout PDF ouvert. Dans GenererScript.vi, générez le script du checkpoint 2×2 avec Résoudre=TRUE, Ouvrir PDF=FALSE et le nom <code>Grille.png</code>.</li>
@@ -637,12 +660,12 @@ NaN NaN NaN NaN];
 <li>Répétez les deux essais avec Résoudre=FALSE, puis depuis un dossier contenant des espaces. Utilisez aussi le nom <code>L&#x27;exemple_test.png</code> pour vérifier les apostrophes et le caractère souligné.</li>
 <li>Notez la version MATLAB, le code de retour, la sortie d&#x27;erreur et l&#x27;observation du lecteur. Si le PDF existe mais ne s&#x27;ouvre pas, vérifiez d&#x27;abord son ouverture par double-clic dans Windows. Ne marquez pas V05 réussi tant que les quatre combinaisons ne fonctionnent pas par le lancement <code>-batch</code> réel.</li>
 </ol>
-<h3 id="etape-57">18.4 Deux types d&#x27;échec à ne pas confondre</h3>
+<h3 id="etape-58">18.4 Deux types d&#x27;échec à ne pas confondre</h3>
 <ul>
 <li><code>Binairo_4x4_Bad.png</code> peut avoir une géométrie correcte tout en étant contradictoire : OCR complet, MATLAB terminé, PDF <code>== Error ==</code> attendu.</li>
 <li><code>Binaro_5x6_Bad.png</code> a un nombre de lignes/colonnes incompatible : erreur de géométrie <strong>avant</strong> l&#x27;OCR et avant le lancement MATLAB.</li>
 </ul>
-<h2 id="etape-58">19 Batterie finale de validation native</h2>
+<h2 id="etape-59">19 Batterie finale de validation native</h2>
 <p>Pour chaque ligne : notez date, version des logiciels, PASS/FAIL et observation réelle dans <code>Preuves/validation.txt</code>. Ne cochez pas une ligne parce qu&#x27;elle est écrite dans la recette. Restaurez les noms/options après chaque essai.</p>
 <div class="table-scroll"><table>
 <tr><th>Essai</th><th>Action exacte</th><th>Réussite attendue</th></tr>
@@ -668,16 +691,16 @@ NaN NaN NaN NaN];
 <tr><td>V20</td><td>Dans ce dossier, rendre un fichier résultat non inscriptible avec les permissions du compte de test, puis lancer</td><td>erreur écriture transmise ; restaurer les permissions</td></tr>
 <tr><td>V21</td><td>Tous les checkpoints EtendueNoire/IntervallesNoirs/rectangle et binaire asymétrique</td><td>indices et octets exacts</td></tr>
 <tr><td>V22</td><td>Mode direct : succès et erreur volontaire, avec attente effective ; répéter pour le mode fourni seulement s’il est installé</td><td>attend la fin et transmet l’erreur ; captures conservées</td></tr>
-<tr><td>V23</td><td>C : BadCell_1, un pixel manquant, un pixel supplémentaire, cellule non vide sans chiffre ; consulter Documentation_projet</td><td>comportements et messages conformes aux choix documentés</td></tr>
+<tr><td>V23</td><td>C : BadCell_1, un pixel manquant, un pixel supplémentaire, cellule non vide sans chiffre ; consulter les choix de warning du chapitre 3</td><td>comportements et messages conformes aux choix documentés</td></tr>
 <tr><td>V24</td><td>Géométrie/binaire : dimensions 49,50,1000,1001 sur chaque axe ; suivre G4.4</td><td>49/1001 refusées ; 50/1000 acceptées ; pas d’inversion largeur/hauteur</td></tr>
 <tr><td>V25</td><td>Exporter chaque jeu de résultats avant le suivant ; assembler et réextraire l’archive selon 21</td><td>fichiers présents et programme portable</td></tr>
 </table></div>
 <p>Pour V20, l&#x27;attribut « lecture seule » d&#x27;un dossier Windows ne prouve pas une interdiction d&#x27;écrire : utilisez un fichier protégé ou les permissions réelles, sans modifier les permissions de l&#x27;installation de cours. Si votre compte ne permet pas ce test, marquez-le non exécuté et utilisez V12–V14 pour vérifier déjà les échecs d&#x27;ouverture.</p>
 <p>Pour V02, comparez l&#x27;original à la matrice reconnue avant de juger la solution. Pour chaque ligne et colonne de la solution : moitié 0/moitié 1, jamais trois identiques consécutifs, aucune ligne complète dupliquée, aucune colonne complète dupliquée. La photo de l&#x27;image d&#x27;origine et le PDF final doivent permettre de vérifier les couleurs des indices.</p>
-<h3 id="etape-59">19.1 Ajouter des tests de géométrie sans écrire de code externe</h3>
+<h3 id="etape-60">19.1 Ajouter des tests de géométrie sans écrire de code externe</h3>
 <p>Dans un VI de test séparé : <code>Initialize Array</code> de Boolean FALSE de taille 46×46, puis <code>Replace Array Subset</code> pour dessiner des traits complets à lignes/colonnes 0,15,30,45 avec TRUE (utilisez des vecteurs TRUE produits par Initialize Array de longueur 46). Le tableau représente 3×3 cases et doit être refusé pour nombre impair. Répétez avec dimensions 31×46 et traits de lignes 0,15,30, colonnes 0,15,30,45 : 2×3 doit être refusé. Une matrice totalement FALSE doit être refusée comme absence de grille. Les instructions géométrie donnent aussi des tests unitaires plus simples de transitions.</p>
 <p>Si vous créez des images complémentaires avec un logiciel de dessin, gardez-les comme tests, sans les confondre avec les fichiers du professeur. Une grille photographiée en perspective n&#x27;est pas un cas implicitement pris en charge : l&#x27;algorithme demandé suppose des traits alignés avec les axes.</p>
-<h2 id="etape-60">20 Si quelque chose ne marche pas</h2>
+<h2 id="etape-61">20 Si quelque chose ne marche pas</h2>
 <p>Ne modifiez pas dix fils à la fois. Arrêtez-vous au <strong>premier checkpoint faux</strong>.</p>
 <div class="table-scroll"><table>
 <tr><th>Symptôme</th><th>Vérification dans cet ordre</th></tr>
@@ -695,7 +718,7 @@ NaN NaN NaN NaN];
 <tr><td>PDF verrouillé</td><td>fermer le lecteur de PDF avant de réessayer ; ne pas ignorer l&#x27;erreur de suppression</td></tr>
 <tr><td>Le lanceur fourni a d&#x27;autres bornes</td><td>capture Front Panel, connector pane, Context Help et diagramme ; ne pas adopter les bornes du Billard</td></tr>
 </table></div>
-<h3 id="etape-61">20.1 Ce qu&#x27;il faut renvoyer pour une correction précise</h3>
+<h3 id="etape-62">20.1 Ce qu&#x27;il faut renvoyer pour une correction précise</h3>
 <ol start="1">
 <li>Enregistrez tous les VIs. Ne relancez pas une autre image avant d&#x27;avoir copié les résultats : cela écraserait Cell.bin/CellValue.txt.</li>
 <li>Copiez dans un dossier Preuves daté : VIs et <code>.ctl</code> actuels, PNG exact utilisé si partage permis, Cell.bin, CellValue.txt si présent, solve.m si présent et PDF si présent.</li>
@@ -704,16 +727,16 @@ NaN NaN NaN NaN];
 <li>Pour un fil impossible, ajoutez Context Help du nœud et de la borne visée. Pour une panne de lancement, ajoutez le texte exact de la commande, return code, stdout, stderr.</li>
 <li>Fermez LabVIEW puis archivez ce dossier de preuves. Le dossier ne constitue pas encore l&#x27;archive de remise.</li>
 </ol>
-<h2 id="etape-62">21 Assembler le rendu, étape par étape</h2>
+<h2 id="etape-63">21 Assembler le rendu, étape par étape</h2>
 <p>L’addendum du 7 octobre fixe ce contenu. La recette, un binaire Mac ou les seuls fichiers sources ne constituent pas un rendu Windows validé.</p>
-<h3 id="etape-63">21.1 Fermer la validation native</h3>
+<h3 id="etape-64">21.1 Fermer la validation native</h3>
 <ol start="1">
 <li>Exécutez chaque essai du chapitre 19 sur la VM. Dans Preuves/validation.txt, inscrivez le résultat observé, la date et les versions. Un essai non exécuté reste indiqué comme tel.</li>
 <li>Vérifiez les descriptions et auteurs dans les VIs. Rangez les fils ; laissez les erreurs visibles. Fermez les fichiers PDF ouverts.</li>
 <li>Remettez les seuils <strong>88/90/90</strong>, Options TRUE/TRUE, Lanceur fourni FALSE et une erreur claire. <code>Edit &gt; Make Current Values Default</code>, puis <code>Ctrl+S</code>, pour les typedefs et le principal. Les chemins se choisissent sur la face avant, sans constante personnelle dans le diagramme.</li>
 <li>Fermez LabVIEW et copiez les VIs, typedefs et projet dans votre sauvegarde persistante. Le principal se nomme exactement <strong>BinairoSolver.vi</strong>.</li>
 </ol>
-<h3 id="etape-64">21.2 Sauver les résultats avant qu’ils soient écrasés</h3>
+<h3 id="etape-65">21.2 Sauver les résultats avant qu’ils soient écrasés</h3>
 <ol start="1">
 <li>Créez <code>Preuves/6x6</code>, <code>Preuves/8x8</code>, <code>Preuves/4x4_Bad</code>, <code>Preuves/5x6_Bad</code>, <code>Preuves/BadBinairo</code>.</li>
 <li>Exécutez 6×6 avec 88/90/90, TRUE/FALSE. Vérifiez la matrice et le PDF. <strong>Avant toute nouvelle exécution</strong>, copiez de Execution vers Preuves/6x6 : <code>Cell.bin</code>, <code>CellValue.txt</code>, <code>solve.m</code>, <code>Binairo_6x6.pdf</code>, plus le diagnostic observé.</li>
@@ -721,22 +744,22 @@ NaN NaN NaN NaN];
 <li>Pour 5×6 etBadBinairo, conservez la capture et le diagnostic de refus. Aucun solve.m/PDF réussi n’est attendu : <strong>ne copiez pas un ancien résultat comme preuve de ces cas</strong>.</li>
 <li>Conservez les basenames requis dans chaque sous-dossier. Les PNG sources restent dans Images et ne seront pas ajoutés à l’archive de remise.</li>
 </ol>
-<h3 id="etape-65">21.3 Remplir la documentation courte et réunir l’archive</h3>
+<h3 id="etape-66">21.3 Remplir la documentation courte et réunir l’archive</h3>
 <ol start="1">
-<li>Ouvrez <code>temp/docs/Documentation_projet.md</code>. Son état de préparation décrit honnêtement ce qui a été vérifié. Après les essais, inscrivez les versions VM/Windows/compilateur/MATLAB/LabVIEW réellement utilisées, les résultats et les limites restantes, puis exportez en PDF. Ne remplacez pas « non exécuté » par « réussi » sans essai. Comparez au modèle <code>Ex. Documentation projet.pdf</code>.</li>
+<li>Après les essais dans la VM, rédigez la brève documentation selon le modèle Moodle <code>Ex. Documentation projet.pdf</code>, puis exportez-la en PDF. Indiquez les auteurs, versions VM/Windows/compilateur/MATLAB/LabVIEW, rôle des fichiers, chaîne PNG → LabVIEW → C → MATLAB → PDF, algorithmes, formats, seuils et politiques de warning du chapitre 3, résultats réellement observés et limites restantes. Mentionnez les codes C 0,2,3,4,5,6 et le comportement du contrôleur après une erreur. Ne remplacez pas « non exécuté » par « réussi » sans essai. Aucun rapport final prérempli n’est fourni dans le dépôt.</li>
 <li>Exportez <strong>les conversations complètes d’aide IA en PDF</strong>, y compris l’audit et les corrections. Le rapport d’audit ou un résumé ne remplace pas le transcript. Déclarez aussi toute autre source de code et toute coopération significative avec un autre groupe, si applicable ; n’inventez pas une déclaration d’absence à leur place.</li>
-<li>Créez un dossier de remise portant les noms <strong>Pedelaborde_MugnierDeAlmeida_Pical</strong>, avec les trois sous-dossiers <strong>c</strong>, <strong>matlab</strong> et <strong>temp</strong>. Dans c, conservez les cinq fichiers C/header et <code>OCR.sln</code>/<code>OCR.vcxproj</code> ; dans matlab, les sept fonctions <code>.m</code>. Dans <code>temp/Execution</code>, copiez le contenu utile du dossier Execution testé : principal, tous ses sous-VIs, quatre typedefs, projet LabVIEW, sept fonctions MATLAB, cinq fichiers C/header, <strong>OCR.exe Windows compilé et testé</strong>, <code>OCR.sln</code>, <code>OCR.vcxproj</code>. Les copies d’exécution doivent correspondre aux dernières sources de c/matlab. Conservez leurs chemins relatifs ; aucun projet ne doit dépendre du dossier d’un développeur.</li>
-<li>Dans temp, conservez <code>docs</code> avec la documentation courte PDF et les références nécessaires, ajoutez <code>Transcripts</code> avec les conversations complètes en PDF et <code>Preuves</code> avec les résultats de chaque séquence. Le dossier temp regroupe provisoirement le reste du projet : ne le supprimez pas avant remise, car il contient les VIs et les pièces exigées. <strong>Excluez Images et les PNG de test</strong>, les dossiers <code>.git</code>, <code>.vs</code>, les fichiers de compilation intermédiaires et les exécutables pour une autre plateforme. Les exemples binaires d’entrée du professeur servent aux tests locaux ; les résultats générés sont dans Preuves.</li>
+<li>Créez un dossier de remise portant les noms <strong>Pedelaborde_MugnierDeAlmeida_Pical</strong>, avec les trois sous-dossiers <strong>c</strong>, <strong>matlab</strong> et <strong>temp</strong>. Dans c, conservez les cinq fichiers C/header et les fichiers projet créés avec votre IDE dans la VM ; dans matlab, les sept fonctions <code>.m</code>. Dans <code>temp/Execution</code>, copiez le contenu utile du dossier Execution testé : principal, tous ses sous-VIs, quatre typedefs, projet LabVIEW, sept fonctions MATLAB, cinq fichiers C/header, <strong>OCR.exe Windows compilé et testé</strong>, ainsi que les fichiers projet associés réellement créés dans la VM. Les copies d’exécution doivent correspondre aux dernières sources de c/matlab. Conservez leurs chemins relatifs ; aucun projet ne doit dépendre du dossier d’un développeur.</li>
+<li>Dans temp, gardez la recette, créez <code>docs</code> pour la documentation courte PDF et les références nécessaires, puis ajoutez <code>Transcripts</code> avec les conversations complètes en PDF et <code>Preuves</code> avec les résultats de chaque séquence. Le dossier temp regroupe provisoirement le reste du projet : ne le supprimez pas avant remise, car il contient les VIs et les pièces exigées. <strong>Excluez Images et les PNG de test</strong>, les dossiers <code>.git</code>, <code>.vs</code>, les fichiers de compilation intermédiaires et les exécutables pour une autre plateforme. Les exemples binaires d’entrée du professeur servent aux tests locaux ; les résultats générés sont dans Preuves.</li>
 <li>Comparez le contenu avec cette liste, puis compressez le dossier en <code>Pedelaborde_MugnierDeAlmeida_Pical.zip</code>. Conservez une copie datée avant toute soumission.</li>
 </ol>
-<h3 id="etape-66">21.4 Vérifier exactement ce qui sera évalué</h3>
+<h3 id="etape-67">21.4 Vérifier exactement ce qui sera évalué</h3>
 <ol start="1">
 <li>Extrayez le ZIP dans <strong>un autre dossier avec espaces</strong>, idéalement sur une autre machine/VM prévue par le cours.</li>
 <li>Ouvrez <code>temp/Execution/BinairoSolver.vi</code> depuis le dossier extrait, sélectionnez le PNG conservé à part et le MATLAB de cette machine, puis utilisez la flèche Run. Vérifiez 6×6/8×8, les cas invalides et l’absence de dépendance manquante.</li>
 <li>Après la soumission Moodle, <strong>retéléchargez l’archive déposée</strong>, extrayez-la ailleurs et répétez le contrôle. Seule la dernière soumission est retenue. Ce document ne dépose rien à votre place.</li>
 <li>Relisez toute nouvelle annonce Moodle avant la remise. L’addendum du 7 octobre est intégré ; une nouvelle instruction postérieure devra être comparée explicitement.</li>
 </ol>
-<h2 id="etape-67">22 Références à consulter en cas de différence</h2>
+<h2 id="etape-68">22 Références à consulter en cas de différence</h2>
 <p>Les numéros suivants sont les <strong>pages physiques du PDF</strong>, pas nécessairement les nombres imprimés sur les diapositives.</p>
 <div class="table-scroll"><table>
 <tr><th>Source du cours</th><th>Pages</th><th>Exigence utilisée</th></tr>
@@ -745,7 +768,7 @@ NaN NaN NaN NaN];
 <tr><td>Exo.Proj.Binairo.LabVIEW.2.pdf</td><td>2–7</td><td>matrice générée, script, lanceur fourni, erreurs</td></tr>
 <tr><td>Exo.Proj.Binairo.Matlab.1.pdf</td><td>1–2</td><td>résultat PDF et fonctions d&#x27;affichage</td></tr>
 <tr><td>P0.PPI_Projet_soumission.26.1.pdf</td><td>3–12,14–16</td><td>rendu, erreurs, dimensions 50..1000, seuils entiers 1..99 et 88/90/90, noms, defaults, PDF</td></tr>
-<tr><td>LV1 et LV2, versions 2026</td><td>voir Conformite_programme.md</td><td>structures, tableaux, chaînes, fichiers, erreurs et sous-VIs</td></tr>
+<tr><td>LV1 et LV2, versions 2026</td><td>annexe H</td><td>structures, tableaux, chaînes, fichiers, erreurs et sous-VIs</td></tr>
 </table></div>
 <p>Les exercices de ce tableau sont des aides secondaires ; leurs noms de sous-VIs et leur lanceur ne deviennent pas des obligations absentes de la donnée.</p>
 <p>Documentation primaire des fonctions NI utilisées, pour vérifier leurs bornes avec Context Help dans votre version :</p>
@@ -762,7 +785,7 @@ NaN NaN NaN NaN];
 <li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/vi-lib/utility/colorconv-llb/color-to-rgb-vi.html">Color to RGB</a> : composantes U8 à convertir avant addition.</li>
 <li><a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/file-directory-info.html">File/Directory Info</a> et <a href="https://www.ni.com/docs/en-US/bundle/labview-api-ref/page/functions/delete.html">Delete</a> : contrôle des fichiers et suppression non récursive.</li>
 </ul>
-<h2 id="etape-68">23 Contrôle de couverture avant de déclarer la partie terminée</h2>
+<h2 id="etape-69">23 Contrôle de couverture avant de déclarer la partie terminée</h2>
 <p>L’addendum du 7 octobre prime pour les points qu’il fixe ; la donnée 2026.2 et les exercices compatibles complètent les exigences. Les pages sources sont au chapitre 22. Ce tableau relie les exigences à leur construction et à leur vérification.</p>
 <div class="table-scroll"><table>
 <tr><th>Exigence</th><th>Où la construire</th><th>Preuve à obtenir</th></tr>
@@ -786,13 +809,13 @@ NaN NaN NaN NaN];
 </table></div>
 <p><strong>État de cette recette :</strong> le C corrigé est compilé localement. Les 116 cellules des trois images carrées ont toutes été reconnues correctement à 88/90/90 pour quatre conversions RGB d’essai (464 appels). Chaque découpage conserve au maximum deux pixels réels par bord. Cette mesure indépendante ne remplace pas Picture to Pixmap ni les VIs Windows. Les matrices attendues figurent au chapitre 18. Les tests natifs restent ceux du chapitre 19.</p>
 <p>La partie LabVIEW peut être déclarée terminée lorsque les tests natifs sont réussis, le mode direct de lancement MATLAB fonctionne réellement, les fichiers nécessaires sont sauvegardés, et les dernières consignes officielles sont intégrées. L’inspection facultative du chapitre 14 n’est pas une condition de conformité à la donnée.</p>
-<h3 id="etape-69">23.1 Ambiguïtés résiduelles</h3>
+<h3 id="etape-70">23.1 Ambiguïtés résiduelles</h3>
 <p>L’addendum fournit maintenant la liste des erreurs et la remise : ne demandez plus si ces documents existent. Deux points ne sont pas explicitement tranchés dans l’export : score brut contre marge lorsque les seuils diffèrent, et éventuel connecteur officiel du principal. Le code suit la procédure détaillée p. 18 (marge), les deux seuils par défaut étant identiques ; le connecteur de la recette est un choix documenté. Si le professeur donne une précision ultérieure, répercutez-la dans le code, la recette et les tests. Aucun message n’est envoyé par cette recette.</p>
-<h1 id="etape-70">Annexe G — Détecter la grille et découper ses cases</h1>
+<h1 id="etape-71">Annexe G — Détecter la grille et découper ses cases</h1>
 <p>Ce chapitre construit <code>EtendueNoire.vi</code>, <code>IntervallesNoirs.vi</code>, <code>ComputeCellRect.vi</code>, puis <code>ComputeRowsCols.vi</code>, dans cet ordre. Les deux derniers noms sont repris de l’exercice comme conventions compatibles. La donnée impose les opérations correspondantes (p. 25–27), sans fixer les noms de ces deux sous-VIs. Les deux premiers sont nos sous-VIs auxiliaires. <code>ErreurSi.vi</code> doit déjà exister : entrées <code>Condition</code> Boolean, <code>Code</code> I32, <code>Message</code> String, <code>error in</code> ; sortie <code>error out</code>. Il conserve une erreur entrante ; sinon il crée l&#x27;erreur demandée uniquement lorsque <code>Condition</code> est vraie.</p>
 <p>Les opérations ci-dessous se font dans LabVIEW. Elles ne sont pas des tests déjà exécutés. Les résultats indiqués sont les résultats à obtenir avant de poursuivre.</p>
 <p>Références : <code>Exo.Proj.Binairo.LabVIEW.1.pdf</code>, pages physiques 5–8 et 15–16 ; <code>P00.PPI_Projet.2026.2.pdf</code>, pages physiques 25–27. Le professeur demande de compter les traits, traiter ceux qui touchent le bord, vérifier un nombre pair et égal de lignes/colonnes, puis tenir compte des bordures lors du découpage. Nous mesurons chaque trait : une bordure de 5 pixels est donc prise en compte par sa largeur réelle, sans soustraire arbitrairement 5 partout.</p>
-<h2 id="etape-71">G0. Conventions à appliquer à chaque fil</h2>
+<h2 id="etape-72">G0. Conventions à appliquer à chaque fil</h2>
 <ol start="1">
 <li>Enregistrer les nouveaux fichiers dans le même dossier de travail LabVIEW que le VI principal.</li>
 <li><code>Bitmap</code> est le tableau <strong>Boolean 2D déjà normalisé</strong> fourni par <code>LireImage.vi</code> : TRUE = noir, FALSE = blanc. Premier indice = ligne, deuxième indice = colonne. Toutes les coordonnées commencent à <strong>0</strong>.</li>
@@ -809,9 +832,9 @@ NaN NaN NaN NaN];
 <li>Les codes 6101–6104 sont des <strong>codes de notre projet</strong>, pas des numéros officiels du professeur ou de NI.</li>
 <li>Pour chaque VI, compléter File → VI Properties → Documentation : rôle, sens des entrées/sorties, unités et erreurs. Ajouter les auteurs Louis Pédelaborde, Romeo Mugnier de Almeida, Raphaël Pical. Sauvegarder des entrées vides/0 et un cluster sans erreur avec Edit → Make Current Values Default, puis sauvegarder le VI.</li>
 </ol>
-<h2 id="etape-72">G1. Vérifier les deux types et attribuer les connecteurs</h2>
+<h2 id="etape-73">G1. Vérifier les deux types et attribuer les connecteurs</h2>
 <p>Les deux fichiers .ctl ont déjà été créés au chapitre 3 : vérifiez-les avec les indications ci-dessous, <strong>ne créez pas une seconde copie</strong>. Leur dossier est Execution.</p>
-<h3 id="etape-73">G1.1 <code>LignesGrille.ctl</code></h3>
+<h3 id="etape-74">G1.1 <code>LignesGrille.ctl</code></h3>
 <ol start="1">
 <li>Dans une face avant vide, déposer un <code>Cluster</code>.</li>
 <li>À l&#x27;intérieur, déposer quatre <code>Array</code> contenant chacun un contrôle numérique I32. Un seul indice affiché : tableaux <strong>1D</strong>.</li>
@@ -820,9 +843,9 @@ NaN NaN NaN NaN];
 <li>Laisser les quatre tableaux vides : ne pas saisir de zéro dans une case.</li>
 <li>Clic droit → Advanced → Customize. Dans l&#x27;éditeur de contrôle, choisir <code>Type Def.</code> ; enregistrer <code>LignesGrille.ctl</code> ; fermer l&#x27;éditeur en acceptant de remplacer le contrôle initial.</li>
 </ol>
-<h3 id="etape-74">G1.2 <code>RectangleCellule.ctl</code></h3>
+<h3 id="etape-75">G1.2 <code>RectangleCellule.ctl</code></h3>
 <p>Même procédure, mais cluster de quatre <strong>scalaires I32</strong> : <code>gauche</code>, <code>haut</code>, <code>droite</code>, <code>bas</code>, dans cet ordre. Valeurs par défaut 0. Enregistrer <code>RectangleCellule.ctl</code>. Il s&#x27;agit du rectangle <strong>de notre programme</strong>, pas du cluster rectangle natif des fonctions Picture ; ici l&#x27;extraction finale se fait avec <code>Array Subset</code>.</p>
-<h3 id="etape-75">G1.3 Connecteurs des quatre sous-VIs</h3>
+<h3 id="etape-76">G1.3 Connecteurs des quatre sous-VIs</h3>
 <p>Pour chaque VI, afficher le connecteur en haut à droite de la face avant et choisir le motif de <strong>12 bornes</strong> : quatre à gauche, quatre à droite, deux en haut et deux en bas. Repérer L1–L4 de haut en bas à gauche, R1–R4 de haut en bas à droite, T1/T2 en haut, B1/B2 en bas. Cliquer la borne puis le contrôle/indicateur indiqué.</p>
 <div class="table-scroll"><table>
 <tr><th>VI</th><th>L1</th><th>L2</th><th>L3</th><th>L4</th><th>R1</th><th>R2</th><th>R3</th><th>R4</th></tr>
@@ -832,8 +855,8 @@ NaN NaN NaN NaN];
 <tr><td><code>ComputeRowsCols.vi</code></td><td>Bitmap</td><td>libre</td><td>libre</td><td>error in</td><td>n</td><td>Lignes</td><td>libre</td><td>error out</td></tr>
 </table></div>
 <p>Toutes les bornes T1,T2,B1,B2 restent libres. Les bornes de données d&#x27;entrée utilisées sont Required ; <code>error in</code> Recommended. Ce motif est notre choix pour les <strong>sous-VIs</strong> ; il ne prétend pas reproduire un connecteur officiel du VI principal.</p>
-<h2 id="etape-76">G2. <code>EtendueNoire.vi</code> — trouver le premier et le dernier pixel occupé</h2>
-<h3 id="etape-77">G2.1 Face avant</h3>
+<h2 id="etape-77">G2. <code>EtendueNoire.vi</code> — trouver le premier et le dernier pixel occupé</h2>
+<h3 id="etape-78">G2.1 Face avant</h3>
 <p>Créer et sauvegarder <code>EtendueNoire.vi</code>. Ajouter :</p>
 <div class="table-scroll"><table>
 <tr><th>Nom</th><th>Sens</th><th>Type</th><th>Défaut</th></tr>
@@ -843,7 +866,7 @@ NaN NaN NaN NaN];
 <tr><td>Fin</td><td>indicateur</td><td>I32</td><td>0</td></tr>
 <tr><td>error out</td><td>indicateur</td><td>cluster d&#x27;erreur standard</td><td>aucune erreur</td></tr>
 </table></div>
-<h3 id="etape-78">G2.2 Placer et câbler</h3>
+<h3 id="etape-79">G2.2 Placer et câbler</h3>
 <ol start="1">
 <li>Placer <code>S0</code>, une Case Structure commandée par <code>error in</code>. Créer trois sorties : <code>debut</code>, <code>fin</code>, <code>erreur</code> ; relier aux indicateurs correspondants.</li>
 <li>Cas <strong>Error</strong> : constante I32 0 → <code>debut</code> et <code>fin</code> ; <code>error in</code> → <code>erreur</code>.</li>
@@ -866,7 +889,7 @@ NaN NaN NaN NaN];
 <li>Relier les trois sorties de S1 aux trois sorties de S0. Aucun résultat calculé en cas d&#x27;erreur ne contourne S1.</li>
 <li>Il n&#x27;y a <strong>aucune boucle</strong> ni registre à décalage dans ce VI. Les sorties inutilisées de Search 1D Array restent non connectées.</li>
 </ol>
-<h3 id="etape-79">G2.3 Vérifier avant de continuer</h3>
+<h3 id="etape-80">G2.3 Vérifier avant de continuer</h3>
 <div class="table-scroll"><table>
 <tr><th>Bits</th><th>Debut</th><th>Fin</th><th>Erreur</th></tr>
 <tr><td>F,F,T,T,F,T,F</td><td>2</td><td>6</td><td>aucune</td></tr>
@@ -875,11 +898,11 @@ NaN NaN NaN NaN];
 <tr><td>tableau vide</td><td>0</td><td>0</td><td>6102</td></tr>
 </table></div>
 <p>Injecter également <code>error in = status TRUE, code 123, source &quot;essai&quot;</code> : retrouver exactement cette erreur, avec Debut=Fin=0. Ne pas remplacer l&#x27;erreur 123 par 6102. Sauvegarder.</p>
-<h2 id="etape-80">G3. <code>IntervallesNoirs.vi</code> — relever tous les traits, même aux bords</h2>
-<h3 id="etape-81">G3.1 Face avant et structure</h3>
+<h2 id="etape-81">G3. <code>IntervallesNoirs.vi</code> — relever tous les traits, même aux bords</h2>
+<h3 id="etape-82">G3.1 Face avant et structure</h3>
 <p>Créer le VI. Contrôles : <code>Bits</code> Boolean 1D vide et <code>error in</code>. Indicateurs : <code>Debuts</code> et <code>Fins</code>, deux tableaux I32 1D vides, et <code>error out</code>. Attribuer le connecteur G1.</p>
 <p>Placer <code>S0</code>, Case sur <code>error in</code>, sorties <code>debuts</code>, <code>fins</code>, <code>erreur</code>. Dans Error : tableau I32 1D vide vers <code>debuts</code> et <code>fins</code>, erreur entrante vers <code>erreur</code>.</p>
-<h3 id="etape-82">G3.2 Cas No Error : objets et tous les fils</h3>
+<h3 id="etape-83">G3.2 Cas No Error : objets et tous les fils</h3>
 <ol start="1">
 <li>Créer une constante <strong>tableau Boolean 1D contenant exactement un FALSE</strong>.</li>
 <li>Placer <code>B = Build Array</code>, agrandir à trois entrées et activer <strong>Concatenate Inputs</strong>. Câbler : entrée 0 = <code>[FALSE]</code>, entrée 1 = Bits, entrée 2 = <code>[FALSE]</code>. Nommer le résultat <code>avecBords</code>.</li>
@@ -903,7 +926,7 @@ NaN NaN NaN NaN];
 <li>Premier tableau de sortie F → S0.debuts ; deuxième → S0.fins. <code>error in</code> → S0.erreur. Relier les sorties S0 aux indicateurs.</li>
 </ol>
 <p>La boucle effectue longueur(Bits)+1 tours, i=0 jusqu&#x27;à longueur(Bits) incluse. Le tableau complété a longueur(Bits)+2 éléments ; les lectures i et i+1 sont donc toutes valides. L&#x27;indice i est déjà celui de l&#x27;image d&#x27;origine : <strong>ne pas retrancher 1</strong>.</p>
-<h3 id="etape-83">G3.3 Tests à réaliser</h3>
+<h3 id="etape-84">G3.3 Tests à réaliser</h3>
 <div class="table-scroll"><table>
 <tr><th>Bits</th><th>Debuts</th><th>Fins</th></tr>
 <tr><td>F,T,T,F,T,F</td><td>1,4</td><td>3,5</td></tr>
@@ -913,8 +936,8 @@ NaN NaN NaN NaN];
 <tr><td>vide</td><td>vide</td><td>vide</td></tr>
 </table></div>
 <p>Tous ces essais ont un error out sans erreur. Le cas sans trait sera rejeté par ComputeRowsCols, pas ici. Avec erreur entrante 123 : sorties vides, même erreur 123. Sauvegarder.</p>
-<h2 id="etape-84">G4. <code>ComputeCellRect.vi</code> — case avec bord mesuré</h2>
-<h3 id="etape-85">G4.1 Face avant</h3>
+<h2 id="etape-85">G4. <code>ComputeCellRect.vi</code> — case avec bord mesuré</h2>
+<h3 id="etape-86">G4.1 Face avant</h3>
 <p>Contrôles <code>ligne</code> I32=0, <code>colonne</code> I32=0, <code>Lignes</code> instance de LignesGrille.ctl vide, <code>error in</code>. Indicateurs <code>Rectangle</code> instance RectangleCellule.ctl à zéro, <code>error out</code>. Attribuer le connecteur G1.</p>
 <p>Le VI conserve au maximum <strong>deux pixels noirs déjà présents par côté</strong>. Pour un trait [debut,fin), son épaisseur est fin−debut. La partie conservée vaut cette épaisseur si elle est inférieure à 2, sinon 2. On ne modifie aucun pixel et on ne dessine pas un nouveau cadre.</p>
 <ul>
@@ -924,7 +947,7 @@ NaN NaN NaN NaN];
 <li>bas = debutY[ligne+1] + min(2,épaisseur du trait bas).</li>
 </ul>
 <p>Dans le diagramme, le minimum se construit avec <strong>Less? puis Select</strong>, détaillés ci-dessous. Cette limite 2 est un choix de découpage pour les traits des images fournies, pas une constante imposée par le professeur. Les deux dimensions <strong>du rectangle final</strong> doivent être entre 50 et 1000 inclus. Le maximum 4096 pour les coordonnées est la garde de lecture d’image du projet. Les chiffres gardent leur taille originale 32×32 ; aucune interpolation n’est ajoutée.</p>
-<h3 id="etape-86">G4.2 Premier filtre : ne jamais indexer hors des tableaux</h3>
+<h3 id="etape-87">G4.2 Premier filtre : ne jamais indexer hors des tableaux</h3>
 <ol start="1">
 <li>Placer S0 Case sur error in, sorties <code>rectangle</code>, <code>erreur</code>.</li>
 <li>S0.Error : rectangle constant(0,0,0,0) → rectangle ; error in → erreur.</li>
@@ -949,7 +972,7 @@ NaN NaN NaN NaN];
 <li>Build Array neuf entrées scalaires, T1..T9 dans cet ordre → Or Array Elements → ErreurSi.Condition. Code 6104, Message <code>Indices de case ou tableaux de traits invalides.</code>, error in = erreur entrante.</li>
 <li>Placer S1 Case sur ce error out, avec sorties rectangle/erreur. S1.Error : rectangle zéro et erreur venant d&#x27;ErreurSi. Relier sorties S1 vers sorties S0.</li>
 </ol>
-<h3 id="etape-87">G4.3 Dans S1.No Error : mesurer les quatre traits puis calculer</h3>
+<h3 id="etape-88">G4.3 Dans S1.No Error : mesurer les quatre traits puis calculer</h3>
 <ol start="1">
 <li>Add(colonne,1)→c1 ; Add(ligne,1)→r1. Huit Index Array donnent les valeurs suivantes :</li>
 </ol>
@@ -972,7 +995,7 @@ NaN NaN NaN NaN];
 <li>Bundle By Name sur Rectangle constant zéro : les quatre résultats du point 3 vers gauche,haut,droite,bas. Case S2 sur la dernière erreur : No Error→rectangle calculé et erreur ; Error→rectangle zéro et erreur.</li>
 <li>Remonter S2→S1→S0→indicateurs. Aucun indexage ne se fait dans une branche Error. Les calculs du point 2 sur une épaisseur invalide ne donnent jamais un rectangle utilisable, car le point 4 les refuse.</li>
 </ol>
-<h3 id="etape-88">G4.4 Essais précis</h3>
+<h3 id="etape-89">G4.4 Essais précis</h3>
 <p>Saisir debutX=[0,58,116], finX=[2,60,118], debutY=[0,53,106], finY=[2,55,108].</p>
 <div class="table-scroll"><table>
 <tr><th>ligne,colonne</th><th>Rectangle (gauche,haut,droite,bas)</th><th>Résultat</th></tr>
@@ -984,19 +1007,19 @@ NaN NaN NaN NaN];
 <p>Raccourcir finX d’un élément : erreur 6104. Mettre finX[0]=debutX[0] : trait vide, erreur 6104. Erreur entrante 123 : rectangle nul et même erreur 123.</p>
 <p>Pour tester la <strong>largeur w</strong> indépendamment : debutX=[0,w−2,2*(w−2)], finX=[2,w,2*w−2], conserver les tableauxY ci-dessus ; appeler case 0,0. Faire w=49,50,1000,1001 : refus, succès, succès, refus. Pour tester la <strong>hauteur h</strong>, conserver X=[0,58,116]/[2,60,118] et utiliser debutY=[0,h−2,2*(h−2)], finY=[2,h,2*h−2]. Même séquence h=49,50,1000,1001. Ces valeurs sont des calculs de préparation du test ; n’inscrivez aucun attendu dans ComputeCellRect.</p>
 <p>Test de bord extérieur épais : remplacer seulement debutX[0] par 0 et finX[0] par 6, avec début du trait suivant 58. La case 0,0 commence à gauche 4 : seuls les deux derniers pixels de cette bordure sont conservés. Sauvegarder après tous les essais.</p>
-<h2 id="etape-89">G5. <code>ComputeRowsCols.vi</code> — nombre de cases et traits mesurés</h2>
-<h3 id="etape-90">G5.1 Face avant et squelette des cas</h3>
+<h2 id="etape-90">G5. <code>ComputeRowsCols.vi</code> — nombre de cases et traits mesurés</h2>
+<h3 id="etape-91">G5.1 Face avant et squelette des cas</h3>
 <p>Contrôles Bitmap Boolean 2D vide, error in. Indicateurs n I32=0, Lignes LignesGrille.ctl vide, error out. Attribuer connecteur G1.</p>
 <p>Créer S0 Case sur error in. Dans son No Error seront imbriqués successivement S1,S2,S3,S4. <strong>Chaque Case a exactement trois sorties</strong> : <code>n</code>, <code>lignes</code>, <code>erreur</code>. Dans le cas Error de chacune : I32 0 → n ; cluster LignesGrille dont les quatre tableaux sont vides → lignes ; erreur qui sélectionne ce Case → erreur. Dans le No Error, les trois sorties du Case intérieur rejoignent les trois sorties du Case extérieur. Seul S4.No Error fournit les résultats finaux valides. S0.sorties vont aux indicateurs.</p>
 <p>Cette règle définit explicitement les cinq branches d&#x27;erreur. Il faut les câbler toutes ; aucun tunnel de sortie par défaut.</p>
-<h3 id="etape-91">G5.2 S0.No Error : dimensions avant toute opération</h3>
+<h3 id="etape-92">G5.2 S0.No Error : dimensions avant toute opération</h3>
 <ol start="1">
 <li>Array Size(Bitmap) → tableau dimensions ; deux Index Array aux indices 0 et 1 donnent hauteur et largeur.</li>
 <li>Quatre tests : hauteur&lt;32, hauteur&gt;4096, largeur&lt;32, largeur&gt;4096.</li>
 <li>Build Array des quatre tests → Or Array Elements → ErreurSi.Condition ; Code 6101 ; Message <code>Dimensions d&#x27;image hors de 32 a 4096 pixels.</code> ; error in entrante → error in.</li>
 <li>ErreurSi.error out → sélecteur S1 et son fil d&#x27;erreur. Bitmap entre dans S1 sans indexation. Le domaine32..4096 est notre garde pour les images, distinct des dimensions 50..1000 des cellules. Ne pas imposer hauteur=largeur ici.</li>
 </ol>
-<h3 id="etape-92">G5.3 S1.No Error : trouver la position réelle du bord noir</h3>
+<h3 id="etape-93">G5.3 S1.No Error : trouver la position réelle du bord noir</h3>
 <p>Placer ces objets :</p>
 <div class="table-scroll"><table>
 <tr><th>Repère</th><th>Objet</th><th>Configuration et fils</th></tr>
@@ -1016,7 +1039,7 @@ NaN NaN NaN NaN];
 </table></div>
 <p>E2.error out → sélecteur S2 et son fil d&#x27;erreur. Passer Bitmap, ligneAnalyse et colonneAnalyse à l&#x27;intérieur de S2 par des tunnels d&#x27;entrée.</p>
 <p><strong>Ne pas remplacer Bitmap par le tableau transposé</strong> : la transposition ne sert qu&#x27;à calculer l&#x27;occupation des colonnes. La grille peut avoir une marge blanche ; bord+10 n&#x27;est donc pas nécessairement l&#x27;indice absolu 10. Une image entièrement blanche donne 6102 et n&#x27;atteint jamais les Index Array suivants.</p>
-<h3 id="etape-93">G5.4 S2.No Error : extraire les axes et compter les traits</h3>
+<h3 id="etape-94">G5.4 S2.No Error : extraire les axes et compter les traits</h3>
 <ol start="1">
 <li>Deux Index Array reçoivent <strong>Bitmap original</strong>. Agrandir pour voir les indices ligne/colonne.</li>
 <li>Premier : ligneAnalyse → index0 ; <strong>index1 volontairement non câblé</strong>. Sortie tableau 1D = parcours horizontal.</li>
@@ -1030,7 +1053,7 @@ NaN NaN NaN NaN];
 <li>ErreurSi.error out → sélecteur S3 et son fil d&#x27;erreur ; nombreColonnes → entrée n de S3 ; lignesCalculees → entrée lignes de S3.</li>
 </ol>
 <p>Les débuts et fins ont déjà été appariés par IntervallesNoirs : leur nombre est le <strong>nombre de traits</strong>. Un début et une fin forment deux transitions : additionner leurs nombres, diviser par 2 puis retrancher 1 donne le nombre de cases. Ne divisez pas seulement le nombre de débuts par 2.</p>
-<h3 id="etape-94">G5.5 S3.No Error : vérifier toutes les largeurs et hauteurs</h3>
+<h3 id="etape-95">G5.5 S3.No Error : vérifier toutes les largeurs et hauteurs</h3>
 <ol start="1">
 <li>Placer une For Loop F3 ; n → N. Aucun arrêt conditionnel ni parallélisme.</li>
 <li>Ajouter <strong>un registre à décalage de cluster d&#x27;erreur</strong> : clic droit sur bord gauche → Add Shift Register. Depuis l&#x27;extérieur, erreur S3 → registre gauche d&#x27;initialisation. Ce fil est obligatoire.</li>
@@ -1044,7 +1067,7 @@ NaN NaN NaN NaN];
 <li>Relier successivement les trois sorties S4 vers S3, S3 vers S2, S2 vers S1, S1 vers S0. Enregistrer.</li>
 </ol>
 <p>R1 vérifie toutes les largeurs de colonnes à la ligne 0. R2 vérifie toutes les hauteurs de lignes à la colonne 0. Toutes les combinaisons de cellules sont alors couvertes pour ces dimensions indépendantes. Après une erreur, les itérations restantes transmettent l&#x27;erreur sans refaire de travail ; les sous-VIs sont eux-mêmes protégés par leur cas Error.</p>
-<h3 id="etape-95">G5.6 Tests des images fournies</h3>
+<h3 id="etape-96">G5.6 Tests des images fournies</h3>
 <p>Brancher LireImage.Bitmap sur ComputeRowsCols.Bitmap et chaîner les erreurs. Faire chaque essai séparément et noter les valeurs réellement observées.</p>
 <div class="table-scroll"><table>
 <tr><th>Image fournie</th><th>Résultat géométrique attendu</th></tr>
@@ -1054,8 +1077,8 @@ NaN NaN NaN NaN];
 <tr><td>Binaro_5x6_Bad.png</td><td>six lignes et cinq colonnes : erreur 6103, n=0, Lignes vide</td></tr>
 </table></div>
 <p>Sur le 6×6, ComputeCellRect(0,0) doit donner gauche 4,haut 4,droite 80,bas 76, soit 76×72. Sur le 8×8 : gauche 6,haut 11,droite 82,bas 83, soit 76×72. Ces découpages diffèrent des fichiers binaires 74×74 du professeur ; ne comparez pas leurs octets comme s’ils étaient identiques. Comparez les symboles et les matrices.</p>
-<h2 id="etape-96">G6. Essais géométriques sans image et extraction effective</h2>
-<h3 id="etape-97">G6.1 Construire un bitmap de test sans fichier externe</h3>
+<h2 id="etape-97">G6. Essais géométriques sans image et extraction effective</h2>
+<h3 id="etape-98">G6.1 Construire un bitmap de test sans fichier externe</h3>
 <ol start="1">
 <li>Créer un VI temporaire : For Loop extérieure N=108 et intérieure N=118. i extérieur=ligne ; i intérieur=colonne. Sorties des deux boucles auto-indexées, aucun registre.</li>
 <li>Dans la boucle interne, construire trois intervalles noirs de colonnes : [0,2), [58,60), [116,118). Pour chacun : Greater Or Equal?(colonne,debut), Less?(colonne,fin), AND des deux. OR des trois AND→traitVertical.</li>
@@ -1066,7 +1089,7 @@ NaN NaN NaN NaN];
 <li>Tableau entièrement FALSE 108×118 : 6102. Bitmap vide : 6101. Erreur entrante 123 : 123 avec n0/Lignes vide.</li>
 <li>Exécuter les huit tests 49/50/1000/1001 de G4.4. Conserver les VIs de test dans Preuves/Essais, séparés des VIs du programme.</li>
 </ol>
-<h3 id="etape-98">G6.2 Extraire une case dans le futur VI de reconnaissance</h3>
+<h3 id="etape-99">G6.2 Extraire une case dans le futur VI de reconnaissance</h3>
 <ol start="1">
 <li>ComputeCellRect reçoit ligne,colonne,Lignes et le cluster d&#x27;erreur courant.</li>
 <li>Placer une Case sur son error out. Dans Error : pas d&#x27;extraction, pas d&#x27;écriture, pas d&#x27;appel OCR ; propager l&#x27;erreur.</li>
@@ -1077,16 +1100,72 @@ NaN NaN NaN NaN];
 <li>Le sous-VI d&#x27;écriture du chapitre suivant le convertira en U8 et écrira largeur puis hauteur. <strong>Ne pas transposer pour corriger l&#x27;ordre de l&#x27;en-tête.</strong></li>
 </ol>
 <p>Le calcul suppose une grille alignée sur les axes et des lignes d&#x27;analyse à bord+10 qui ne traversent pas les chiffres, comme dans l&#x27;énoncé. Les données fournies et les cas limites ci-dessus doivent tous être essayés sur la VM. Une flèche exécutable et des résultats attendus dans un document ne remplacent pas ces essais.</p>
-<h2 id="etape-99">Mise a jour des sources et du PDF</h2>
+<h2 id="etape-100">Mise a jour des sources et du PDF</h2>
 <p>Les fonctions DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk et printGrid sont locales a SolveBinairo.m, comme dans le modele fourni. Supprimez leurs anciens fichiers .m du dossier Execution. Elles ne s&#x27;appellent plus directement depuis la fenetre de commande. Le script genere utilise disp(B) pour afficher la matrice ; remplacez aussi printGrid(B) par disp(B) dans une ancienne constante N6.</p>
 <p>Le dessin utilise axis ij, axis equal et axis off. Le PDF utilise les reglages papier par defaut de MATLAB ; la date provient de char(datetime(&#x27;now&#x27;)) et depend de la langue et des preferences de l&#x27;installation. Verifiez le PDF natif : grille entiere, cases carrees, nom et date lisibles, couleurs et message d&#x27;erreur. Ce nouveau rendu n&#x27;a pas ete execute ici.</p>
 <p>Le C ne cree ni ne vide CellValue.txt lorsque la reconnaissance echoue. Un ancien resultat peut donc rester present : le code de retour reste obligatoire pour decider si le resultat est utilisable. Une erreur d&#x27;ecriture apres ouverture peut encore laisser un resultat incomplet.</p>
-<h2 id="etape-100">Contrôles de remise après l’addendum du 7 octobre</h2>
-<p>La documentation de préparation est fournie dans temp/docs/Documentation_projet.md et PDF. Complétez sa validation après les essais sur la VM EPFL. Relevez alors la version Windows, l&#x27;identification de la VM, le compilateur et sa version, MATLAB et sa version, ainsi que LabVIEW et sa version. Documentez la configuration dans laquelle le projet complet fonctionne ; ne recopiez pas les versions de l&#x27;exemple Billard du professeur.</p>
+<h2 id="etape-101">Contrôles de remise après l’addendum du 7 octobre</h2>
+<p>Rédigez la documentation courte après les essais sur la VM EPFL, suivant le chapitre 21. Relevez alors la version Windows, l&#x27;identification de la VM, le compilateur et sa version, MATLAB et sa version, ainsi que LabVIEW et sa version. Documentez la configuration dans laquelle le projet complet fonctionne ; ne recopiez pas les versions de l&#x27;exemple Billard du professeur.</p>
 <p>Le C accepte une cellule rectangulaire dont chaque dimension est dans 50..1000 et qui contient exactement largeur×hauteur octets 0/1. Une grille Binairo, en revanche, doit avoir le même nombre pair de lignes et de colonnes. Les coordonnées et seuils restent contrôlés avant leur utilisation. Les codes−2/−3 cités en cours étaient des exemples, et non une numérotation imposée. Les codes actuellement implémentés restent 0,2,3,4,5,6 ; leur signification est précisée dans reconnaissance.h et les messages d&#x27;erreur. Toute erreur non nulle interdit de lire l&#x27;ancien résultat.</p>
-<p>Pendant les essais natifs, vérifier aussi le refus d&#x27;un fichier tronqué, d&#x27;un octet supplémentaire, d&#x27;une dimension négative encodée en U32 et d&#x27;une dimension 10000. Conserver le message complet, pas seulement le numéro.</p></article></main><script>
+<p>Pendant les essais natifs, vérifier aussi le refus d&#x27;un fichier tronqué, d&#x27;un octet supplémentaire, d&#x27;une dimension négative encodée en U32 et d&#x27;une dimension 10000. Conserver le message complet, pas seulement le numéro.</p>
+<h1 id="etape-102">Annexe H - Techniques et références ME-213 / CS-119a</h1>
+<p>Ce tableau relie les <strong>techniques des sources C/MATLAB et des diagrammes décrits</strong> aux cours fournis. Le projet combine ces techniques pour résoudre un nouvel exercice : il ne prétend pas que chaque ligne a été recopiée d’une diapositive. Les pages sont physiques, à partir de 1. Les fichiers originaux des cours ne sont pas redistribués dans le dépôt.</p>
+<h2 id="etape-103">H1 C</h2>
+<div class="table-scroll"><table>
+<tr><th>Technique dans le projet</th><th>Référence fournie</th><th>Utilisation</th></tr>
+<tr><td>Conditions, boucles, tableaux, fonctions, pointeurs, chaînes terminées par NUL</td><td>CS-119a <code>cours2.pdf</code> à <code>cours7.pdf</code>, exemples <code>while_number_of_digits.c</code>, <code>strings_argc_argv.c</code>, <code>pointers_and_arrays.c</code> ; ME-213 C1</td><td>parcours des arguments et des pixels, validation, fonctions auxiliaires</td></tr>
+<tr><td>Conversion d’un entier par les chiffres, multiplication par 10 et addition</td><td>opérations/arithmetic et boucles des cours précédents ; <code>while_number_of_digits.c</code> pour le parcours des chiffres</td><td>ConvertirSeuil : refus des fractions et bornes 1..99, sans parseur externe</td></tr>
+<tr><td>Structures et pointeurs vers structures</td><td>CS-119a <code>cours8.pdf</code>, p. 18–29 ; <code>structs_and_ptrs.c</code></td><td>CelluleOCR, SeuilsOCR, ResultatOCR</td></tr>
+<tr><td>malloc/free, allocation selon la taille connue</td><td>CS-119a <code>cours7.pdf</code>, p. 10–11 et 29 ; <code>dynamic_array.c</code> ; ME-213 C5</td><td>pixels et chemins ; aucun VLA</td></tr>
+<tr><td>fopen/fread/fgetc/fprintf/ferror/fclose</td><td>ME-213 <code>C3.PPI_C_Fichiers.26.r1.pdf</code>, p. 13–26 ; CS-119a <code>cours11.pdf</code> et <code>cours12.pdf</code></td><td>lecture binaire groupée, détection des troncatures/excès, texte de sortie, erreurs</td></tr>
+<tr><td>fflush</td><td>CS-119a <code>cours12.pdf</code>, p. 12</td><td>détecter l’échec du vidage du tampon de sortie</td></tr>
+<tr><td>strlen/strcmp/memcpy</td><td>CS-119a <code>cours12.pdf</code>, p. 21,23,25–26 ; <code>strings_strlen.c</code>, <code>strings_strcmp.c</code></td><td>construire le chemin voisin CellValue.txt sans modifier l’entrée</td></tr>
+<tr><td>Types entiers de largeur fixée, octets et ordre des octets</td><td>ME-213 C3, p. 27 et 30–34 ; donnée Binairo, p. 20–22</td><td>uint32_t, décodage little-endian</td></tr>
+<tr><td>Décalages et masques binaires</td><td>ME-213 <code>C2.PPI_C_RepresentationNombre+BitWiseOp.26.r1.pdf</code>, p. 13–16</td><td>GetDigitBitmapBit et lecture de l’en-tête</td></tr>
+<tr><td>static, const, durée de vie</td><td>ME-213 <code>C5.PPI_C_IntroMemoryMgmt.26.r1.pdf</code>, p. 8–9 ; rappels C</td><td>nom constant de sortie</td></tr>
+<tr><td>goto uniquement vers le nettoyage final</td><td>ME-213 <code>C4.PPI_C_SoftwareEngineering.26.r1.pdf</code>, p. 21–23</td><td>un chemin de fermeture/libération en cas d’erreur</td></tr>
+<tr><td>Balayage des deux modèles 32×32, test du vide puis score/marge</td><td>donnée Binairo 2026.2, p. 7–18</td><td>algorithme expressément demandé</td></tr>
+</table></div>
+<p>La mise à jour des seuils utilise uniquement caractères, entiers, if/while et arithmétique. Le contrôle après chaque chiffre empêche le débordement de l’accumulation. Les structures et interfaces existantes restent identiques.</p>
+<h2 id="etape-104">H2 MATLAB</h2>
+<div class="table-scroll"><table>
+<tr><th>Technique/fonction dans les sept fichiers</th><th>Référence fournie</th><th>Utilisation</th></tr>
+<tr><td>Matrices, produits, transposition, indexation, masques logiques, concaténation</td><td><code>M1.PPI_Matlab_I.26.r1.pdf</code>, p. 15–29</td><td>comptes, répétition d’une ligne/colonne, comparaison simultanée et tracé sans boucles</td></tr>
+<tr><td>find, ind2sub, isnan, sum, any, isequal</td><td><code>Exo.Proj.Binairo.Matlab.2.pdf</code>, p. 1 ; M3 p. 12 pour ind2sub</td><td>fonctions explicitement proposées pour ce projet</td></tr>
+<tr><td>if, fonctions locales, arguments/retours, isa</td><td><code>M2.PPI_Matlab_II.26.r1.pdf</code>, p. 27–41</td><td>validation et découpage en fonctions</td></tr>
+<tr><td>Récursion et retour en arrière</td><td>donnée Binairo p. 29 et 33–34 ; exercice de récursion ; CS-119a <code>cours13.pdf</code>, p. 5–7 et 18–21, <code>cours14.pdf</code></td><td>essais 0 puis 1 et reprise de la grille de base</td></tr>
+<tr><td>Diviser un parcours en deux parties récursives</td><td>CS-119a théorie <code>icc_cours3_handout.pdf</code>, p. 12–24 (dichotomie/tri fusion)</td><td>ParcourirCases conserve l’ordre mais limite la profondeur du parcours ; aucune bibliothèque de recherche</td></tr>
+<tr><td>numel et isempty</td><td><code>Demo_matlab.zip</code>, <code>Demo_Matlab_4_8_Integral_SimpsonRec.m</code> ; pour isempty aussi <code>Demo_Matlab_4_4c_DemoAntOutsideThePlate.m</code></td><td>taille et absence d’éléments</td></tr>
+<tr><td>floor</td><td><code>Demo_matlab.zip</code>, <code>Demo_Matlab_4_x_CellArray_SegmentGetCentralIdx.m</code></td><td>milieu entier d’un intervalle</td></tr>
+<tr><td>Cell arrays et concaténation de cellules</td><td>M3 p. 15–19</td><td>découper le nom long en lignes de texte</td></tr>
+<tr><td>meshgrid</td><td>M3 p. 28–30</td><td>coordonnées de toutes les cases</td></tr>
+<tr><td>figure, axes, handles et propriétés graphiques</td><td>M2 p. 42–50 ; <code>Demo_Matlab_2_5_PlotRef.m</code></td><td>placement, couleurs, tailles et propriétés du dessin</td></tr>
+<tr><td>line</td><td><code>Demo_Matlab_2_1_edit_debug.m</code>, et démonstrations d’animation de ressort dans Demo_matlab.zip</td><td>traits horizontaux et verticaux</td></tr>
+<tr><td>text, axis, datetime, num2str, print</td><td><code>Exo.Proj.Binairo.Matlab.1.pdf</code>, p. 2</td><td>fonctions explicitement proposées pour le PDF ; char convertit la date en texte</td></tr>
+<tr><td>close, drawnow</td><td><code>Demo_Matlab_4_15a_ODE45_Unforced_DampedSpring_Animation.m</code></td><td>rafraîchir/fermer la figure sans toucher aux autres figures</td></tr>
+<tr><td>fprintf et error</td><td>M2 p. 32 ; M3 p. 51 ; squelette SolveBinairoHeader</td><td>messages et remontée des erreurs</td></tr>
+<tr><td>uiopen</td><td>addendum du 7 octobre, p. 14</td><td>ouvrir le PDF si demandé</td></tr>
+</table></div>
+<p>Le produit des masques 0/1 dans GrilleBinairoValide n’introduit pas une nouvelle bibliothèque : il applique le produit matriciel enseigné pour compter les positions égales. Une somme égale à n implique deux lignes complètes identiques. Les récursions, opérations matricielles et signatures du squelette sont conservées. Aucun arrayfun/cellfun, classe, toolbox d’optimisation, solveur externe ou boucle explicite n’est ajouté.</p>
+<h2 id="etape-105">H3 LabVIEW</h2>
+<div class="table-scroll"><table>
+<tr><th>Construction décrite dans la recette</th><th>Référence fournie</th></tr>
+<tr><td>Types, conversions, tableaux/clusters, For/Case, Select</td><td><code>LV1.PPI_LabVIEW_intro1.26.r1.pdf</code>, p. 28–47,59–61,71 et 75–76</td></tr>
+<tr><td>Registres à décalage et propagation d’erreurs</td><td><code>LV2.PPI_LabVIEW_intro2_SR_Files.26.r1.pdf</code>, p. 3,8–10,18–20 ; exercice Loops/TunnelMode/ShiftRegister</td></tr>
+<tr><td>Chaînes, String Subset, Search and Replace, Format Into String, Scan From String</td><td>LV2 p. 45–50</td></tr>
+<tr><td>Fichiers texte/binaires, ouvrir/écrire/fermer</td><td>LV2 p. 24–31 ; exercice Binairo LabVIEW 1, p. 9–14</td></tr>
+<tr><td>System Exec et gestion de son retour</td><td>LV2 p. 51 ; exercice Binairo LabVIEW 1 p. 13–14 ; LabVIEW 2 p. 2–7</td></tr>
+<tr><td>Lecture PNG, Picture to Pixmap, Unflatten Pixmap, Index Array, Array Subset</td><td>exercice Binairo LabVIEW 1 p. 3–8</td></tr>
+<tr><td>Chemins relatifs au VI, Build Path</td><td>même exercice p. 10–11</td></tr>
+<tr><td>Compter transitions et traiter les traits aux bords</td><td>donnée p. 27 ; exercice LabVIEW 1 p. 15–16</td></tr>
+<tr><td>Nouveau calcul du rectangle</td><td>indexation des traits, soustractions, comparaisons et Select des cours ci-dessus ; pas de morphologie ou de traitement d’image ajouté</td></tr>
+<tr><td>Parseur OCR sans expression régulière</td><td>Scan From String puis Format Into String et égalité de chaînes, LV2 p. 47–48</td></tr>
+<tr><td>Génération de solve.m</td><td>LabVIEW 2 p. 2–5, chaînes/formats de LV2</td></tr>
+<tr><td>Suppression d’un ancien résultat, contrôle d’existence/type et d’erreur</td><td>fichiers/chemins/erreurs de LV2 ; détails des bornes via Context Help, comme demandé dans l’exercice</td></tr>
+</table></div>
+<p>Les détails des <strong>bornes et options des fonctions natives</strong> se vérifient avec Context Help et la documentation NI, comme le demandent les exercices. Ce sont des paramètres d’utilisation des fonctions du cours, pas un nouveau paradigme. Les fonctions de lecture d’image et les opérations de fichier restent natives. La recette ne demande ni Python, ni .NET, ni ActiveX, ni IMAQ, ni DLL externe, ni expressions régulières. Les commandes du compilateur et les fichiers projet sont des moyens de construction, pas du code d’algorithme à étudier.</p></article></main><script>
 document.querySelectorAll('pre').forEach(pre=>{const b=document.createElement('button');b.textContent='Copier';b.addEventListener('click',async()=>{const text=pre.querySelector('code').textContent;try{await navigator.clipboard.writeText(text);b.textContent='Copié';}catch(e){const range=document.createRange();range.selectNodeContents(pre.querySelector('code'));const sel=window.getSelection();sel.removeAllRanges();sel.addRange(range);b.textContent='Sélectionné : Ctrl+C';}setTimeout(()=>b.textContent='Copier',2500);});pre.prepend(b);});
-const key='binairo-recette-20261008-conformite-v1';let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
+const key='binairo-recette-20261009-code-seul';let saved={};try{saved=JSON.parse(localStorage.getItem(key)||'{}');}catch(e){}
 const heads=[...document.querySelectorAll('h2')].filter(h=>!/^22 |^23 |^Mode/.test(h.textContent));
 function progress(){document.getElementById('progress').textContent=heads.filter(h=>saved[h.id]).length+' / '+heads.length+' étapes cochées';}
 heads.forEach(h=>{const label=document.createElement('label');label.className='check';const input=document.createElement('input');input.type='checkbox';input.checked=!!saved[h.id];label.append(input,document.createTextNode('Étape terminée et contrôlée'));h.after(label);input.addEventListener('change',()=>{saved[h.id]=input.checked;try{localStorage.setItem(key,JSON.stringify(saved));}catch(e){}progress();});});progress();
