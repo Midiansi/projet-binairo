@@ -189,6 +189,13 @@ nettoyage:
         etat = OCR_ERREUR_ECRITURE;
         description = "impossible de fermer le fichier de resultat";
     }
+    /* Vider un ancien resultat si possible, sans remplacer l'erreur initiale. */
+    if (etat != OCR_SUCCES && cheminSortie != NULL) {
+        sortie = fopen(cheminSortie, "w");
+        if (sortie != NULL) {
+            fclose(sortie);
+        }
+    }
     LibererCellule(&cellule);
     free(cheminSortie);
     if (etat != OCR_SUCCES) {

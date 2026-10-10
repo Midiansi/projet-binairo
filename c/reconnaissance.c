@@ -230,7 +230,7 @@ int ChoisirChiffre(const double scores[2], const double seuils[2])
 /**
  * ReconnaitreCellule - Tester le vide puis comparer la cellule aux deux modeles de chiffres.
  * Entrees : cellule : pixels valides ; seuils : entiers de 1 a 99, stockes en double.
- * Sorties : resultat : symbole et score ; description : message en cas d'echec.
+ * Sorties : resultat : symbole et score (ratio de blancs pour -2) ; description : message en cas d'echec.
  * Retour : OCR_SUCCES ou OCR_AUCUN_CHIFFRE.
  */
 int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
@@ -252,8 +252,9 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
         blancs += cellule->pixels[indice] == 0u;
     }
 
-    /* Tester la case vide avant les chiffres ; son resultat est -2 avec un score nul. */
+    /* Tester la case vide avant les chiffres ; ecrire -2 et le ratio de blancs. */
     if (100.0 * (double)blancs / (double)nombrePixels > seuils->vide) {
+        resultat->pourcentage = 100.0 * (double)blancs / (double)nombrePixels;
         return OCR_SUCCES;
     }
     if (cellule->largeur < DigitBitmapWidth || cellule->hauteur < DigitBitmapHeight) {
