@@ -182,7 +182,7 @@ Les passages modifiés portent la mention *(modifié le 30.10)* dans la recette 
 | §15.1 entrée P2 | ExecutableMatlab obligatoire | vide = commande `matlab` du PATH | Lire |
 | §15.2 étapes 1 à 8 | matlab.exe obligatoire, sans `-sd` | champ vide accepté, `-sd`, nouvelles étapes 1 à 5 | **Modifier le VI** |
 | §17.1 et §17.5 | choisir matlab.exe | laisser vide si `where matlab` trouve MATLAB | Lire |
-| §18.3 | test de uiopen seulement | + étape 6 : solution de repli depuis LabVIEW | Seulement si besoin |
+| §18.3 | essais avec le vrai matlab.exe ; test de uiopen seulement | étape 2 : essai avec le champ vide, puis avec matlab.exe ; + étape 6 : solution de repli depuis LabVIEW | **Refaire le test** (étape 2) ; étape 6 seulement si besoin |
 | §19 V15 | matlab.exe inexistant | + champ vide sans MATLAB dans le PATH | **Refaire le test** |
 | Ch. 20 Si quelque chose ne marche pas | « largeur/hauteur dans cet ordre » ; découpage avec deux pixels ; « ne pas retirer tous les traits » | hauteur puis largeur ; découpage à l'intérieur des traits ; nouvelle ligne « MATLAB ne démarre pas » | Lire |
 | §21.3 documentation | codes 0 à 6 | codes 0 à 7 + CellValue.txt, seuils très bas, Résoudre=FALSE, lancement par le PATH | Lire |
