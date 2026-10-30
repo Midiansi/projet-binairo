@@ -18,7 +18,7 @@ CellValue.txt pour une case vide (lu par AnalyserResultatOCR.vi)
   après : d:'-1', 88.166542%     <- pourcentage = ratio de pixels blancs
 ```
 
-Les sources C et la recette mises à jour sont sur la branche main du dépôt projet-binairo (PR #3, fusionnée le 30.10), issues de la branche `correction-ordre-hauteur-vide`. Dans la recette, chaque passage modifié porte la mention *(modifié le 30.10)*.
+Les sources C et la recette mises à jour sont sur la branche main du dépôt projet-binairo (PR #3 pour le C et les changements 1 à 3, PR #5 pour les changements 4 et 5, fusionnées le 30.10). Dans la recette, chaque passage modifié porte la mention *(modifié le 30.10)*.
 
 ## Pourquoi
 
