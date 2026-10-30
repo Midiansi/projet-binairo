@@ -1,6 +1,8 @@
 # Construire la partie LabVIEW du projet Binairo
 
-Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 9 octobre 2026, après l’addendum du 7 octobre ; rangement en c, matlab et temp.
+Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 30 octobre 2026, après l’addendum du 7 octobre et les corrections du professeur sur Ed du 29 au 31 octobre ; rangement en c, matlab et temp.
+
+**Modifications du 30 octobre 2026 (Ed #16, #28, #29, #30) :** si vous avez déjà construit ces parties, reprenez §1.1 (recompiler OCR.exe, nouveaux résultats), §9.1 étape 1 et §9.3 (en-tête **hauteur puis largeur**), §11.1 étape 7 et §11.2 (case vide **`-1`** au lieu de `-2`). Les autres passages modifiés (§2.2, §3, §12.3, chapitre 20, annexes) ne changent que des explications. Chaque passage modifié porte la mention *(modifié le 30.10)*.
 
 Ce document explique comment construire les VIs, les raccorder au C et à MATLAB, puis vérifier le résultat. Il s'adresse à une personne qui débute dans LabVIEW. Les consignes sont prévues pour **LabVIEW 2025 Q3, menus anglais, sous Windows**, notamment dans la VM EPFL. Les noms anglais ci-dessous sont ceux à rechercher dans LabVIEW ; les noms de vos propres objets sont en français. Ne construisez pas un projet Real-Time, FPGA ou NXG.
 
@@ -8,7 +10,7 @@ Ce document explique comment construire les VIs, les raccorder au C et à MATLAB
 
 **État réel :** le C est compilé et testé sur macOS ; les nouveaux découpages ont été contrôlés avec cet exécutable à 88/90/90. Les VIs Windows et le rendu MATLAB natif restent à construire/exécuter sur la VM. Les résultats attendus ci-dessous sont des checkpoints à mesurer, pas des captures de VIs déjà réalisés. Les concepts utilisés et leurs références ME-213/CS-119a sont regroupés dans l’annexe H de cette recette. Aucun traitement d’image externe ni bibliothèque de résolution n’est nécessaire.
 
-**Règle OCR appliquée :** la procédure détaillée de la donnée, page physique 18, impose `score >= seuil` pour les chiffres, puis le maximum de `score - seuil`. Elle prime ici sur le résumé « score brut » de sa page 10. Il existe donc une contradiction interne à la donnée, explicitement signalée ; le code suit désormais sa procédure détaillée. La case vide reste testée en premier avec `ratio de blancs > seuil vide` (page 10). Si les marges sont exactement égales, conserver 0 est notre convention déterministe, faute de départage prescrit. Aucun connecteur principal définitif n’apparaît dans cette donnée : les connecteurs ci-dessous sont nos choix de construction, pas celui du Billard 2025.
+**Règle OCR appliquée :** la procédure détaillée de la donnée, page physique 18, impose `score >= seuil` pour les chiffres, puis le maximum de `score - seuil`. Elle prime ici sur le résumé « score brut » de sa page 10. Il existe donc une contradiction interne à la donnée, explicitement signalée ; le code suit désormais sa procédure détaillée. Depuis la correction du professeur (Ed #28 et message Semaine 7), les chiffres sont testés d’abord ; la case vide n’est testée qu’ensuite, avec `ratio de blancs > seuil vide`, et s’écrit `d:'-1', <ratio de blancs>%` (Ed #16). Si 0 et 1 atteignent leur seuil avec le même score ou la même marge, le C s’arrête avec le code 7 (Ed #7). *(modifié le 30.10)* Aucun connecteur principal définitif n’apparaît dans cette donnée : les connecteurs ci-dessous sont nos choix de construction, pas celui du Billard 2025.
 
 **Contenu du dépôt :** `c/` contient uniquement les cinq sources/en-têtes C ; `matlab/` contient les sept fonctions MATLAB ; `temp/` contient cette recette en Markdown, HTML et PDF. La compilation, la création des projets, la construction des VIs et la production des résultats seront effectuées dans la VM Windows. Aucun exécutable ni fichier projet préconfiguré n’est fourni. Les pièces de remise seront préparées après les essais, suivant le chapitre 21.
 
@@ -82,7 +84,7 @@ echo %ERRORLEVEL%
 type CellValue.txt
 ```
 
-Résultats attendus : code `0` à chaque fois ; respectivement `d:'0', 97.167969%`, `d:'1', 97.753906%`, `d:'-2', 0.000000%`, chacun suivi d'une fin de ligne. Le programme normal n'écrit rien sur stdout/stderr. Conservez une capture. Les fichiers du cours sont lus, jamais réécrits. Le résultat `CellValue.txt` est remplacé à chaque appel réussi. Lancez aussi `OCR.exe BadCell_1.bin 88 90 90` : code 3 et message de pixels manquants, sans utiliser le précédent résultat. Dans chacune des trois positions de seuil, essayez 0, 100, 88.5, `nan` et `90junk` : code 2. Les valeurs 1 et 99 sont admises. Si vous travaillez depuis un IDE, créez le projet dans la VM avec les fichiers ci-dessus et les réglages du cours. Placez son OCR.exe compilé dans Execution. Conservez les fichiers projet réellement créés dans la VM pour le rendu ; aucun projet préconfiguré n’est à récupérer dans le dépôt.
+Résultats attendus : code `0` à chaque fois ; respectivement `d:'0', 97.167969%`, `d:'1', 97.753906%`, `d:'-1', 88.166545%`, chacun suivi d'une fin de ligne (Moodle indique 88.166542 % pour la case vide : l’écart sur la sixième décimale est admis par l’addendum). *(modifié le 30.10)* Le programme normal n'écrit rien sur stdout/stderr. Conservez une capture. Les fichiers du cours sont lus, jamais réécrits. Le résultat `CellValue.txt` est remplacé à chaque appel réussi. Lancez aussi `OCR.exe BadCell_1.bin 88 90 90` : code 3 et message de pixels manquants ; `CellValue.txt` est alors vidé (0 octet). Testez enfin les fichiers Cell rectangulaires (largeur ≠ hauteur) ajoutés sur Moodle : ils doivent être reconnus comme les cellules carrées. *(modifié le 30.10)* Dans chacune des trois positions de seuil, essayez 0, 100, 88.5, `nan` et `90junk` : code 2. Les valeurs 1 et 99 sont admises. Si vous travaillez depuis un IDE, créez le projet dans la VM avec les fichiers ci-dessus et les réglages du cours. Placez son OCR.exe compilé dans Execution. Conservez les fichiers projet réellement créés dans la VM pour le rendu ; aucun projet préconfiguré n’est à récupérer dans le dépôt.
 
 ### 1.2 Tester MATLAB avant de construire le lanceur
 
@@ -174,7 +176,7 @@ Avec la matrice 4×4_Bad du chapitre 18.1b, attendez ok=FALSE et un PDF portant 
 
 ### 2.2 Tableaux et clusters
 
-- Un tableau 2D est indexé **ligne, colonne**. `Array Size` renvoie `[hauteur, largeur]`. En revanche le fichier C commence par **largeur, hauteur**.
+- Un tableau 2D est indexé **ligne, colonne**. `Array Size` renvoie `[hauteur, largeur]`. Le fichier Cell.bin commence dans **le même ordre : hauteur, largeur** (Ed #29 et #30). *(modifié le 30.10)*
 - Créez une coquille `Array` puis déposez son élément dedans. Clic droit sur l'afficheur d'index `Add Dimension` pour passer de 1D à 2D. Pour un tableau vide, `Data Operations > Empty Array` ; un tableau `[0]` n'est pas vide.
 - Pour un cluster : placez `Cluster`, déposez ses éléments, puis clic droit sur la bordure `Reorder Controls in Cluster`. L'ordre est celui donné par la recette.
 - Pour un type partagé `.ctl` : clic droit sur la commande cluster `Advanced > Customize`, choisissez **Type Def.**, enregistrez sous le nom prescrit, fermez et acceptez le remplacement. Déposez ensuite ce fichier depuis le projet. N'en recréez pas des copies indépendantes.
@@ -234,7 +236,7 @@ Les seuils officiels sont **88/90/90**, pour les exemples binaires et pour les c
 
 Le découpage G4 conserve au maximum **deux pixels du trait existant de chaque côté**. Aucun pixel n’est ajouté ou recolorié. Sur les exemples fournis, le contrôle indépendant à 128 donne environ 89,41–89,62 % de blanc pour les cases vides et 82,74–85,53 % pour les chiffres : le seuil 88 les sépare. Le même contrôle a conservé toutes les cases pour quatre seuils de conversion RGB (100,128,160,200). Ce contrôle est une approximation documentée de la conversion native ; les checkpoints dans LabVIEW restent obligatoires. Garder toute une bordure extérieure épaisse ou retirer tous les traits ne donne pas le même résultat.
 
-Les scores de chiffres peuvent être décimaux, même si les seuils sont entiers. Le C accepte `score >= seuil`, choisit la plus grande marge `score - seuil` et garde 0 à marge égale. Le score écrit est le score brut. Le test du vide est prioritaire et strict `>`. Les trois comportements de warning à décrire dans la documentation finale sont : arrêt sur pixels supplémentaires, arrêt si aucun chiffre n’est reconnu, sélection par marge si les deux sont admissibles. Aucun warning non fatal n’est écrit dans stderr ; le contrôleur du chapitre 12 est cohérent avec ce choix.
+Les scores de chiffres peuvent être décimaux, même si les seuils sont entiers. Le C accepte `score >= seuil`, choisit la plus grande marge `score - seuil` et s’arrête avec le code 7 si les deux chiffres sont admissibles avec le même score ou la même marge. Le score écrit est le score brut. Le test du vide n’intervient qu’après les chiffres et reste strict `>` ; une case vide s’écrit `-1` suivie du ratio de blancs. Les comportements de warning à décrire dans la documentation finale sont : arrêt sur pixels supplémentaires (code 3), arrêt si ni chiffre ni case vide n’est reconnu (code 5), sélection par marge si les deux chiffres sont admissibles, arrêt en cas d’égalité (code 7). Après une erreur, le C vide `CellValue.txt` lorsqu’il le peut. *(modifié le 30.10)* Aucun warning non fatal n’est écrit dans stderr ; le contrôleur du chapitre 12 est cohérent avec ce choix.
 
 ## 4 ErreurSi.vi
 
@@ -382,7 +384,7 @@ Construisez maintenant, dans cet ordre : `EtendueNoire.vi`, `IntervallesNoirs.vi
 
 ## 9 EcrireCellule.vi
 
-**But :** écrire exactement le format attendu par `LireCellule` en C, sans dimensions supplémentaires et sans inverser largeur et hauteur.
+**But :** écrire exactement le format attendu par `LireCellule` en C, sans dimensions supplémentaires : en-tête **hauteur puis largeur** (Ed #29 et #30), puis les pixels ligne par ligne. *(modifié le 30.10)*
 
 P1 `Cellule` Boolean 2D L1 ; P2 `Chemin` Path L2 ; P3 `error in` L4 ; P4 `error out` R4. Garde Error transmet P3.
 
@@ -392,7 +394,7 @@ Dans No Error : A1 `Array Size` sur P1 ; I1/I2 `Index Array` sur A1, indices 0/1
 
 G1.No Error :
 
-1. H1/H2 `To Unsigned Long Integer` sur largeur puis hauteur. H3 `Build Array` deux scalaires, Concatenate OFF : H1→entrée 0, H2→entrée 1. Résultat = **U32 [largeur,hauteur]**.
+1. H1/H2 `To Unsigned Long Integer` sur **hauteur puis largeur**. H3 `Build Array` deux scalaires, Concatenate OFF : H1 (hauteur)→entrée 0, H2 (largeur)→entrée 1. Résultat = **U32 [hauteur,largeur]**. *(modifié le 30.10)*
 2. F1 For Loop : P1 Cellule→tunnel auto-indexé, qui fournit une ligne Boolean 1D ; N non câblé. Dans F1, F2 For Loop : ligne→tunnel auto-indexé, qui fournit un booléen ; N non câblé. Dans F2, `Select` : s=pixel, t=U8 1, f=U8 0. Sortie auto-indexée de F2 = ligne U8. Cette ligne sort par tunnel auto-indexé de F1 = matrice U8.
 3. M1 `Multiply` largeur×hauteur en I32. M2 `Reshape Array` sur la matrice U8, **une seule dimension de sortie**, M1→dimension size. Résultat = vecteur U8 dans l'ordre ligne par ligne. Ne transposez rien.
 
@@ -404,7 +406,7 @@ Frame 0 : N2/N3 `Write to Binary File`. N1.refnum→N2.file ; H3→N2.data ; FAL
 
 Frame 1 : N4 `Close File` reçoit refnum N1 et erreur claire ; N5 `Merge Errors` reçoit N3.error out puis N4.error out. Résultat→G2→G1→garde extérieure→P4. La séquence impose que les deux écritures finissent avant la fermeture. **Ne branchez pas le chemin à la seconde écriture : cela pourrait rouvrir/remplacer le fichier au lieu de continuer après l'en-tête.**
 
-Le fichier contient exactement `8 + largeur*hauteur` octets. Le `prepend=FALSE` est volontaire : nous avons écrit nous-mêmes l'en-tête U32 dans l'ordre du C. Le raccourci consistant à préfixer directement une matrice LabVIEW risquerait d'écrire hauteur puis largeur.
+Le fichier contient exactement `8 + largeur*hauteur` octets. Le `prepend=FALSE` est volontaire : nous écrivons nous-mêmes l'en-tête U32 hauteur puis largeur, ce qui rend l'ordre visible dans le diagramme et indépendant des options de préfixe de LabVIEW. *(modifié le 30.10)*
 
 ### 9.3 Checkpoint asymétrique sans outil externe
 
@@ -413,7 +415,7 @@ Créez un VI temporaire `ControleBinaire.vi` dans un sous-dossier `Binairo/temp/
 1. `Initialize Array` : élément FALSE, dimension 0=55, dimension 1=60. `Replace Array Subset` : cette matrice→array, row=2, col=9, new element=TRUE.
 2. Résultat→EcrireCellule.Cellule ; créez une commande Path pour un fichier temporaire `Asymetrique.bin`, erreur claire→error in, affichez error out.
 3. Après son error out, posez `Read from Binary File` avec le **chemin** du fichier, constante de type U8 scalaire→data type, count I32 -1, byte order little-endian. La lecture U8 brute renvoie tous les octets ; ne lui donnez pas un type tableau qui attendrait une taille préfixée. Créez un indicateur tableau sur la sortie et un `Array Size`→indicateur.
-4. Exécutez : taille 3308 ; huit premiers octets décimaux `[60,0,0,0,55,0,0,0]`. À l'index **137**, valeur 1 ; les autres pixels 0. L'index 137 est `8 + 2*60 + 9`.
+4. Exécutez : taille 3308 ; huit premiers octets décimaux `[55,0,0,0,60,0,0,0]` (hauteur 55 puis largeur 60). *(modifié le 30.10)* À l'index **137**, valeur 1 ; les autres pixels 0. L'index 137 est `8 + 2*60 + 9`.
 5. Testez ensuite une matrice 49×60 : erreur 7003. Revenez aux valeurs normales. Ce contrôle est de développement ; gardez-le dans Preuves, pas dans le code évalué si seuls les VIs de fonctionnement sont demandés.
 
 ## 10 CommandeOCR.vi
@@ -473,16 +475,16 @@ Utilisez **Scan From String et Format Into String**, présentés au chapitre cha
 4. N5 `Scan From String`, agrandi à deux sorties : input string=ligne, format Normal Display `%.;d:'%d', %f%%`, initial scan location=U32 0, default value1=I32 0, default value2=DBL 0, error in=erreur G2. Les sorties 1/2 sont `symbole` I32 et `score` DBL. Ajouter une garde G3 sur N5.error out. Une erreur native de scan est propagée : son code n’est pas nécessairement 7005.
 5. Dans G3.No Error : N6 `Format Into String`, format Normal Display `%.;d:'%d', %.6f%%`, arg0=symbole, arg1=score, initial string vide, error in=N5.error out. N7 `Equal?` compare le résultat entier à `ligne`. `%.;` impose le point décimal dans les deux nœuds.
 6. N8 `In Range and Coerce` reçoit score, lower=DBL 0, upper=DBL 100, deux limites incluses TRUE. N9 `String Length` sur N5.remaining string, puis `Equal To 0?`. AND(N7,N8.in range?,N9==0) puis NOT→ErreurSi(7005,`Format ou score OCR invalide.`,N6.error out). Garde G4 sur cette erreur. Les espaces superflus, un exposant, une virgule, une seconde ligne ou un nombre de décimales incorrect sont ainsi refusés.
-7. G4.No Error : Case **numérique sur symbole**, cases 0,1,-2,Default, avec trois sorties ValeurMatlab/Pourcentage/erreur.
+7. G4.No Error : Case **numérique sur symbole**, cases 0,1,-1,Default *(modifié le 30.10)*, avec trois sorties ValeurMatlab/Pourcentage/erreur.
 
 | Case | ValeurMatlab | Pourcentage | Erreur |
 |---|---|---|---|
 | 0 | chaîne `0` | score | erreur G4 |
 | 1 | chaîne `1` | score | erreur G4 |
-| -2 | chaîne `NaN` | score | ErreurSi(score≠0,7005,`Score de case vide invalide.`,erreur G4) |
+| -1 | chaîne `NaN` | score (ratio de blancs) | erreur G4 |
 | Default | chaîne vide | DBL 0 | ErreurSi(TRUE,7005,`Symbole OCR invalide.`,erreur G4) |
 
-Dans -2, garde supplémentaire : si erreur, chaîne vide/DBL 0 ; sinon NaN/score. Remonter les trois sorties via G4→G3→G2→G1→garde extérieure→P3/P4/P5. **Chaque Error renvoie chaîne vide, DBL 0 et l’erreur qui l’a sélectionné.**
+Dans -1, pas de garde supplémentaire : renvoyez directement NaN, le score lu et l’erreur G4 ; N8 a déjà vérifié que ce ratio est entre 0 et 100. *(modifié le 30.10)* Remonter les trois sorties via G4→G3→G2→G1→garde extérieure→P3/P4/P5. **Chaque Error renvoie chaîne vide, DBL 0 et l’erreur qui l’a sélectionné.**
 
 ### 11.2 Checkpoint du parseur
 
@@ -490,7 +492,7 @@ Saisissez les entrées ci-dessous en **Backslash Codes Display** pour fabriquer 
 
 | Texte d'essai | Résultat |
 |---|---|
-| `d:'-2', 0.000000%\n` | `NaN`,0,sans erreur |
+| `d:'-1', 88.166542%\n` | `NaN`,88.166542,sans erreur |
 | `d:'0', 97.167969%\n` | `0`,97.167969,sans erreur |
 | `d:'1', 97.753906%\r\n` | `1`,97.753906,sans erreur |
 | `d:'2', 90.000000%\n` | erreur 7005 |
@@ -500,7 +502,7 @@ Saisissez les entrées ci-dessous en **Backslash Codes Display** pour fabriquer 
 | ligne correcte puis seconde ligne | erreur 7005 |
 | chaîne vide | erreur 7005 |
 | `d:'0', 90.0%\n` ou `d:'0', 9e1%\n` | erreur 7005 après comparaison |
-| `d:'-2', 1.000000%\n` | erreur 7005 |
+| `d:'-2', 0.000000%\n` (ancien format) | erreur 7005 (Default) |
 
 ## 12 LireCase.vi
 
@@ -545,7 +547,7 @@ V8 `LireTexte.vi` : B2→Chemin ; V7.error out→error in. V9 `AnalyserResultatO
 
 **Pourquoi supprimer le résultat avant chaque cellule :** un ancien fichier ne doit pas survivre à un exécutable manquant ou défectueux. Le code de retour et le cluster System Exec sont deux contrôles distincts. Notre enveloppe LabVIEW considère stderr non vide comme diagnostic d'échec ; stdout est conservé pour inspection.
 
-Checkpoint : pour la première cellule du 6×6, indices 0,0, les coordonnées sont gauche 4,haut 4,droite 80,bas 76, soit **76×72** et `Cell.bin` de **5480 octets**. Résultat `NaN`. La case 0,1 doit donner `0`. Les fichiers Cell0.bin/Cell1.bin du cours ont un cadrage 74×74 différent : leurs dimensions ne sont pas le résultat attendu ici. Vérifiez aussi la case 2,4 (un `1`) : à 88/90/90 elle ne doit jamais devenir NaN.
+Checkpoint : pour la première cellule du 6×6, indices 0,0, les coordonnées sont gauche 4,haut 4,droite 80,bas 76, soit **76×72** et `Cell.bin` de **5480 octets**, dont les huit premiers sont `[72,0,0,0,76,0,0,0]`. Résultat `NaN`, avec le ratio de blancs de la case (supérieur à 88) comme pourcentage. *(modifié le 30.10)* La case 0,1 doit donner `0`. Les fichiers Cell0.bin/Cell1.bin du cours ont un cadrage 74×74 différent : leurs dimensions ne sont pas le résultat attendu ici. Vérifiez aussi la case 2,4 (un `1`) : à 88/90/90 elle ne doit jamais devenir NaN.
 
 ## 13 GenererScript.vi
 
@@ -932,8 +934,8 @@ Ne modifiez pas dix fils à la fois. Arrêtez-vous au **premier checkpoint faux*
 | Flèche cassée | Error List ; borne non câblée ; type exact ; sortie Case oubliée ; tunnel indexé par erreur |
 | Bitmap inversé | chapitre 7.4 et les deux pixels de calibration ; ne pas inverser dans plusieurs VIs |
 | n vaut 0,1 ou nombre incohérent | Bitmap correct ? marges prises en compte ? balayage top+10/left+10 ? IntervallesNoirs inclut-il les bords ? |
-| Cell.bin refusé | lire les huit premiers U8 ; largeur/hauteur dans cet ordre ; byte order2 ; deux prependFALSE ; pixels U8 et non bits compactés |
-| OCR code 5 partout | polarité ; dimensions ; découpage G4 avec deux pixels réels de bord ; seuils 88/90/90 ; police fournie présente |
+| Cell.bin refusé | lire les huit premiers U8 ; hauteur puis largeur *(modifié le 30.10)* ; byte order2 ; deux prependFALSE ; pixels U8 et non bits compactés |
+| OCR code 5 partout | ordre hauteur puis largeur de l’en-tête, §9.1 *(modifié le 30.10)* ; polarité ; dimensions ; découpage G4 avec deux pixels réels de bord ; seuils 88/90/90 ; police fournie présente |
 | Fichier OCR jamais trouvé | working directory de System Exec ; OCR.exe réellement Windows ; nom exact Cell.bin ; file close avant appel |
 | Tous les indices deviennent NaN | vérifier 88/90/90 puis G4 : ne pas retirer tous les traits ; comparer les matrices 18.1/18.1b |
 | Matrice transposée | F1.i=ligne, F2.i=colonne ; Array Subset row puis col ; ne pas transposer le bitmap de production |
@@ -1041,7 +1043,7 @@ L’addendum du 7 octobre prime pour les points qu’il fixe ; la donnée 2026.2
 | Exécution effective dans votre environnement |19 | résultats natifs enregistrés pour tous les tests applicables |
 | Derniers compléments de consignes/erreurs/connecteur |21 | comparaison avec Moodle avant remise, adaptation si un contrat nouveau est fourni |
 
-**État de cette recette :** le C corrigé est compilé localement. Les 116 cellules des trois images carrées ont toutes été reconnues correctement à 88/90/90 pour quatre conversions RGB d’essai (464 appels). Chaque découpage conserve au maximum deux pixels réels par bord. Cette mesure indépendante ne remplace pas Picture to Pixmap ni les VIs Windows. Les matrices attendues figurent au chapitre 18. Les tests natifs restent ceux du chapitre 19.
+**État de cette recette :** le C corrigé est compilé localement. Les 116 cellules des trois images carrées ont toutes été reconnues correctement à 88/90/90 pour quatre conversions RGB d’essai (464 appels), avec la version du 9 octobre qui testait le vide d’abord ; refaites ce contrôle sur la VM avec le C du 30 octobre. *(modifié le 30.10)* Chaque découpage conserve au maximum deux pixels réels par bord. Cette mesure indépendante ne remplace pas Picture to Pixmap ni les VIs Windows. Les matrices attendues figurent au chapitre 18. Les tests natifs restent ceux du chapitre 19.
 
 La partie LabVIEW peut être déclarée terminée lorsque les tests natifs sont réussis, le mode direct de lancement MATLAB fonctionne réellement, les fichiers nécessaires sont sauvegardés, et les dernières consignes officielles sont intégrées. L’inspection facultative du chapitre 14 n’est pas une condition de conformité à la donnée.
 
@@ -1379,7 +1381,7 @@ Sur le 6×6, ComputeCellRect(0,0) doit donner gauche 4,haut 4,droite 80,bas 76, 
 4. Deux Subtract : droite−gauche → largeur ; bas−haut → hauteur.
 5. Array Subset reçoit Bitmap original 2D ; régler pour deux dimensions : index0=haut, length0=hauteur, index1=gauche, length1=largeur.
 6. Vérifier Array Size du résultat : index0 doit donner hauteur, index1 largeur. Ce tableau reste Boolean 2D avec TRUE noir.
-7. Le sous-VI d'écriture du chapitre suivant le convertira en U8 et écrira largeur puis hauteur. **Ne pas transposer pour corriger l'ordre de l'en-tête.**
+7. Le sous-VI d'écriture du chapitre suivant le convertira en U8 et écrira hauteur puis largeur, dans l'ordre d'Array Size *(modifié le 30.10)*. **Ne pas transposer pour corriger l'ordre de l'en-tête.**
 
 Le calcul suppose une grille alignée sur les axes et des lignes d'analyse à bord+10 qui ne traversent pas les chiffres, comme dans l'énoncé. Les données fournies et les cas limites ci-dessus doivent tous être essayés sur la VM. Une flèche exécutable et des résultats attendus dans un document ne remplacent pas ces essais.
 
@@ -1389,13 +1391,13 @@ Les fonctions DirectValues, CheckValidMove, CheckVectorOk, CheckVectorUniqueOk e
 
 Le dessin utilise axis ij, axis equal et axis off. Le PDF utilise les reglages papier par defaut de MATLAB ; la date provient de char(datetime('now')) et depend de la langue et des preferences de l'installation. Verifiez le PDF natif : grille entiere, cases carrees, nom et date lisibles, couleurs et message d'erreur. Ce nouveau rendu n'a pas ete execute ici.
 
-Le C ne cree ni ne vide CellValue.txt lorsque la reconnaissance echoue. Un ancien resultat peut donc rester present : le code de retour reste obligatoire pour decider si le resultat est utilisable. Une erreur d'ecriture apres ouverture peut encore laisser un resultat incomplet.
+Apres une erreur, le C vide CellValue.txt lorsqu'il le peut (fichier inscriptible). Un fichier protege ou un dossier de ce nom ne peut pas etre vide : le code de retour reste obligatoire pour decider si le resultat est utilisable. *(modifié le 30.10)* Une erreur d'ecriture apres ouverture peut encore laisser un resultat incomplet.
 
 ## Contrôles de remise après l’addendum du 7 octobre
 
 Rédigez la documentation courte après les essais sur la VM EPFL, suivant le chapitre 21. Relevez alors la version Windows, l'identification de la VM, le compilateur et sa version, MATLAB et sa version, ainsi que LabVIEW et sa version. Documentez la configuration dans laquelle le projet complet fonctionne ; ne recopiez pas les versions de l'exemple Billard du professeur.
 
-Le C accepte une cellule rectangulaire dont chaque dimension est dans 50..1000 et qui contient exactement largeur×hauteur octets 0/1. Une grille Binairo, en revanche, doit avoir le même nombre pair de lignes et de colonnes. Les coordonnées et seuils restent contrôlés avant leur utilisation. Les codes−2/−3 cités en cours étaient des exemples, et non une numérotation imposée. Les codes actuellement implémentés restent 0,2,3,4,5,6 ; leur signification est précisée dans reconnaissance.h et les messages d'erreur. Toute erreur non nulle interdit de lire l'ancien résultat.
+Le C accepte une cellule rectangulaire dont chaque dimension est dans 50..1000 et qui contient exactement largeur×hauteur octets 0/1. Une grille Binairo, en revanche, doit avoir le même nombre pair de lignes et de colonnes. Les coordonnées et seuils restent contrôlés avant leur utilisation. Les codes−2/−3 cités en cours étaient des exemples, et non une numérotation imposée. Les codes actuellement implémentés sont 0,2,3,4,5,6,7 (7 : 0 et 1 admissibles à égalité, Ed #7) *(modifié le 30.10)* ; leur signification est précisée dans reconnaissance.h et les messages d'erreur. Toute erreur non nulle interdit de lire l'ancien résultat.
 
 Pendant les essais natifs, vérifier aussi le refus d'un fichier tronqué, d'un octet supplémentaire, d'une dimension négative encodée en U32 et d'une dimension 10000. Conserver le message complet, pas seulement le numéro.
 
@@ -1418,7 +1420,7 @@ Ce tableau relie les **techniques des sources C/MATLAB et des diagrammes décrit
 | Décalages et masques binaires | ME-213 `C2.PPI_C_RepresentationNombre+BitWiseOp.26.r1.pdf`, p. 13–16 | GetDigitBitmapBit et lecture de l’en-tête |
 | static, const, durée de vie | ME-213 `C5.PPI_C_IntroMemoryMgmt.26.r1.pdf`, p. 8–9 ; rappels C | nom constant de sortie |
 | goto uniquement vers le nettoyage final | ME-213 `C4.PPI_C_SoftwareEngineering.26.r1.pdf`, p. 21–23 | un chemin de fermeture/libération en cas d’erreur |
-| Balayage des deux modèles 32×32, test du vide puis score/marge | donnée Binairo 2026.2, p. 7–18 | algorithme expressément demandé |
+| Balayage des deux modèles 32×32, score/marge puis test du vide (Ed #28, #30) | donnée Binairo 2026.2, p. 7–18 | algorithme expressément demandé |
 
 La mise à jour des seuils utilise uniquement caractères, entiers, if/while et arithmétique. Le contrôle après chaque chiffre empêche le débordement de l’accumulation. Les structures et interfaces existantes restent identiques.
 

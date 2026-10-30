@@ -14,8 +14,9 @@ enum EtatOCR {
     OCR_ERREUR_ARGUMENT = 2, /* Nombre d'arguments, chemin ou seuil invalide. */
     OCR_ERREUR_FORMAT = 3,   /* Entete, dimensions, nombre ou valeur des pixels. */
     OCR_ERREUR_LECTURE = 4,  /* Ouverture/lecture de l'entree ou allocation impossible. */
-    OCR_AUCUN_CHIFFRE = 5,   /* Case non vide : aucun modele admissible. */
-    OCR_ERREUR_ECRITURE = 6  /* Ouverture, ecriture ou fermeture de la sortie. */
+    OCR_AUCUN_CHIFFRE = 5,   /* Ni chiffre ni case vide : aucun seuil atteint. */
+    OCR_ERREUR_ECRITURE = 6, /* Ouverture, ecriture ou fermeture de la sortie. */
+    OCR_CHIFFRE_AMBIGU = 7   /* 0 et 1 admissibles a egalite de score ou de marge. */
 };
 
 typedef struct {

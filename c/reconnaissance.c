@@ -152,8 +152,9 @@ int LireCellule(const char *chemin, CelluleOCR *cellule, const char **descriptio
                                       "l'entete doit contenir 8 octets";
         goto nettoyage;
     }
-    cellule->largeur = LireEntier32PetitBoutiste(entete);
-    cellule->hauteur = LireEntier32PetitBoutiste(entete + 4);
+    /* Ordre ecrit par LabVIEW (Ed #29 et #30) : hauteur puis largeur. */
+    cellule->hauteur = LireEntier32PetitBoutiste(entete);
+    cellule->largeur = LireEntier32PetitBoutiste(entete + 4);
     if (cellule->largeur < OCR_DIMENSION_MIN || cellule->largeur > OCR_DIMENSION_MAX ||
         cellule->hauteur < OCR_DIMENSION_MIN || cellule->hauteur > OCR_DIMENSION_MAX) {
         etat = OCR_ERREUR_FORMAT;
@@ -208,10 +209,11 @@ nettoyage:
 }
 
 /**
- * ChoisirChiffre - Choisir la plus grande marge score-seuil ; garder 0 a egalite.
+ * ChoisirChiffre - Choisir la plus grande marge score-seuil.
  * Entrees : scores, seuils : tableaux de deux valeurs, pour 0 puis 1.
  * Sorties : Aucune.
- * Retour : Chiffre choisi, ou -1 si aucun seuil n'est atteint.
+ * Retour : Chiffre choisi, -1 si aucun seuil n'est atteint,
+ *          -2 si 0 et 1 sont admissibles avec le meme score ou la meme marge.
  */
 int ChoisirChiffre(const double scores[2], const double seuils[2])
 {
@@ -224,14 +226,20 @@ int ChoisirChiffre(const double scores[2], const double seuils[2])
             choisi = (int)chiffre;
         }
     }
+    /* Ed #7 : une egalite entre 0 et 1 est une erreur a signaler a LabVIEW. */
+    if (scores[0] >= seuils[0] && scores[1] >= seuils[1] &&
+        (scores[0] == scores[1] || scores[0] - seuils[0] == scores[1] - seuils[1])) {
+        return -2;
+    }
     return choisi;
 }
 
 /**
- * ReconnaitreCellule - Tester le vide puis comparer la cellule aux deux modeles de chiffres.
+ * ReconnaitreCellule - Comparer la cellule aux deux modeles de chiffres, puis tester le vide.
  * Entrees : cellule : pixels valides ; seuils : entiers de 1 a 99, stockes en double.
- * Sorties : resultat : symbole et score ; description : message en cas d'echec.
- * Retour : OCR_SUCCES ou OCR_AUCUN_CHIFFRE.
+ * Sorties : resultat : symbole (0, 1, ou -1 pour une case vide) et score
+ *           (ratio de blancs pour -1) ; description : message en cas d'echec.
+ * Retour : OCR_SUCCES, OCR_AUCUN_CHIFFRE ou OCR_CHIFFRE_AMBIGU.
  */
 int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
                  ResultatOCR *resultat, const char **description)
@@ -241,23 +249,16 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
     size_t indice;
     unsigned int chiffre;
     double scores[2];
+    double ratioBlancs;
     const double seuilsChiffres[2] = {seuils->zero, seuils->un};
     int choisi;
 
-    resultat->symbole = -2;
+    resultat->symbole = -1;
     resultat->pourcentage = 0.0;
     resultat->maximum[0] = 0;
     resultat->maximum[1] = 0;
-    for (indice = 0; indice < nombrePixels; ++indice) {
-        blancs += cellule->pixels[indice] == 0u;
-    }
-
-    /* Tester la case vide avant les chiffres ; son resultat est -2 avec un score nul. */
-    if (100.0 * (double)blancs / (double)nombrePixels > seuils->vide) {
-        return OCR_SUCCES;
-    }
     if (cellule->largeur < DigitBitmapWidth || cellule->hauteur < DigitBitmapHeight) {
-        *description = "cellule non vide trop petite pour les modeles de 32 par 32 pixels";
+        *description = "cellule trop petite pour les modeles de 32 par 32 pixels";
         return OCR_AUCUN_CHIFFRE;
     }
 
@@ -285,11 +286,28 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
         scores[chiffre] = 100.0 * (double)resultat->maximum[chiffre] / (DigitBitmapWidth * DigitBitmapHeight);
     }
     choisi = ChoisirChiffre(scores, seuilsChiffres);
-    if (choisi < 0) {
-        *description = "aucun chiffre n'atteint son seuil de reconnaissance";
-        return OCR_AUCUN_CHIFFRE;
+    if (choisi == -2) {
+        *description = "0 et 1 atteignent leur seuil avec le meme score ou la meme marge";
+        return OCR_CHIFFRE_AMBIGU;
     }
-    resultat->symbole = choisi;
-    resultat->pourcentage = scores[choisi];
-    return OCR_SUCCES;
+    if (choisi >= 0) {
+        resultat->symbole = choisi;
+        resultat->pourcentage = scores[choisi];
+        return OCR_SUCCES;
+    }
+
+    /* Ed #28 et #30 : le vide est teste apres les chiffres, car le ratio de
+     * blancs depend du decoupage de la case fait par LabVIEW. */
+    for (indice = 0; indice < nombrePixels; ++indice) {
+        blancs += cellule->pixels[indice] == 0u;
+    }
+    ratioBlancs = 100.0 * (double)blancs / (double)nombrePixels;
+    if (ratioBlancs > seuils->vide) {
+        /* Ed #16 : une case vide s'ecrit -1, suivie de son ratio de blancs. */
+        resultat->symbole = -1;
+        resultat->pourcentage = ratioBlancs;
+        return OCR_SUCCES;
+    }
+    *description = "ni chiffre ni case vide : aucun seuil n'est atteint";
+    return OCR_AUCUN_CHIFFRE;
 }

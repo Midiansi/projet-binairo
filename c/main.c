@@ -123,14 +123,14 @@ int EcrireResultat(FILE *sortie, const ResultatOCR *resultat,
 /**
  * main - Lire une cellule, reconnaitre son contenu et ecrire CellValue.txt.
  * Entrees : argc, argv : programme, chemin de cellule et trois seuils.
- * Sorties : CellValue.txt ; message sur stderr en cas d'erreur.
+ * Sorties : CellValue.txt, vide si possible apres une erreur ; message sur stderr en cas d'erreur.
  * Retour : Code EtatOCR ; zero indique une execution reussie.
  */
 int main(int argc, char *argv[])
 {
     CelluleOCR cellule = {0, 0, NULL};
     SeuilsOCR seuils = {0.0, 0.0, 0.0};
-    ResultatOCR resultat = {-2, 0.0, {0, 0}};
+    ResultatOCR resultat = {-1, 0.0, {0, 0}};
     char *cheminSortie = NULL;
     char *cheminEntree = NULL;
     size_t longueurChemin;
@@ -188,6 +188,13 @@ nettoyage:
     if (sortie != NULL && fclose(sortie) != 0) {
         etat = OCR_ERREUR_ECRITURE;
         description = "impossible de fermer le fichier de resultat";
+    }
+    /* Vider un ancien resultat si possible, sans remplacer l'erreur initiale. */
+    if (etat != OCR_SUCCES && cheminSortie != NULL) {
+        sortie = fopen(cheminSortie, "w");
+        if (sortie != NULL) {
+            fclose(sortie);
+        }
     }
     LibererCellule(&cellule);
     free(cheminSortie);
