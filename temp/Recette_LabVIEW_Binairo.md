@@ -1,6 +1,8 @@
 # Construire la partie LabVIEW du projet Binairo
 
-Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 30 octobre 2026, après l’addendum du 7 octobre et les corrections du professeur sur Ed du 29 au 31 octobre ; rangement en c, matlab et temp.
+Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 11 novembre 2026, après l’addendum du 7 octobre et les corrections du professeur sur Ed du 29 au 31 octobre ; rangement en c, matlab et temp.
+
+**Ajouts du 11 novembre 2026 :** inclure `Binairo_6x6_rect.v2.png` (exemple du professeur ajouté le 9 novembre) dans les images (§1), les contrôles de géométrie (G5.6), les résultats attendus (§18.1), les essais (V26) et les résultats conservés (§21.2). Recompiler `OCR.exe` sur la VM Windows avec l’optimisation activée (§1.1), puis effectuer toute la validation avec cet exécutable. Ces deux ajouts ne changent pas les sources C/MATLAB ni le câblage des VIs.
 
 **Modifications du 30 octobre 2026 (Ed #16, #28, #29, #30) :** si vous avez déjà construit ces parties, reprenez §1.1 (recompiler OCR.exe, nouveaux résultats), §9.1 étape 1 et §9.3 (en-tête **hauteur puis largeur**), §11.1 étape 7 et §11.2 (case vide **`-1`** au lieu de `-2`). Les autres passages modifiés (§2.2, §3, §12.3, chapitre 20, annexes) ne changent que des explications. Deuxième série du même jour, après relecture : annexe G4 (case découpée **à l’intérieur des traits**, checkpoints 72×68 au lieu de 76×72), §15.2 (MATLAB lancé par la commande **`matlab` du PATH** quand le champ Executable MATLAB est vide, avec `-sd`), §18.3 (solution de repli pour ouvrir le PDF), §21.3 (points à documenter). Chaque passage modifié porte la mention *(modifié le 30.10)*.
 
@@ -45,8 +47,8 @@ PNG → LireImage → ComputeRowsCols
 3. Copiez dans `Execution` **les cinq fichiers** du dossier `c` de la livraison : `main.c`, `reconnaissance.c`, `reconnaissance.h`, `parametres_ocr.h`, `FontRasterized_0_1.h`. Le dernier est la police originale du professeur, incluse dans le dépôt et dans son archive GitHub `Code > Download ZIP`. Ne créez pas une police de remplacement.
 4. Copiez aussi les **sept fichiers `.m`** de la livraison dans `Execution` : `CheminPdfBinairo`, `CreerFigureBinairo`, `DispBinairo`, `DisplayBinairo`, `FormatGrilleValide`, `GrilleBinairoValide`, `SolveBinairo`. Gardez l'extension `.m` et la casse exacte. Le script généré ci-dessous appelle directement SolveBinairo et DisplayBinairo.
 5. Le mode normal de cette recette lance MATLAB directement par System Exec. **Facultatif :** copiez `MP_LaunchMatlabScript4.vi` depuis Moodle uniquement si vous souhaitez utiliser ce lanceur alternatif ; conservez alors ailleurs son original.
-6. Dans `Binairo/temp`, créez `Images` et `Preuves`. Copiez les PNG du cours dans `Images`, **jamais à la place d'un résultat**. En particulier : `Binairo_6x6.png`, `Binairo_8x8.png`, `Binairo_4x4_Bad.png`, `Binaro_5x6_Bad.png` et **`BadBinairo.png`**. Ce dernier est volontairement un document Word renommé : gardez-le tel quel pour le test d’erreur. Le nom `Binaro_5x6_Bad.png` n'est pas à corriger.
-7. Ouvrez LabVIEW. `Help > About LabVIEW` : notez version et architecture dans `Preuves/version.txt`. Faites de même avec MATLAB (`version` dans sa fenêtre de commande). Ces notes décrivent votre installation, pas le programme à remettre.
+6. Dans `Binairo/temp`, créez `Images` et `Preuves`. Copiez les PNG du cours dans `Images`, **jamais à la place d'un résultat**. En particulier : `Binairo_6x6.png`, **`Binairo_6x6_rect.v2.png`** (ajouté le 9 novembre), `Binairo_8x8.png`, `Binairo_4x4_Bad.png`, `Binaro_5x6_Bad.png` et **`BadBinairo.png`**. Ce dernier est volontairement un document Word renommé : gardez-le tel quel pour le test d’erreur. Le nom `Binaro_5x6_Bad.png` n'est pas à corriger.
+7. Dans la VM, lancez `winver` et notez la version Windows réellement affichée dans `Preuves/version.txt` (Windows 11 seulement si confirmé). Ouvrez LabVIEW : `Help > About LabVIEW`, puis notez version et architecture. Faites de même avec MATLAB (`version` dans sa fenêtre de commande) et le compilateur (`gcc --version` ou la bannière de `cl`). Ces notes décrivent votre installation, pas le programme à remettre.
 8. Dans LabVIEW : `File > Create Project > Blank Project`, puis enregistrez `Binairo.lvproj` **dans `Execution`**. Tous les VIs et `.ctl` de cette recette sont enregistrés à cet endroit, sous `My Computer`. Ajoutez les fichiers avec clic droit `My Computer > Add > File` si nécessaire.
 9. Une seule personne modifie les VIs à la fois. Ne faites pas tourner deux exemplaires du programme dans le même dossier : ils partageraient `Cell.bin`, `CellValue.txt` et `solve.m`.
 
@@ -59,14 +61,16 @@ Effectuez la compilation dans la VM Windows. Ouvrez le terminal du compilateur *
 - Si `gcc --version` fonctionne, utilisez :
 
 ```text
-gcc -std=c11 -Wall -Wextra -Wpedantic -Werror -Wvla main.c reconnaissance.c -o OCR.exe
+gcc -std=c11 -O2 -Wall -Wextra -Wpedantic -Werror -Wvla main.c reconnaissance.c -o OCR.exe
 ```
 
 - Si le cours utilise Visual Studio, ouvrez son **Developer Command Prompt**, puis utilisez :
 
 ```text
-cl /nologo /std:c11 /W4 /TC main.c reconnaissance.c /Fe:OCR.exe
+cl /nologo /std:c11 /O2 /W4 /TC main.c reconnaissance.c /Fe:OCR.exe
 ```
+
+**Optimisation :** `-O2` (GCC) ou `/O2` (Visual Studio) demande au compilateur de produire un exécutable plus rapide à partir des mêmes sources. Cela est utile pour les grandes cellules, jusqu’à 1000×1000 pixels ; ce réglage ne change ni les formats ni les seuils. Aucun délai maximal du professeur n’est confirmé ici. Dans un IDE, activez le même niveau d’optimisation dans la configuration de compilation utilisée pour le rendu. Refaites les essais ci-dessous et toute la validation du chapitre 19 avec cet `OCR.exe` Windows ; conservez cette même version testée pour la remise.
 
 N'exécutez qu'une des deux commandes, selon le compilateur réellement installé. Si aucun n'est disponible, conservez la capture de l'erreur et faites installer/activer l'outil prévu par le cours ; ne poursuivez pas les tests OCR avec un exécutable Mac renommé `.exe`. Ne remplacez pas des erreurs de compilation par des modifications improvisées du code.
 
@@ -839,6 +843,8 @@ end
 
 Le PDF doit contenir tous les indices initiaux en noir gras et toutes les valeurs ajoutées en bleu gras. La date/heure doit correspondre à cette exécution. Fermez le lecteur PDF avant un nouvel essai si Windows verrouille le fichier : une erreur d'accès ne doit jamais être ignorée.
 
+**Variante rectangulaire :** `Binairo_6x6_rect.v2.png` contient également 6 lignes et 6 colonnes, avec les mêmes indices que la matrice ci-dessus. L’image mesure 545 pixels de large et 360 de haut : les cellules sont rectangulaires. Traitez le PNG original sans le redimensionner. Le script généré doit contenir `fichierSource = 'Binairo_6x6_rect.v2.png';` et produire **`Binairo_6x6_rect.v2.pdf`**, en conservant le point dans `.v2`. Comparez toutes les cases reconnues avant de juger la solution. Effectuez V26 sur la VM et sauvegardez les quatre fichiers selon §21.2 ; ce résultat natif reste à mesurer.
+
 ### 18.1b Exemple 8 par 8 et grille impossible
 
 Avant d’observer une solution, comparez **toutes les cases reconnues** à ces matrices. Ne les mettez jamais dans GenererScript à la place du résultat OCR.
@@ -925,6 +931,7 @@ Pour chaque ligne : notez date, version des logiciels, PASS/FAIL et observation 
 | V23 | C : BadCell_1, un pixel manquant, un pixel supplémentaire, cellule non vide sans chiffre ; consulter les choix de warning du chapitre 3 | comportements et messages conformes aux choix documentés |
 | V24 | Géométrie/binaire : dimensions 49,50,1000,1001 sur chaque axe ; suivre G4.4 |49/1001 refusées ; 50/1000 acceptées ; pas d’inversion largeur/hauteur |
 | V25 | Exporter chaque jeu de résultats avant le suivant ; assembler et réextraire l’archive selon 21 | fichiers présents et programme portable |
+| V26 | `Binairo_6x6_rect.v2.png` original, 88/90/90, TRUE/FALSE, puis TRUE/TRUE | n=6, matrice de §18.1, cellules rectangulaires sans inversion hauteur/largeur ; PDF `Binairo_6x6_rect.v2.pdf` correct, ouverture conforme à l’option ; quatre résultats sauvegardés selon §21.2 |
 
 Pour V20, l'attribut « lecture seule » d'un dossier Windows ne prouve pas une interdiction d'écrire : utilisez un fichier protégé ou les permissions réelles, sans modifier les permissions de l'installation de cours. Si votre compte ne permet pas ce test, marquez-le non exécuté et utilisez V12–V14 pour vérifier déjà les échecs d'ouverture.
 
@@ -972,18 +979,19 @@ L’addendum du 7 octobre fixe ce contenu. La recette, un binaire Mac ou les seu
 
 ### 21.1 Fermer la validation native
 
-1. Exécutez chaque essai du chapitre 19 sur la VM. Dans Preuves/validation.txt, inscrivez le résultat observé, la date et les versions. Un essai non exécuté reste indiqué comme tel.
+1. Exécutez chaque essai du chapitre 19, y compris V26, sur la VM avec l’`OCR.exe` optimisé compilé au §1.1. Après toute recompilation, refaites ces essais avant de remplacer l’exécutable du rendu. Dans Preuves/validation.txt, inscrivez le résultat observé, la date et les versions. Un essai non exécuté reste indiqué comme tel.
 2. Vérifiez les descriptions et auteurs dans les VIs. Rangez les fils ; laissez les erreurs visibles. Fermez les fichiers PDF ouverts.
 3. Remettez les seuils **88/90/90**, Options TRUE/TRUE, Lanceur fourni FALSE et une erreur claire. `Edit > Make Current Values Default`, puis `Ctrl+S`, pour les typedefs et le principal. Les chemins se choisissent sur la face avant, sans constante personnelle dans le diagramme.
 4. Fermez LabVIEW et copiez les VIs, typedefs et projet dans votre sauvegarde persistante. Le principal se nomme exactement **BinairoSolver.vi**.
 
 ### 21.2 Sauver les résultats avant qu’ils soient écrasés
 
-1. Créez `Preuves/6x6`, `Preuves/8x8`, `Preuves/4x4_Bad`, `Preuves/5x6_Bad`, `Preuves/BadBinairo`.
+1. Créez `Preuves/6x6`, `Preuves/6x6_rect_v2`, `Preuves/8x8`, `Preuves/4x4_Bad`, `Preuves/5x6_Bad`, `Preuves/BadBinairo`.
 2. Exécutez 6×6 avec 88/90/90, TRUE/FALSE. Vérifiez la matrice et le PDF. **Avant toute nouvelle exécution**, copiez de Execution vers Preuves/6x6 : `Cell.bin`, `CellValue.txt`, `solve.m`, `Binairo_6x6.pdf`, plus le diagnostic observé.
-3. Répétez pour 8×8 puis 4×4_Bad, chacun dans son sous-dossier. Le dernier PDF doit contenir `== Error ==`. Les fichiers Cell.bin/CellValue correspondent à la dernière cellule de la grille ; ne les décrivez pas comme toutes les cellules.
-4. Pour 5×6 etBadBinairo, conservez la capture et le diagnostic de refus. Aucun solve.m/PDF réussi n’est attendu : **ne copiez pas un ancien résultat comme preuve de ces cas**.
-5. Conservez les basenames requis dans chaque sous-dossier. Les PNG sources restent dans Images et ne seront pas ajoutés à l’archive de remise.
+3. Exécutez **`Binairo_6x6_rect.v2.png`** avec 88/90/90, TRUE/FALSE. Vérifiez la matrice de §18.1 et le PDF. **Avant toute nouvelle exécution**, copiez de Execution vers `Preuves/6x6_rect_v2` : **`Cell.bin`, `CellValue.txt`, `solve.m` et `Binairo_6x6_rect.v2.pdf`**, plus le diagnostic observé. Ce jeu est distinct de celui du 6×6 original.
+4. Répétez pour 8×8 puis 4×4_Bad, chacun dans son sous-dossier. Le dernier PDF doit contenir `== Error ==`. Les fichiers Cell.bin/CellValue correspondent à la dernière cellule de la grille ; ne les décrivez pas comme toutes les cellules.
+5. Pour 5×6 etBadBinairo, conservez la capture et le diagnostic de refus. Aucun solve.m/PDF réussi n’est attendu : **ne copiez pas un ancien résultat comme preuve de ces cas**.
+6. Conservez les basenames requis dans chaque sous-dossier. Les PNG sources restent dans Images et ne seront pas ajoutés à l’archive de remise.
 
 ### 21.3 Remplir la documentation courte et réunir l’archive
 
@@ -996,7 +1004,7 @@ L’addendum du 7 octobre fixe ce contenu. La recette, un binaire Mac ou les seu
 ### 21.4 Vérifier exactement ce qui sera évalué
 
 1. Extrayez le ZIP dans **un autre dossier avec espaces**, idéalement sur une autre machine/VM prévue par le cours.
-2. Ouvrez `temp/Execution/BinairoSolver.vi` depuis le dossier extrait, sélectionnez le PNG conservé à part et le MATLAB de cette machine, puis utilisez la flèche Run. Vérifiez 6×6/8×8, les cas invalides et l’absence de dépendance manquante.
+2. Ouvrez `temp/Execution/BinairoSolver.vi` depuis le dossier extrait, sélectionnez le PNG conservé à part et le MATLAB de cette machine, puis utilisez la flèche Run. Vérifiez 6×6, `Binairo_6x6_rect.v2.png`, 8×8, les cas invalides et l’absence de dépendance manquante.
 3. Après la soumission Moodle, **retéléchargez l’archive déposée**, extrayez-la ailleurs et répétez le contrôle. Seule la dernière soumission est retenue. Ce document ne dépose rien à votre place.
 4. Relisez toute nouvelle annonce Moodle avant la remise. L’addendum du 7 octobre est intégré ; une nouvelle instruction postérieure devra être comparée explicitement.
 
@@ -1366,6 +1374,7 @@ Brancher LireImage.Bitmap sur ComputeRowsCols.Bitmap et chaîner les erreurs. Fa
 | Image fournie | Résultat géométrique attendu |
 |---|---|
 | Binairo_6x6.png | image 454×431 ; n=6 ; sept traits X, sept traits Y ; aucune erreur |
+| Binairo_6x6_rect.v2.png | image 545×360 (largeur×hauteur) ; n=6 ; sept traits X, sept traits Y ; cellules rectangulaires ; aucune erreur |
 | Binairo_8x8.png | image 610×577 ; n=8 ; neuf traits X, neuf traits Y ; aucune erreur |
 | Binairo_4x4_Bad.png | n=4 ; cinq traits par axe ; aucune erreur géométrique : sa contradiction relève ensuite de MATLAB |
 | Binaro_5x6_Bad.png | six lignes et cinq colonnes : erreur 6103, n=0, Lignes vide |

@@ -1,6 +1,15 @@
 # Binairo – changements LabVIEW
 
-30 octobre 2026 · Romeo Mugnier de Almeida
+11 novembre 2026 · Romeo Mugnier de Almeida
+
+## Complément du 11 novembre : deux actions sur la VM
+
+1. **Recompiler `OCR.exe` avec optimisation.** Au §1.1, la commande GCC utilise maintenant `-O2` et celle de Visual Studio `/O2`. Si vous utilisez un IDE, activez le même niveau d’optimisation dans la configuration du rendu. Le compilateur produit un exécutable plus rapide à partir des mêmes sources ; les formats et les seuils restent identiques. Refaites les essais C et toute la validation du chapitre 19 sur la VM Windows avec cet exécutable, puis conservez cette version testée pour la remise. Aucun délai maximal du professeur n’est confirmé ici.
+2. **Ajouter le nouvel exemple du professeur.** Copiez `Binairo_6x6_rect.v2.png` (ajouté le 9 novembre) dans `Images`, sans le redimensionner. Suivez G5.6, §18.1 et le nouvel essai V26. La grille a toujours 6×6 cases et les mêmes indices que le 6×6 original, mais les cellules sont rectangulaires. Avant de lancer une autre image, conservez dans `Preuves/6x6_rect_v2` les quatre fichiers `Cell.bin`, `CellValue.txt`, `solve.m` et `Binairo_6x6_rect.v2.pdf`, selon §21.2. Incluez ce jeu de résultats dans la remise et vérifiez-le après extraction du ZIP (§21.4).
+
+Ces ajouts ne changent ni les sources C/MATLAB ni les VIs à construire. Les essais natifs restent à effectuer par le groupe sur la VM EPFL. Notez la version Windows réellement affichée par `winver`, ainsi que les versions du compilateur, de LabVIEW et de MATLAB ; ne présumez pas Windows 11 sans vérifier.
+
+## Historique du 30 octobre 2026
 
 Le prof a corrigé le format de Cell.bin et de CellValue.txt sur Ed (29–31 oct.) et le code C a été mis à jour : côté LabVIEW, il faut modifier quatre VIs (EcrireCellule, AnalyserResultatOCR, ComputeCellRect, LancerMatlab) et recompiler OCR.exe ; les deux derniers viennent d'une relecture du même jour. Le reste de la recette ne change pas.
 
@@ -193,7 +202,7 @@ Les passages modifiés portent la mention *(modifié le 30.10)* dans la recette 
 | Annexe G6.2, étape 7 | « écrira largeur puis hauteur » | « écrira hauteur puis largeur » | Lire |
 | Annexes Mise à jour, Contrôles de remise, H1 | C ne vide pas CellValue.txt ; codes 0 à 6 ; vide puis score | C vide CellValue.txt ; codes 0 à 7 ; score puis vide | Lire |
 
-Le PDF de la recette a été régénéré depuis la version HTML : même contenu, mise en page différente (73 pages au lieu de 49).
+Le 30 octobre, le PDF de la recette avait été régénéré depuis la version HTML : même contenu, mise en page différente (73 pages au lieu de 49). Les versions Markdown, HTML et PDF sont à nouveau synchronisées pour les ajouts du 11 novembre.
 
 ## Inchangé
 
