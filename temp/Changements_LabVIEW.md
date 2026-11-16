@@ -1,6 +1,21 @@
 # Binairo – changements LabVIEW
 
-11 novembre 2026 · Romeo Mugnier de Almeida
+16 novembre 2026 · Romeo Mugnier de Almeida
+
+## Audit du 16 novembre : ce qui change pour vous
+
+Branche `audit/2026-11-16-conformite`. Le détail et la liste complète des tâches restantes sont dans `temp/Audit/Rapport_audit_2026-11-16.md`. Dans la recette, chaque passage touché porte la mention *(audit 16.11)*.
+
+| Quoi | Pourquoi | Action |
+| --- | --- | --- |
+| `c/reconnaissance.c` : ratio de blancs en simple précision | `CellEmpty.bin` donne maintenant exactement la valeur Moodle `88.166542%` (avant : `88.166545%`) | Recopier le fichier et **recompiler `OCR.exe`** ; aucun VI à modifier |
+| `matlab/DisplayBinairo.m` : `print(..., '-dpdf')` sans `-painters` | option ancienne, absente du cours | Recopier le fichier dans Execution |
+| §1.1 : projet Visual Studio Release x64, `/MT` | l’addendum exige les fichiers projet du C | Créer le projet sur la VM et le remettre |
+| §7.6 : conversion noir/blanc | les traits de `Binairo_6x6_rect.v2.png` sont gris et fins ; la marge est faible | Faire le contrôle G5.6 sur cette image **en premier** ; appliquer le repli seulement si n≠6 |
+| §15.3 et §17.1 : commande `Lanceur fourni` | une commande qui ne produit qu’une erreur ne doit pas rester sur la face avant évaluée | La supprimer si l’option n’est pas installée |
+| §17.1 : indicateur image d’au moins 870×690 | la plus grande image fournie mesure 862×676 | Agrandir l’indicateur |
+| §21.3 : archive à plat | tous les fichiers dans le même dossier, `BinairoSolver.vi` à la racine | Suivre le nouveau §21.3 |
+| `temp/Tests` | 49 cas C et un script MATLAB prêts à lancer | §1.1 et §1.2 |
 
 ## Complément du 11 novembre : deux actions sur la VM
 
