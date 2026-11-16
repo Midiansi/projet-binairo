@@ -253,13 +253,14 @@ Environment: macOS 27.2.1, arm64, Apple clang 21.0.0. Python 3 with NumPy and Pi
 |---|---|---|---|
 | `c/reconnaissance.c` | white ratio in `float`; 4 lines | D-1 | rebuild, 351-run comparison |
 | `matlab/DisplayBinairo.m` | `-painters` removed; 1 line | D-2 | not executed |
-| `temp/Recette_LabVIEW_Binairo.md` (+ regenerated `.html`, `.pdf`) | 17 passages marked *(audit 16.11)*: summary block, references, Visual Studio project, expected value, test kit, §7.6, launcher interface and control, picture size, PDF-viewer blocking note, documentation, flat archive | D-3 to D-8 | text comparison old/new: only these passages differ |
-| `temp/Changements_LabVIEW.md` (+ `.pdf`) | new section listing what changes for the teammates | — | — |
+| `temp/Recette_LabVIEW_Binairo_audit-16-11.md` (+ `.html`, `.pdf`), **new separate files**; the original `Recette_LabVIEW_Binairo.*` is untouched | corrected copy of the recipe, 17 passages marked *(audit 16.11)*: summary block, references, Visual Studio project, expected value, test kit, §7.6, launcher interface and control, picture size, PDF-viewer blocking note, documentation, flat archive | D-3 to D-8 | text comparison old/new: only these passages differ |
+| `temp/Changements_audit-16-11.md` (+ `.pdf`), **new separate file**; `Changements_LabVIEW.*` is untouched | two pages for teammates already following the original recipe: what to adjust, by progress | — | — |
+| `temp/Audit/Checklist_remise_audit-16-11.md` (new) | remaining actions and the readiness checklist, extracted from this report | — | — |
 | `temp/Tests/` (new) | `TestOCR.bat`, `attendu_ocr.txt`, 26 cell files, `TestBinairo.m`, `README.md` | mechanical VM verification | expected values produced by the real binary; scripts not run |
 | `temp/docs/Documentation_projet_BROUILLON.md` (new) | documentation skeleton following the 2026 template; C and MATLAB parts filled from the code | documentation must agree with the code (addendum slide 6) | read against the code |
 | `temp/Audit/Rapport_audit_2026-11-16.md` (new) | this report | — | — |
 
-**Deliberately left unchanged:** the digit selection rule (D-9), the too-many-pixels policy (D-10), the MATLAB structure (D-12), the recipe's architecture of sub-VIs, and all official course files. The recipe's HTML and PDF were regenerated from the Markdown with the original stylesheet and script; the generator used before was not in the repository.
+**Deliberately left unchanged:** the digit selection rule (D-9), the too-many-pixels policy (D-10), the MATLAB structure (D-12), the recipe's architecture of sub-VIs, and all official course files. The corrected recipe is a separate set of files so that teammates who are mid-way through the original are not disturbed; its HTML and PDF were generated from the Markdown with the original stylesheet and script.
 
 ---
 
@@ -350,7 +351,7 @@ Ordered by importance for the grade.
 
 **1 · Critical · colleagues (LabVIEW) — build the VIs from the corrected recipe**
 
-- *Action:* follow `temp/Recette_LabVIEW_Binairo.pdf` (16 November version) chapters 1–17 and annex G. If parts are built already, apply `temp/Changements_LabVIEW.md`.
+- *Action:* keep following the recipe you are already using (`temp/Recette_LabVIEW_Binairo.pdf`, unchanged) and apply the two-page `temp/Changements_audit-16-11.pdf`. Anyone starting fresh uses the corrected copy `temp/Recette_LabVIEW_Binairo_audit-16-11.pdf` instead. Chapter numbers are the same in both.
 - *Reason:* the LabVIEW part does not exist; it drives the whole evaluation.
 - *Done when:* `BinairoSolver.vi` has an unbroken run arrow and every sub-VI checkpoint in the recipe gives the listed values.
 - *Verification:* recipe tests V01–V04 and V26 give the matrices of §18 and the expected PDFs.

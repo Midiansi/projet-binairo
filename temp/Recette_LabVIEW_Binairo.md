@@ -1,16 +1,6 @@
 # Construire la partie LabVIEW du projet Binairo
 
-Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 16 novembre 2026 (corrections d’audit), après l’addendum du 7 octobre (révision 3 du 30 octobre) et les corrections du professeur sur Ed du 29 au 31 octobre ; rangement en c, matlab et temp.
-
-**Corrections de l’audit du 16 novembre 2026** — chaque passage touché porte la mention *(audit 16.11)*. À faire si la partie correspondante est déjà construite :
-
-1. **C (§1.1) :** le ratio de blancs de la case vide est calculé en simple précision ; `CellEmpty.bin` donne maintenant exactement la valeur Moodle `d:'-1', 88.166542%`. Récupérez `c/reconnaissance.c` et **recompilez `OCR.exe`**. Aucun symbole ni code de retour ne change.
-2. **MATLAB :** `DisplayBinairo.m` appelle `print(figure, fichier, '-dpdf')` sans l’ancienne option `-painters`. Recopiez ce fichier dans Execution.
-3. **Projet Visual Studio obligatoire (§1.1) :** l’addendum demande « le(s) fichier(s) source(s) c et fichier(s) projet relatif ». La compilation en ligne de commande seule ne produit aucun fichier projet.
-4. **Conversion noir/blanc mesurée (§7.6) :** nouveau paragraphe, avec la marche à suivre si `Binairo_6x6_rect.v2.png` ne donne pas n=6.
-5. **Lanceur MATLAB (§14, §15, §17.1) :** pas de commande inutilisée sur la face avant évaluée ; interface réelle de `MP_LaunchMatlabScript4.vi` relevée.
-6. **Rendu (§21.3) :** archive **à plat**, sans les dossiers `c`, `matlab`, `temp` du dépôt ; documentation de cinq pages au maximum.
-7. **Tests prêts à lancer :** `temp/Tests/TestOCR.bat` (49 cas C) et `temp/Tests/TestBinairo.m` (§1.1, §1.2).
+Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Raphaël Pical. Version du 11 novembre 2026, après l’addendum du 7 octobre et les corrections du professeur sur Ed du 29 au 31 octobre ; rangement en c, matlab et temp.
 
 **Ajouts du 11 novembre 2026 :** inclure `Binairo_6x6_rect.v2.png` (exemple du professeur ajouté le 9 novembre) dans les images (§1), les contrôles de géométrie (G5.6), les résultats attendus (§18.1), les essais (V26) et les résultats conservés (§21.2). Recompiler `OCR.exe` sur la VM Windows avec l’optimisation activée (§1.1), puis effectuer toute la validation avec cet exécutable. Ces deux ajouts ne changent pas les sources C/MATLAB ni le câblage des VIs.
 
@@ -18,13 +8,13 @@ Recette de construction pour Louis Pédelaborde, Romeo Mugnier de Almeida et Rap
 
 Ce document explique comment construire les VIs, les raccorder au C et à MATLAB, puis vérifier le résultat. Il s'adresse à une personne qui débute dans LabVIEW. Les consignes sont prévues pour **LabVIEW 2025 Q3, menus anglais, sous Windows**, notamment dans la VM EPFL. Les noms anglais ci-dessous sont ceux à rechercher dans LabVIEW ; les noms de vos propres objets sont en français. Ne construisez pas un projet Real-Time, FPGA ou NXG.
 
-**Références prioritaires :** `P00.PPI_Projet_soumission.26.3.pdf`, addendum révision 3 du **30 octobre 2026** *(audit 16.11)*, puis `P00.PPI_Projet.2026.4.pdf`, donnée révision 4 du 30 octobre. L’addendum fait foi pour les noms, les erreurs C et les constantes (pages physiques 9–11). Les exercices précisent la construction. Les anciennes consignes Billard ne sont pas utilisées pour définir le contrat Binairo. Le critère MATLAB actuel est « utilisation minimale (~ absence) de boucles » ; les sources restent sans boucle explicite.
+**Références prioritaires :** `P00.PPI_Projet_soumission.26.2.pdf`, addendum révision 2 du **8 octobre 2026** *(modifié le 30.10)*, puis `P00.PPI_Projet.2026.2.pdf`, donnée du 7 septembre. L’addendum fait foi pour les noms, les erreurs C et les constantes (pages physiques 9–11). Les exercices précisent la construction. Les anciennes consignes Billard ne sont pas utilisées pour définir le contrat Binairo. Le critère MATLAB actuel est « utilisation minimale (~ absence) de boucles » ; les sources restent sans boucle explicite.
 
 **État réel :** le C est compilé et testé sur macOS ; les nouveaux découpages ont été contrôlés avec cet exécutable à 88/90/90. Les VIs Windows et le rendu MATLAB natif restent à construire/exécuter sur la VM. Les résultats attendus ci-dessous sont des checkpoints à mesurer, pas des captures de VIs déjà réalisés. Les concepts utilisés et leurs références ME-213/CS-119a sont regroupés dans l’annexe H de cette recette. Aucun traitement d’image externe ni bibliothèque de résolution n’est nécessaire.
 
 **Règle OCR appliquée :** la procédure détaillée de la donnée, page physique 18, impose `score >= seuil` pour les chiffres, puis le maximum de `score - seuil`. Elle prime ici sur le résumé « score brut » de sa page 10. Il existe donc une contradiction interne à la donnée, explicitement signalée ; le code suit désormais sa procédure détaillée. Depuis la correction du professeur (Ed #28 et message Semaine 7), les chiffres sont testés d’abord ; la case vide n’est testée qu’ensuite, avec `ratio de blancs > seuil vide`, et s’écrit `d:'-1', <ratio de blancs>%` (Ed #16). Si 0 et 1 atteignent leur seuil avec le même score ou la même marge, le C s’arrête avec le code 7 (Ed #7). *(modifié le 30.10)* Aucun connecteur principal définitif n’apparaît dans cette donnée : les connecteurs ci-dessous sont nos choix de construction, pas celui du Billard 2025.
 
-**Contenu du dépôt :** `c/` contient uniquement les cinq sources/en-têtes C ; `matlab/` contient les sept fonctions MATLAB ; `temp/` contient cette recette en Markdown, HTML et PDF, ainsi que les six entrées de test dans `temp/Images` (à exclure du rendu), le kit de tests `temp/Tests`, le brouillon de documentation `temp/docs` et le rapport d’audit `temp/Audit` *(audit 16.11)*. La compilation, la création des projets, la construction des VIs et la production des résultats seront effectuées dans la VM Windows. Aucun exécutable ni fichier projet préconfiguré n’est fourni. Les pièces de remise seront préparées après les essais, suivant le chapitre 21.
+**Contenu du dépôt :** `c/` contient uniquement les cinq sources/en-têtes C ; `matlab/` contient les sept fonctions MATLAB ; `temp/` contient cette recette en Markdown, HTML et PDF, ainsi que les six entrées de test dans `temp/Images` (à exclure du rendu). La compilation, la création des projets, la construction des VIs et la production des résultats seront effectuées dans la VM Windows. Aucun exécutable ni fichier projet préconfiguré n’est fourni. Les pièces de remise seront préparées après les essais, suivant le chapitre 21.
 
 ## Mode d’emploi de cette recette
 
@@ -84,17 +74,6 @@ cl /nologo /std:c11 /O2 /W4 /TC main.c reconnaissance.c /Fe:OCR.exe
 
 N'exécutez qu'une des deux commandes, selon le compilateur réellement installé. Si aucun n'est disponible, conservez la capture de l'erreur et faites installer/activer l'outil prévu par le cours ; ne poursuivez pas les tests OCR avec un exécutable Mac renommé `.exe`. Ne remplacez pas des erreurs de compilation par des modifications improvisées du code.
 
-**Projet Visual Studio à créer et à remettre** *(audit 16.11)*. La VM du cours fournit Visual Studio (syllabus, « VM – STI_Windows11 ») et l’addendum de soumission (p. 3) exige les fichiers projet. La commande `cl` ci-dessus reste utile pour un essai rapide, mais l’exécutable remis doit venir de ce projet :
-
-1. Visual Studio : `File > New > Project > Empty Project` (C++). Nom `OCR`, emplacement = votre dossier `Execution`, case **Place solution and project in the same directory** cochée. Visual Studio crée `Execution\OCR\OCR.sln` et `OCR.vcxproj`.
-2. `Project > Add Existing Item` : sélectionnez dans `Execution` les deux `.c` et les trois `.h`. Ils sont ajoutés par chemin relatif ; ne les copiez pas une seconde fois.
-3. Dans la barre d’outils, choisissez la configuration **Release** et la plateforme **x64**.
-4. `Project > Properties`, avec Configuration = Release et Platform = x64 : `C/C++ > Optimization > Optimization` = **/O2** ; `C/C++ > Code Generation > Runtime Library` = **Multi-threaded (/MT)**, pour que `OCR.exe` ne dépende d’aucune DLL de Visual Studio ; `C/C++ > General > Warning Level` = **/W4**. Les fichiers `.c` sont compilés en C sans autre réglage.
-5. `Build > Build Solution` : zéro erreur. Copiez `Execution\OCR\x64\Release\OCR.exe` dans `Execution`, à côté de `BinairoSolver.vi`.
-6. Pour le rendu, gardez `OCR.sln`, `OCR.vcxproj` et `OCR.vcxproj.filters` ; excluez `.vs`, `x64` et les fichiers `.user`. Rouvrez `OCR.sln` après avoir déplacé tout le dossier `Execution` : le projet doit encore se compiler, ce qui prouve l’absence de chemin absolu.
-
-Ces six étapes n’ont pas été exécutées ici ; notez la version de Visual Studio (`Help > About`) pour la documentation.
-
 Copiez temporairement `Cell0.bin`, `Cell1.bin`, `CellEmpty.bin` et `BadCell_1.bin` du cours dans `Execution`, puis exécutez successivement :
 
 ```text
@@ -109,15 +88,11 @@ echo %ERRORLEVEL%
 type CellValue.txt
 ```
 
-Résultats attendus : code `0` à chaque fois ; respectivement `d:'0', 97.167969%`, `d:'1', 97.753906%`, `d:'-1', 88.166542%`, chacun suivi d'une fin de ligne : ce sont exactement les trois valeurs indiquées sur Moodle *(audit 16.11)*. Le programme normal n'écrit rien sur stdout/stderr. Conservez une capture. Les fichiers du cours sont lus, jamais réécrits. Le résultat `CellValue.txt` est remplacé à chaque appel réussi. Lancez aussi `OCR.exe BadCell_1.bin 88 90 90` : code 3 et message de pixels manquants ; `CellValue.txt` est alors vidé (0 octet). Testez enfin les fichiers Cell rectangulaires (largeur ≠ hauteur) ajoutés sur Moodle : ils doivent être reconnus comme les cellules carrées. *(modifié le 30.10)* Dans chacune des trois positions de seuil, essayez 0, 100, 88.5, `nan` et `90junk` : code 2. Les valeurs 1 et 99 sont admises. Si vous travaillez depuis un IDE, créez le projet dans la VM avec les fichiers ci-dessus et les réglages du cours. Placez son OCR.exe compilé dans Execution. Conservez les fichiers projet réellement créés dans la VM pour le rendu ; aucun projet préconfiguré n’est à récupérer dans le dépôt.
-
-**Contrôle automatique des 49 cas** *(audit 16.11)*. Copiez dans `temp\Tests\cellules` les huit fichiers Moodle `Cell0.bin`, `Cell1.bin`, `CellEmpty.bin`, `Cell0_rect.bin`, `Cell1_rect.bin`, `CellEmpty_rect.bin`, `BadCell_1.bin` et `Bad_Cell0_morepx.bin`. Copiez `OCR.exe` dans `temp\Tests`, puis double-cliquez `TestOCR.bat` (ou lancez-le dans `cmd`). Le script appelle `OCR.exe` sur chaque cas, écrit `resultats_vm.txt` et le compare à `attendu_ocr.txt`. Réussite : la ligne `RESULTAT : tous les cas sont identiques a attendu_ocr.txt`. Sinon, les lignes différentes sont affichées. Le cas `z1000.bin` (1000×1000 pixels) doit se terminer en quelques secondes avec la compilation Release. Les valeurs attendues ont été produites sur macOS avec les mêmes sources ; le script `.bat` lui-même n’a pas pu être exécuté hors de Windows. Détails dans `temp/Tests/README.md`.
+Résultats attendus : code `0` à chaque fois ; respectivement `d:'0', 97.167969%`, `d:'1', 97.753906%`, `d:'-1', 88.166545%`, chacun suivi d'une fin de ligne (Moodle indique 88.166542 % pour la case vide : l’écart sur la sixième décimale est admis par l’addendum). *(modifié le 30.10)* Le programme normal n'écrit rien sur stdout/stderr. Conservez une capture. Les fichiers du cours sont lus, jamais réécrits. Le résultat `CellValue.txt` est remplacé à chaque appel réussi. Lancez aussi `OCR.exe BadCell_1.bin 88 90 90` : code 3 et message de pixels manquants ; `CellValue.txt` est alors vidé (0 octet). Testez enfin les fichiers Cell rectangulaires (largeur ≠ hauteur) ajoutés sur Moodle : ils doivent être reconnus comme les cellules carrées. *(modifié le 30.10)* Dans chacune des trois positions de seuil, essayez 0, 100, 88.5, `nan` et `90junk` : code 2. Les valeurs 1 et 99 sont admises. Si vous travaillez depuis un IDE, créez le projet dans la VM avec les fichiers ci-dessus et les réglages du cours. Placez son OCR.exe compilé dans Execution. Conservez les fichiers projet réellement créés dans la VM pour le rendu ; aucun projet préconfiguré n’est à récupérer dans le dépôt.
 
 ### 1.2 Tester MATLAB avant de construire le lanceur
 
 Effectuez les contrôles ci-dessous directement dans MATLAB sur la VM. Conservez les observations et les PDF dans Preuves/Matlab, puis retirez les sorties de test de Execution avant l’intégration. Ces contrôles sont indépendants de LabVIEW ; les quatre options et le lancement réel seront vérifiés aux chapitres 18 et 19.
-
-**Contrôle automatique** *(audit 16.11)* : copiez `temp/Tests/TestBinairo.m` dans Execution, tapez `TestBinairo` dans la Command Window. Attendez uniquement des lignes `PASS` et `Nombre d'echecs : 0`, puis ouvrez les trois PDF `Test_*.pdf` pour le contrôle visuel et supprimez-les. Les solutions 6×6 et 8×8 y sont comparées à celles des PDF du professeur. Ce script n’a pas pu être exécuté ici (pas de MATLAB sur la machine d’audit) ; la logique du solveur a été vérifiée séparément par une transcription.
 
 Après avoir copié les dernières fonctions .m, effectuez les trois contrôles simples ci-dessous dans MATLAB, avec Current Folder réglé sur Execution :
 
@@ -407,23 +382,6 @@ Après cette Case : `NOT` sur le tableau brut entier ; `Select` avec s=noirVautT
 5. Avec `Binairo_8x8.png`, attendez largeur 610, hauteur 577 ; Bitmap[5,2]=TRUE et Bitmap[30,30]=FALSE. Les tailles sont celles des images reçues ; si Moodle a remplacé les fichiers, ne forcez pas ces nombres dans le diagramme.
 6. Déplacez l'image dans un autre dossier, re-sélectionnez-la : elle doit encore être lue. La calibration n'est à refaire que si la version/environnement de conversion change.
 
-### 7.6 Ce que fait la conversion native, et quoi faire si le rectangle échoue *(audit 16.11)*
-
-**Mesure.** Les fichiers `Cell0.bin`, `Cell1.bin` et `CellEmpty.bin` du professeur ont été retrouvés pixel pour pixel dans `Binairo_6x6.png` (positions x=74,y=5 ; x=0,y=215 ; x=0,y=5) en déclarant noir tout pixel dont la luminance `0,299 R + 0,587 G + 0,114 B` est inférieure à un seuil compris entre 126 et 130. La conversion 1 bit de `Picture to Pixmap` se comporte donc comme un seuil d’environ **128** sur la luminance. Avec ce seuil, une simulation hors LabVIEW de toute la chaîne (traits à bord+10, découpe G4, `OCR` réel à 88/90/90) reconnaît correctement les 36+36+64+16 cases des quatre grilles valides et refuse `Binaro_5x6_Bad.png`.
-
-**Point fragile.** Dans `Binairo_6x6_rect.v2.png`, les traits horizontaux intérieurs sont lissés : un seul pixel d’épaisseur, de luminance 88 à 127 selon le trait. Le compte de sept traits n’est correct que si le seuil effectif est d’au moins 120. La marge par rapport à 126–130 est faible. Les images carrées n’ont pas ce problème (seuils 44 à 233 acceptés).
-
-**Contrôle obligatoire sur la VM.** Lancez LireImage + ComputeRowsCols sur `Binairo_6x6_rect.v2.png` (essai G5.6). Attendez n=6 et `debutY` = 0, 62, 120, 179, 238, 296, 354 ou 355 (un pixel d’écart est normal). Si c’est le cas, ne changez rien.
-
-**Seulement si n≠6 sur cette image** (un trait gris a disparu), remplacez la conversion 1 bit par un seuil explicite, avec trois nœuds et sans boucle :
-
-1. Dans 7.3, mettez **I32 24** sur `D2.depth` au lieu de 1, et utilisez la sortie **24-bit pixmap** de D3 (tableau 2D U32, `0x00RRGGBB`) au lieu de `1-bit pixmap`.
-2. `And` : 24-bit pixmap et constante **U32 65280** (`0x0000FF00`), ce qui isole le canal vert.
-3. `Less?` : résultat et constante **U32 35840** (140×256). La sortie est directement le Bitmap, TRUE = noir.
-4. Supprimez alors le 7.4 (palette et polarité) : la polarité est fixée par le `Less?`. Le contrôle de 7.3 sur `image depth` compare à 24.
-
-Avec le canal vert, les seuils 120 à 140 donnent les mêmes matrices sur les cinq images dans la simulation ; 140 laisse la plus grande marge au trait le plus clair. Refaites ensuite tous les checkpoints 7.5, G5.6 et V01–V04, V26, et décrivez ce choix dans la documentation.
-
 ## 8 Géométrie de la grille
 
 Construisez maintenant, dans cet ordre : `EtendueNoire.vi`, `IntervallesNoirs.vi`, `ComputeCellRect.vi`, `ComputeRowsCols.vi`, en suivant l’**annexe G — Détecter la grille et découper ses cases** placée à la fin de cette recette. Revenez ensuite au chapitre 9. Les bornes de cellule sont **50 à 1000 pixels**, identiques au C et à l’addendum p. 10.
@@ -689,8 +647,6 @@ La donnée exige de lancer MATLAB avec le script généré et de détecter ses e
 
 L’interface inconnue de ce VI facultatif ne bloque ni la construction ni la validation du mode direct. N’ajoutez pas une dépendance au VI fourni si vous ne l’utilisez pas.
 
-**Relevé fait sur le fichier Moodle** *(audit 16.11)*. Les libellés lus dans `MP_LaunchMatlabScript4.vi` (sans l’ouvrir dans LabVIEW) sont : commande `matlab script path` (Path), `error in (no error)` ; indicateurs `error out`, `standard output`, `standard error`, `computed command line` ; réglages `Write demo file` (doit rester FALSE) et `Remove ML msg (T)`. Son diagramme construit, sous Windows, une commande `matlab -batch` avec `-sd "<dossier du script>"`, et renvoie l’erreur `Script error.` si le script échoue : c’est la même commande que notre mode direct. Confirmez ces noms à l’étape 2 ci-dessus avant de câbler ; ce relevé ne remplace pas l’inspection.
-
 ## 15 LancerMatlab.vi
 
 **But :** lancer `solve.m`, attendre sa fin, conserver le diagnostic et transmettre une erreur réelle en cas d'échec. Il n'effectue pas le calcul du Binairo lui-même.
@@ -731,7 +687,7 @@ MATLAB peut écrire un avertissement dans stderr sans échec : on conserve ce te
 
 ### 15.3 Mode fourni et adaptation exacte à l'interface observée
 
-**Parcours normal, sans lanceur fourni** *(audit 16.11)* **:** ne laissez pas sur la face avant évaluée une commande qui ne peut produire qu’une erreur. Si vous n’installez pas l’option, **supprimez la commande `LanceurFourni` (P3) et la Case C1** : le contenu de C1.FALSE devient directement le diagramme de la garde No Error, et la borne L3 reste libre. Supprimez de même `Lanceur fourni` (P6) de BinairoSolver.vi au §17.1. Si ces objets sont déjà construits et que vous préférez les garder, la branche C1.TRUE doit rester : ErreurSi(TRUE,7009,`Option lanceur fourni non installee ; utiliser le mode direct.`,P4), error out vers la sortie erreur et la même chaîne vers Diagnostic, avec LanceurFourni=FALSE par défaut.
+**Parcours normal, sans lanceur fourni :** dans C1.TRUE, placez ErreurSi(TRUE,7009,`Option lanceur fourni non installee ; utiliser le mode direct.`,P4) ; câblez son error out à la sortie erreur et la même chaîne à Diagnostic. La case FALSE contient le lancement complet et constitue le fonctionnement normal. Cette branche TRUE signale une option indisponible, pas une fonction requise manquante. Gardez LanceurFourni=FALSE par défaut.
 
 **Seulement si vous installez l’option :** remplacez ces deux sorties par l’intégration suivante et placez **le vrai MP_LaunchMatlabScript4.vi**. Utilisez la fiche du chapitre 14 pour appliquer cette table, uniquement aux bornes qui existent réellement :
 
@@ -775,7 +731,7 @@ Enregistrez `BinairoSolver.vi` dans `Execution`. Ajoutez ces objets ; textes et 
 | P3 | Options | OptionsBinairo.ctl,TRUE/TRUE | L3 |
 | P4 | error in | erreur commande claire | L4 |
 | P5 | Executable MATLAB | Path commande, vide = commande `matlab` du PATH *(modifié le 30.10)* | T1 |
-| P6 | Lanceur fourni | Boolean commande,FALSE par défaut ; **à ne créer que si l’option du §15.3 est installée** *(audit 16.11)* | T2 |
+| P6 | Lanceur fourni | Boolean commande,FALSE par défaut | T2 |
 | P7 | Image originale | 2D Picture indicateur,vide | R1 |
 | P8 | Matrice reconnue | String indicateur multiligne,vide | R2 |
 | P9 | Diagnostic | String indicateur multiligne,vide | R3 |
@@ -788,7 +744,7 @@ Enregistrez `BinairoSolver.vi` dans `Execution`. Ajoutez ces objets ; textes et 
 
 B1/B2 non attribuées. Alignez P1..P6 à gauche, l'image à droite, les textes et erreurs en dessous. Ajoutez des étiquettes : `Résoudre avec MATLAB` et `Ouvrir le PDF` près des options si leurs champs vous semblent trop courts. Conservez les noms internes resoudre/afficherPDF du typedef.
 
-Zone de dessin Image originale : au moins 870×690 pixels *(audit 16.11 : la plus grande image fournie, `Binaro_5x6_Bad.png`, mesure 862×676 ; la donnée demande l’affichage « à la bonne taille »)* et fond blanc. Clic droit `Visible Items` : activez les barres de défilement horizontale/verticale si disponibles. Cela affiche les exemples 6×6/8×8 à taille lisible sans redimensionner la matrice de pixels. Le PNG sélectionné est un **fichier**, pas un dossier. Le programme s'exécute une fois avec la flèche Run.
+Zone de dessin Image originale : environ 650×620 pixels et fond blanc. Clic droit `Visible Items` : activez les barres de défilement horizontale/verticale si disponibles. Cela affiche les exemples 6×6/8×8 à taille lisible sans redimensionner la matrice de pixels. Le PNG sélectionné est un **fichier**, pas un dossier. Le programme s'exécute une fois avec la flèche Run.
 
 ### 17.2 Dossier et validation de l'entrée
 
@@ -938,7 +894,6 @@ Dans les deux dernières lignes, aucune existence de solution n'est certifiée. 
 4. Répétez les deux essais avec Résoudre=FALSE, puis depuis un dossier contenant des espaces. Utilisez aussi le nom `L'exemple_test.png` pour vérifier les apostrophes et le caractère souligné.
 5. Notez la version MATLAB, le code de retour, la sortie d'erreur et l'observation du lecteur. Si le PDF existe mais ne s'ouvre pas, vérifiez d'abord son ouverture par double-clic dans Windows. Ne marquez pas V05 réussi tant que les quatre combinaisons ne fonctionnent pas par le lancement `-batch` réel.
 6. **Solution de repli si le PDF existe mais ne s’ouvre pas en `-batch`** *(modifié le 30.10)* : l’addendum (p. 14) prévoit aussi l’ouverture depuis LabVIEW par System Exec. Dans GenererScript.vi, mettez la chaîne `false` sur l’entrée t de N5, pour que solve.m n’appelle plus uiopen. Dans BinairoSolver.vi, après V8 VerifierPDF, posez une Case sélectionnée par AND(Options.afficherPDF, NOT(status de V8.error out)). Dans TRUE : `Path To String(N12.path)`→`Format Into String` avec le format `cmd /c start "" "%s"`→System Exec (working directory=Dossier, wait until completion?=FALSE, error in=V8.error out) ; son error out devient l’erreur finale. Dans FALSE : V8.error out traverse. Refaites alors les étapes 3 et 4.
-7. **Si le VI reste bloqué tant que le lecteur PDF est ouvert** *(audit 16.11)* : System Exec attend la fermeture de tous les programmes qui ont hérité de sa sortie standard. Fermez le lecteur : si le VI se termine aussitôt sans erreur, appliquez la solution de repli du point 6, dont le System Exec utilise `wait until completion?`=FALSE. Notez le comportement observé dans la documentation.
 
 ### 18.4 Deux types d'échec à ne pas confondre
 
@@ -1040,16 +995,16 @@ L’addendum du 7 octobre fixe ce contenu. La recette, un binaire Mac ou les seu
 
 ### 21.3 Remplir la documentation courte et réunir l’archive
 
-1. Après les essais dans la VM, rédigez la brève documentation selon le modèle Moodle `ExempleDocumentationProjet.2026.pdf` (version du 9 novembre), **cinq pages au grand maximum** (Ed #35), puis exportez-la en PDF. Partez du brouillon `temp/docs/Documentation_projet_BROUILLON.md`, dont les parties C et MATLAB sont déjà alignées sur le code *(audit 16.11)*. Reprenez les trois lignes « vérifié » et la ligne « Le projet doit être évalué sur : VM » du modèle. Indiquez les auteurs, versions VM/Windows/compilateur/MATLAB/LabVIEW, rôle des fichiers, chaîne PNG → LabVIEW → C → MATLAB → PDF, algorithmes, formats, seuils et politiques de warning du chapitre 3, résultats réellement observés et limites restantes. Mentionnez les codes C 0,2,3,4,5,6,7, l’emplacement de CellValue.txt (dossier de Cell.bin, vidé après une erreur), la lecture d’une case vide comme `1` si les seuils des chiffres sont très bas (les chiffres sont testés d’abord, Ed #28), le sens de l’option Résoudre=FALSE (MATLAB dessine la grille initiale sans la résoudre), le lancement de MATLAB par le PATH et le comportement du contrôleur après une erreur. *(modifié le 30.10)* Ne remplacez pas « non exécuté » par « réussi » sans essai. Aucun rapport final prérempli n’est fourni dans le dépôt.
+1. Après les essais dans la VM, rédigez la brève documentation selon le modèle Moodle `Ex. Documentation projet.pdf`, puis exportez-la en PDF. Indiquez les auteurs, versions VM/Windows/compilateur/MATLAB/LabVIEW, rôle des fichiers, chaîne PNG → LabVIEW → C → MATLAB → PDF, algorithmes, formats, seuils et politiques de warning du chapitre 3, résultats réellement observés et limites restantes. Mentionnez les codes C 0,2,3,4,5,6,7, l’emplacement de CellValue.txt (dossier de Cell.bin, vidé après une erreur), la lecture d’une case vide comme `1` si les seuils des chiffres sont très bas (les chiffres sont testés d’abord, Ed #28), le sens de l’option Résoudre=FALSE (MATLAB dessine la grille initiale sans la résoudre), le lancement de MATLAB par le PATH et le comportement du contrôleur après une erreur. *(modifié le 30.10)* Ne remplacez pas « non exécuté » par « réussi » sans essai. Aucun rapport final prérempli n’est fourni dans le dépôt.
 2. Exportez **les conversations complètes d’aide IA en PDF**, y compris l’audit et les corrections. Le rapport d’audit ou un résumé ne remplace pas le transcript. Déclarez aussi toute autre source de code et toute coopération significative avec un autre groupe, si applicable ; n’inventez pas une déclaration d’absence à leur place.
-3. *(audit 16.11)* Créez un dossier de remise **Pedelaborde_MugnierDeAlmeida_Pical** et copiez-y **à plat** le contenu utile du dossier Execution testé : `BinairoSolver.vi`, tous ses sous-VIs, les quatre typedefs, `Binairo.lvproj`, les sept fonctions `.m`, les cinq fichiers C/header, **`OCR.exe` Windows compilé et testé**, et le sous-dossier `OCR` du projet Visual Studio réduit à `OCR.sln`, `OCR.vcxproj`, `OCR.vcxproj.filters`. L’exercice LabVIEW 1 (p. 10) demande que tous les fichiers soient dans le même dossier, et le correcteur ouvre le VI juste après la décompression : `BinairoSolver.vi` doit être visible à la racine. **N’incluez pas les dossiers `c`, `matlab` et `temp` du dépôt** : ils dupliqueraient les sources, et le correcteur ne saurait pas quelle copie fait foi.
-4. *(audit 16.11)* À la racine du même dossier, ajoutez la documentation courte `Documentation.pdf`, puis trois sous-dossiers : `Resultats` (un sous-dossier par image, copié depuis Preuves : `Cell.bin`, `CellValue.txt`, `solve.m` et le PDF), `Transcripts_IA` (toutes les conversations d’aide IA en PDF) et, si vous le souhaitez, `Tests` (`TestOCR.bat`, `attendu_ocr.txt`, `TestBinairo.m`, `cellules`). N’ajoutez ni la recette, ni le rapport d’audit, ni les captures de Preuves : ils ne sont pas demandés. **Excluez tous les PNG de test** : l’addendum de soumission révision 3, page 3, demande de ne pas inclure les séquences sources. Excluez aussi `.git`, `.vs`, `x64`, les fichiers de compilation intermédiaires et tout exécutable macOS. Le ZIP GitHub est une copie de travail, pas le ZIP final.
+3. Créez un dossier de remise portant les noms **Pedelaborde_MugnierDeAlmeida_Pical**, avec les trois sous-dossiers **c**, **matlab** et **temp**. Dans c, conservez les cinq fichiers C/header et les fichiers projet créés avec votre IDE dans la VM ; dans matlab, les sept fonctions `.m`. Dans `temp/Execution`, copiez le contenu utile du dossier Execution testé : principal, tous ses sous-VIs, quatre typedefs, projet LabVIEW, sept fonctions MATLAB, cinq fichiers C/header, **OCR.exe Windows compilé et testé**, ainsi que les fichiers projet associés réellement créés dans la VM. Les copies d’exécution doivent correspondre aux dernières sources de c/matlab. Conservez leurs chemins relatifs ; aucun projet ne doit dépendre du dossier d’un développeur.
+4. Dans temp, gardez la recette, créez `docs` pour la documentation courte PDF et les références nécessaires, puis ajoutez `Transcripts` avec les conversations complètes en PDF et `Preuves` avec les résultats de chaque séquence. Le dossier temp regroupe provisoirement le reste du projet : ne le supprimez pas avant remise, car il contient les VIs et les pièces exigées. **Excluez tout le dossier `temp/Images` et les PNG de test**, même s’ils sont fournis dans le dépôt : l’addendum de soumission révision 3, page 3, demande de ne pas inclure les séquences sources. Le ZIP GitHub est une copie de travail, pas le ZIP final à déposer. Excluez aussi les dossiers `.git`, `.vs`, les fichiers de compilation intermédiaires et les exécutables pour une autre plateforme. Les exemples binaires d’entrée du professeur servent aux tests locaux ; les résultats générés sont dans Preuves.
 5. Comparez le contenu avec cette liste, puis compressez le dossier en `Pedelaborde_MugnierDeAlmeida_Pical.zip`. Conservez une copie datée avant toute soumission.
 
 ### 21.4 Vérifier exactement ce qui sera évalué
 
 1. Extrayez le ZIP dans **un autre dossier avec espaces**, idéalement sur une autre machine/VM prévue par le cours.
-2. Ouvrez `BinairoSolver.vi` à la racine du dossier extrait *(audit 16.11)*, sélectionnez le PNG conservé à part et le MATLAB de cette machine, puis utilisez la flèche Run. Vérifiez 6×6, `Binairo_6x6_rect.v2.png`, 8×8, les cas invalides et l’absence de dépendance manquante.
+2. Ouvrez `temp/Execution/BinairoSolver.vi` depuis le dossier extrait, sélectionnez le PNG conservé à part et le MATLAB de cette machine, puis utilisez la flèche Run. Vérifiez 6×6, `Binairo_6x6_rect.v2.png`, 8×8, les cas invalides et l’absence de dépendance manquante.
 3. Après la soumission Moodle, **retéléchargez l’archive déposée**, extrayez-la ailleurs et répétez le contrôle. Seule la dernière soumission est retenue. Ce document ne dépose rien à votre place.
 4. Relisez toute nouvelle annonce Moodle avant la remise. L’addendum du 7 octobre est intégré ; une nouvelle instruction postérieure devra être comparée explicitement.
 
@@ -1059,11 +1014,11 @@ Les numéros suivants sont les **pages physiques du PDF**, pas nécessairement l
 
 | Source du cours | Pages | Exigence utilisée |
 |---|---|---|
-| P00.PPI_Projet.2026.4.pdf | 6,15–18,23–27,31–36 | noms, format binaire/texte, interface, orchestration, résolution, PDF, erreurs |
+| P00.PPI_Projet.2026.2.pdf | 6,15–18,23–27,31–36 | noms, format binaire/texte, interface, orchestration, résolution, PDF, erreurs |
 | Exo.Proj.Binairo.LabVIEW.1.pdf | 3–10,13–16 | lecture/conversion image, indexation, co-localisation, System Exec, géométrie |
 | Exo.Proj.Binairo.LabVIEW.2.pdf | 2–7 | matrice générée, script, lanceur fourni, erreurs |
 | Exo.Proj.Binairo.Matlab.1.pdf | 1–2 | résultat PDF et fonctions d'affichage |
-| P00.PPI_Projet_soumission.26.3.pdf | 3–12,14–16 | rendu, erreurs, dimensions 50..1000, seuils entiers 1..99 et 88/90/90, noms, defaults, PDF |
+| P0.PPI_Projet_soumission.26.1.pdf | 3–12,14–16 | rendu, erreurs, dimensions 50..1000, seuils entiers 1..99 et 88/90/90, noms, defaults, PDF |
 | LV1 et LV2, versions 2026 | annexe H | structures, tableaux, chaînes, fichiers, erreurs et sous-VIs |
 
 Les exercices de ce tableau sont des aides secondaires ; leurs noms de sous-VIs et leur lanceur ne deviennent pas des obligations absentes de la donnée.
