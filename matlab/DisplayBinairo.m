@@ -5,7 +5,7 @@ function DisplayBinairo(Original, Solution, file, feasible)
 [cheminPdf, ~] = CheminPdfBinairo(file);
 figureBinairo = CreerFigureBinairo(Original, Solution, file, feasible);
 % Une erreur est transmise au lanceur ; LabVIEW doit verifier le succes avant de lire le PDF.
-print(figureBinairo, cheminPdf, '-dpdf', '-painters');
+print(figureBinairo, cheminPdf, '-dpdf');
 close(figureBinairo);
 fprintf('PDF enregistre : %s\n', cheminPdf);
 end

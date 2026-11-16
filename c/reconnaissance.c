@@ -249,7 +249,7 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
     size_t indice;
     unsigned int chiffre;
     double scores[2];
-    double ratioBlancs;
+    float ratioBlancs;
     const double seuilsChiffres[2] = {seuils->zero, seuils->un};
     int choisi;
 
@@ -301,11 +301,12 @@ int ReconnaitreCellule(const CelluleOCR *cellule, const SeuilsOCR *seuils,
     for (indice = 0; indice < nombrePixels; ++indice) {
         blancs += cellule->pixels[indice] == 0u;
     }
-    ratioBlancs = 100.0 * (double)blancs / (double)nombrePixels;
-    if (ratioBlancs > seuils->vide) {
+    /* Simple precision, comme les exemples Moodle : CellEmpty.bin donne 88.166542 %. */
+    ratioBlancs = 100.0f * (float)blancs / (float)nombrePixels;
+    if ((double)ratioBlancs > seuils->vide) {
         /* Ed #16 : une case vide s'ecrit -1, suivie de son ratio de blancs. */
         resultat->symbole = -1;
-        resultat->pourcentage = ratioBlancs;
+        resultat->pourcentage = (double)ratioBlancs;
         return OCR_SUCCES;
     }
     *description = "ni chiffre ni case vide : aucun seuil n'est atteint";
